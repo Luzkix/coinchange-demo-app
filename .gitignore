@@ -1,0 +1,10 @@
+# Backend
+/backend/target/
+
+# Frontend
+/frontend/node_modules/
+/frontend/build/
+
+# Generic files
+.DS_Store
+.idea/
