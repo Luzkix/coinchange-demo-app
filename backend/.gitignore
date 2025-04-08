@@ -32,4 +32,4 @@ build/
 .vscode/
 
 ### PROJECT SPECIFIC ###
-/src/main/resources/application-private.properties
+/src/main/resources/application-prod.properties
