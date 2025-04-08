@@ -1,0 +1,92 @@
+openapi: 3.0.1
+info:
+  title: CoinChange Backend API
+  version: 1.0.0
+  description: API definition for the CoinChange application.
+
+components:
+  schemas:
+    ErrorDTO:
+      properties:
+        errorStatusValue:
+          type: integer
+          format: int32
+          example: 404
+        errorStatus:
+          type: string
+          example: UNPROCESSABLE_ENTITY
+        errorTime:
+          type: string
+          format: date-time
+          example: "2018-08-29T23:20:50"
+        errorMessage:
+          type: string
+          example: Username or email already exists for live user account!
+        errorBusinessCode:
+          type: string
+          example: USER_ALREADY_EXISTS
+    UserRegistrationRequestDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: John Dow
+        email:
+          type: string
+          example: JohnDow@gmail.com
+        password:
+          type: string
+          example: JohnDowPassw
+    LoginResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        username:
+          type: string
+          example: John Dow
+        email:
+          type: string
+          example: JohnDow@gmail.com
+        createdAt:
+          type: string
+          format: date-time
+          example: "2018-08-29T23:20:50"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2018-08-29T23:20:50"
+        validTo:
+          type: string
+          format: date-time
+          example: "2100-01-01T00:00:00"
+
+paths:
+  /login/user:
+    post:
+      summary: Register a new user
+      operationId: createUser
+      description: |
+        Register a new user
+      requestBody:
+        description: registration attributes provided by new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequestDto'
+        required: true
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDTO will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
