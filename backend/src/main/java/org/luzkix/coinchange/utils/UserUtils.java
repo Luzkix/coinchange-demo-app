@@ -1,6 +1,8 @@
 package org.luzkix.coinchange.utils;
 
 import org.luzkix.coinchange.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -18,4 +20,5 @@ public class UserUtils {
     public static boolean isActiveUser (User user) {
         return DateUtils.isFutureDateGreater(LocalDateTime.now(), user.getValidTo());
     }
+
 }

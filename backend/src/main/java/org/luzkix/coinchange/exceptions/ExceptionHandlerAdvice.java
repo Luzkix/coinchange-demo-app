@@ -30,6 +30,15 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
+            InvalidJwtTokenException.class
+    })
+    public ResponseEntity<Object> handleType401exceptions(final Exception exception,
+                                                          final WebRequest request) {
+
+        return handleException(exception, new HttpHeaders(), UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler({
             AccessDeniedException.class
     })
     public ResponseEntity<Object> handleType403exceptions(final Exception exception,

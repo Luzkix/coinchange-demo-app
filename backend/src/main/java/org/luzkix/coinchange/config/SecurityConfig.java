@@ -1,18 +1,30 @@
 package org.luzkix.coinchange.config;
 
+import org.luzkix.coinchange.controller.UIAPIController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Deaktivace CSRF ochrany (pokud používám JWT token, nepotřebuji ji, jinak zapnout)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Povolení všech požadavků
+                .csrf(csrf -> csrf.disable()) // Disable CSRF protection (not needed for JWT)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Allow access to Swagger UI and API docs without authentication
+                        .requestMatchers(UIAPIController.BASE_UI_URI+"/user/login", UIAPIController.BASE_UI_URI+"/user/register").permitAll() // Allow public access to login and register endpoints
+                        .anyRequest().authenticated() // Require authentication for all other endpoints
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+
         return http.build();
     }
 }
