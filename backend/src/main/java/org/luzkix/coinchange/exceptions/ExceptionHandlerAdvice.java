@@ -1,7 +1,7 @@
 package org.luzkix.coinchange.exceptions;
 
 import org.luzkix.coinchange.openapi.uiapi.model.ErrorDTO;
-import org.luzkix.coinchange.utils.DatesUtils;
+import org.luzkix.coinchange.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -39,12 +39,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-            UnprocessableEntityException.class
+            InvalidInputDataException.class
     })
-    public ResponseEntity<Object> handleType422exceptions(final Exception exception,
+    public ResponseEntity<Object> handleType400exceptions(final Exception exception,
                                                           final WebRequest request) {
 
-        return handleException(exception, new HttpHeaders(), UNPROCESSABLE_ENTITY, request);
+        return handleException(exception, new HttpHeaders(), BAD_REQUEST, request);
     }
 
     private ResponseEntity<Object> handleException(Exception e, HttpHeaders headers,
@@ -53,7 +53,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         ErrorDTO errorDto = new ErrorDTO();
         errorDto.setErrorStatusValue(status.value());
         errorDto.setErrorStatus(status.name());
-        errorDto.setErrorTime(DatesUtils.convertToSystemOffsetDateTime(LocalDateTime.now()));
+        errorDto.setErrorTime(DateUtils.convertToSystemOffsetDateTime(LocalDateTime.now()));
         errorDto.setErrorMessage(e.getMessage());
         if (e instanceof ErrorBusinessCodeProvider) {
             errorDto.setErrorBusinessCode(((ErrorBusinessCodeProvider) e).getErrorBusinessCode().getCode());

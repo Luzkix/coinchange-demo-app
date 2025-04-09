@@ -14,14 +14,14 @@ components:
           example: 404
         errorStatus:
           type: string
-          example: UNPROCESSABLE_ENTITY
+          example: BAD_REQUEST
         errorTime:
           type: string
           format: date-time
           example: "2018-08-29T23:20:50"
         errorMessage:
           type: string
-          example: Username or email already exists for live user account!
+          example: User with same username/email and with active account already exists
         errorBusinessCode:
           type: string
           example: USER_ALREADY_EXISTS
@@ -30,14 +30,23 @@ components:
       properties:
         username:
           type: string
-          example: John Dow
+          example: JohnDow
         email:
           type: string
           example: JohnDow@gmail.com
         password:
           type: string
           example: JohnDowPassw
-    LoginResponseDto:
+    UserLoginRequestDto:
+      type: object
+      properties:
+        usernameOrEmail:
+          type: string
+          example: JohnDow
+        password:
+          type: string
+          example: JohnDowPassw
+    UserLoginResponseDto:
       type: object
       properties:
         id:
@@ -46,7 +55,7 @@ components:
           example: 1
         username:
           type: string
-          example: John Dow
+          example: JohnDow
         email:
           type: string
           example: JohnDow@gmail.com
@@ -64,7 +73,33 @@ components:
           example: "2100-01-01T00:00:00"
 
 paths:
-  /login/user:
+  /user/login:
+    post:
+      summary: Login user
+      operationId: loginUser
+      description: |
+        Login a user
+      requestBody:
+        description: login attributes provided by a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequestDto'
+        required: true
+      responses:
+        201:
+          description: User login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDTO will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+  /user/register:
     post:
       summary: Register a new user
       operationId: createUser
@@ -83,7 +118,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponseDto'
+                $ref: '#/components/schemas/UserLoginResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDTO will specify particular type of thrown error.
           content:

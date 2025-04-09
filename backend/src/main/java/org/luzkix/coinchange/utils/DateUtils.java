@@ -5,12 +5,9 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 /**
- * Provides various helper methods for conversion data into UI DTOs.
+ * Provides various helper methods related to Dates conversions.
  */
-public final class DatesUtils {
-
-    private DatesUtils() {
-    }
+public class DateUtils {
 
     public static OffsetDateTime convertToSystemOffsetDateTime(LocalDateTime localDateTime) {
         return localDateTime != null ? localDateTime.atOffset(OffsetDateTime.now().getOffset()) : null;

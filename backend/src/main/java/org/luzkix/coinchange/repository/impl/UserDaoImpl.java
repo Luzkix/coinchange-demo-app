@@ -1,31 +1,31 @@
-package org.luzkix.coinchange.dao.impl;
+package org.luzkix.coinchange.repository.impl;
 
 import jakarta.transaction.Transactional;
-import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
+import org.luzkix.coinchange.repository.UserDao;
 import org.luzkix.coinchange.repository.UserRepository;
-import org.luzkix.coinchange.utils.DatesUtils;
+import org.luzkix.coinchange.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
-@Component
+@Repository
 public class UserDaoImpl implements UserDao {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public boolean existsByUsernameOrEmailWithActiveAccount(String username, String email) {
-        return userRepository.findFirstByUsernameOrEmail(username, email)
-                .filter(user -> DatesUtils.isFutureDateGreater(LocalDateTime.now(), user.getValidTo()))
-                .isPresent();
+    public User findActiveUserByUsernameOrEmail(String username, String email) {
+        return userRepository.findByUsernameOrEmailIgnoreCaseTrimmed(username, email)
+                .filter(UserUtils::isActiveUser)
+                .orElse(null);
     }
 
     @Override
-    @Transactional // Ensures atomicity of the operation
+    @Transactional
     public User createUser (UserRegistrationRequestDto registrationDto) {
         User user = new User();
 
