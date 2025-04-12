@@ -23,7 +23,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
 
     @ExceptionHandler({
-            Exception.class
+            Exception.class,
+            CustomInternalErrorException.class
     })
     public ResponseEntity<Object> handleType500exceptions(Exception exception, WebRequest request) {
         return handleException(exception, new HttpHeaders(), INTERNAL_SERVER_ERROR, request);

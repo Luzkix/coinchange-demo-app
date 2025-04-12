@@ -128,3 +128,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
+  /user/test/{id}:
+    get:
+      summary: Get a user
+      operationId: getUser
+      description: |
+        Retrieve user details by user ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user to retrieve.
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication.
+      responses:
+        201:
+          description: User loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponseDto'
+        401:
+          description: Unauthorized - JWT token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+        400:
+          description: Bad Request - Invalid parameters or missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'

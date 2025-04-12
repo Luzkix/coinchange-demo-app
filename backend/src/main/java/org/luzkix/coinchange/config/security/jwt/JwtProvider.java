@@ -1,4 +1,4 @@
-package org.luzkix.coinchange.utils;
+package org.luzkix.coinchange.config.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -12,14 +12,16 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
-public class JwtTokenUtils {
+public class JwtProvider {
 
     private final SecretKey secretKey; // Secret key for signing JWT tokens
+
     private final long validityInMilliseconds; // Token expiration time in milliseconds
 
     // Constructor to initialize secretKey and validity duration from application properties
-    public JwtTokenUtils(@Value("${jwt.secret}") String secret,
-                         @Value("${jwt.expiration}") long validityInMilliseconds) {
+    public JwtProvider(@Value("${jwt.secret}") String secret,
+                       @Value("${jwt.expiration}") long validityInMilliseconds
+    ) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)); // Decoded Base64 secret key
         this.validityInMilliseconds = validityInMilliseconds; // token validity duration
     }
@@ -60,8 +62,6 @@ public class JwtTokenUtils {
             throw new InvalidJwtTokenException("Token has expired.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
         } catch (MalformedJwtException e) {
             throw new InvalidJwtTokenException("Malformed token.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
-        } catch (SignatureException e) {
-            throw new InvalidJwtTokenException("Invalid token signature.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
         } catch (IllegalArgumentException e) {
             throw new InvalidJwtTokenException("Token is empty or null.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
         }

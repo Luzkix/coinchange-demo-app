@@ -1,20 +1,27 @@
 package org.luzkix.coinchange.service.impl;
 
+import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
+import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginRequestDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginResponseDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
-import org.luzkix.coinchange.repository.UserDao;
+import org.luzkix.coinchange.dao.RoleDao;
+import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
-import org.luzkix.coinchange.utils.JwtTokenUtils;
+import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
+import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.INVALID_USER_ROLE;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,10 +30,18 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtTokenUtils jwtTokenUtils;
+    private JwtProvider jwtProvider;
+
+    @Override
+    public User findUserById(Long userId) {
+        return userDao.findById(userId);
+    }
 
     @Override
     public UserLoginResponseDto createUser(UserRegistrationRequestDto registrationDto) {
@@ -38,14 +53,22 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(registrationDto.getPassword());
         registrationDto.setPassword(encodedPassword);
 
+        // Assign role 'USER' to the new user
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleDao.findByName(Role.RoleName.USER.name());
+        if (userRole == null) {
+            throw new CustomInternalErrorException("Default role " + Role.RoleName.USER.name() +" not found in database.", INVALID_USER_ROLE);
+        }
+        roles.add(userRole);
+
         //create user
-        user = userDao.createUser(registrationDto);
+        user = userDao.createUser(registrationDto,roles);
 
         // Prepare response DTO
         UserLoginResponseDto responseDto = prepareUserLoginResponseDto(user);
 
         // Prepare JWT token
-        responseDto.setJwtToken(jwtTokenUtils.generateToken(user.getId()));
+        responseDto.setJwtToken(jwtProvider.generateToken(user.getId()));
 
         return responseDto;
     }
@@ -65,7 +88,7 @@ public class UserServiceImpl implements UserService {
         UserLoginResponseDto responseDto = prepareUserLoginResponseDto(user);
 
         // Prepare JWT token
-        responseDto.setJwtToken(jwtTokenUtils.generateToken(user.getId()));
+        responseDto.setJwtToken(jwtProvider.generateToken(user.getId()));
 
         return responseDto;
     }

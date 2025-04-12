@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.controller;
 
+import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.uiapi.api.UserApi;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginRequestDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginResponseDto;
@@ -18,7 +19,7 @@ public class UserController extends UIAPIController implements UserApi {
 
     @Override
     public ResponseEntity<UserLoginResponseDto> createUser(UserRegistrationRequestDto registrationDto) {
-        validateUserRegistrationData(registrationDto);
+        validateUserRegistrationRequestDto(registrationDto);
 
         UserLoginResponseDto newUser = userService.createUser(registrationDto);
 
@@ -27,20 +28,27 @@ public class UserController extends UIAPIController implements UserApi {
 
     @Override
     public ResponseEntity<UserLoginResponseDto> loginUser(UserLoginRequestDto userLoginDto) {
-        validateUserLoginData(userLoginDto);
+        validateUserLoginRequestDto(userLoginDto);
 
         UserLoginResponseDto loggedUser = userService.logUser(userLoginDto);
 
         return ResponseEntity.status(201).body(loggedUser);
     }
 
-    private void validateUserRegistrationData(UserRegistrationRequestDto registrationDto) {
+    @Override
+    public ResponseEntity<UserLoginResponseDto> getUser(Integer id, String authorization) {
+        User user = getUserFromAuthentication();
+
+        return ResponseEntity.status(201).body(new UserLoginResponseDto());
+    }
+
+    private void validateUserRegistrationRequestDto(UserRegistrationRequestDto registrationDto) {
         BusinessValidations.isValidUsername(registrationDto.getUsername(),null);
         BusinessValidations.isValidEmail(registrationDto.getEmail(),null);
         BusinessValidations.isValidPassword(registrationDto.getPassword(),null);
     }
 
-    private void validateUserLoginData(UserLoginRequestDto userLoginDto) {
+    private void validateUserLoginRequestDto(UserLoginRequestDto userLoginDto) {
         BusinessValidations.isFieldNotNullOrEmpty(userLoginDto.getUsernameOrEmail(), "Input for username/email is empty!");
         BusinessValidations.isFieldNotNullOrEmpty(userLoginDto.getPassword(), "Password is empty!");
     }
