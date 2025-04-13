@@ -4,7 +4,16 @@ info:
   version: 1.0.0
   description: API definition for the CoinChange application.
 
+security:
+  - bearerAuth: []
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Authorization header using the Bearer scheme.
   schemas:
     ErrorDTO:
       properties:
@@ -74,6 +83,30 @@ components:
         jwtToken:
           type: string
           example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+        roles:
+          type: array
+          description: List of roles and their associated operations.
+          items:
+            type: object
+            properties:
+              roleName:
+                type: string
+                description: Name of the role.
+                example: ADMIN
+              operations:
+                type: array
+                description: List of operations associated with the role.
+                items:
+                  type: string
+                  description: Name of the operation.
+                  example: ACCESS_ADMIN_SECTION
+    RefreshTokenResponseDto:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+          example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+
 
 paths:
   /user/login:
@@ -128,32 +161,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-  /user/test/{id}:
-    get:
-      summary: Get a user
-      operationId: getUser
+  /user/refresh-token:
+    post:
+      summary: Refresh JWT token
+      operationId: refreshToken
       description: |
-        Retrieve user details by user ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: The ID of the user to retrieve.
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-          description: Bearer token for authentication.
+        Refresh the JWT token using a valid existing token.
+      security:
+        - bearerAuth: []
       responses:
         201:
-          description: User loaded successfully
+          description: New JWT token generated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserLoginResponseDto'
+                $ref: '#/components/schemas/RefreshTokenResponseDto'
         401:
           description: Unauthorized - JWT token is missing or invalid.
           content:

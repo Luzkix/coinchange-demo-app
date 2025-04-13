@@ -8,12 +8,6 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role {
 
-    // Enum for predefined roles
-    public enum RoleName {
-        ADMIN,
-        USER
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +21,7 @@ public class Role {
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<User> users;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_operations",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -73,5 +67,36 @@ public class Role {
 
     public void setOperations(Set<Operation> operations) {
         this.operations = operations;
+    }
+
+    // Enum for predefined roles
+    public enum RoleEnum {
+        ADMIN("ADMIN", "Administrator with access to all sections"),
+        USER("USER", "Registered user with access to trading and personal account");
+
+        private final String name;
+        private final String desc;
+
+        RoleEnum(String name, String desc) {
+            this.name = name;
+            this.desc = desc;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static RoleEnum getRoleEnumFromValue(String value) {
+            for (RoleEnum enumCode : RoleEnum.values()) {
+                if (String.valueOf(enumCode.getName()).equals(value)) {
+                    return enumCode;
+                }
+            }
+            return null;
+        }
     }
 }

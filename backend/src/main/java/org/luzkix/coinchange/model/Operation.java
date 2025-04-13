@@ -52,4 +52,34 @@ public class Operation {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public enum OperationEnum {
+        ADMIN("ACCESS_USER_SECTION", "Access to user trading and account section"),
+        USER("ACCESS_ADMIN_SECTION", "Access to admin settings section");
+
+        private final String name;
+        private final String desc;
+
+        OperationEnum(String name, String desc) {
+            this.name = name;
+            this.desc = desc;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static Operation.OperationEnum getOperationEnumFromValue(String value) {
+            for (Operation.OperationEnum enumCode : Operation.OperationEnum.values()) {
+                if (String.valueOf(enumCode.getName()).equals(value)) {
+                    return enumCode;
+                }
+            }
+            return null;
+        }
+    }
 }

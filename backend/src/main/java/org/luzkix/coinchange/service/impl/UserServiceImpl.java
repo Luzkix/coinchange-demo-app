@@ -3,11 +3,10 @@ package org.luzkix.coinchange.service.impl;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
+import org.luzkix.coinchange.model.Operation;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.uiapi.model.UserLoginRequestDto;
-import org.luzkix.coinchange.openapi.uiapi.model.UserLoginResponseDto;
-import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
+import org.luzkix.coinchange.openapi.uiapi.model.*;
 import org.luzkix.coinchange.dao.RoleDao;
 import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.service.UserService;
@@ -17,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.INVALID_USER_ROLE;
 
@@ -55,9 +52,9 @@ public class UserServiceImpl implements UserService {
 
         // Assign role 'USER' to the new user
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleDao.findByName(Role.RoleName.USER.name());
+        Role userRole = roleDao.findByName(Role.RoleEnum.USER.getName());
         if (userRole == null) {
-            throw new CustomInternalErrorException("Default role " + Role.RoleName.USER.name() +" not found in database.", INVALID_USER_ROLE);
+            throw new CustomInternalErrorException("Default role " + Role.RoleEnum.USER.getName() +" not found in database.", INVALID_USER_ROLE);
         }
         roles.add(userRole);
 
@@ -93,6 +90,10 @@ public class UserServiceImpl implements UserService {
         return responseDto;
     }
 
+    @Override
+    public RefreshTokenResponseDto refreshToken(User user) {
+        return new RefreshTokenResponseDto().jwtToken(jwtProvider.generateToken(user.getId()));
+    }
 
     //PRIVATE METHODS
     private UserLoginResponseDto prepareUserLoginResponseDto(User user) {
@@ -102,12 +103,29 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .createdAt(DateUtils.convertToSystemOffsetDateTime(user.getCreatedAt()))
                 .updatedAt(DateUtils.convertToSystemOffsetDateTime(user.getUpdatedAt()))
-                .validTo(DateUtils.convertToSystemOffsetDateTime(user.getValidTo()));
+                .validTo(DateUtils.convertToSystemOffsetDateTime(user.getValidTo()))
+                .roles(getRolesForResponseDto(user));
     }
 
     private boolean passwordsAreMatching(String plainTextPassword, String encodedPassword) {
         // Compares the plain-text password with the encoded password from the database
         return passwordEncoder.matches(plainTextPassword, encodedPassword);
+    }
+
+    private List<UserLoginResponseDtoRolesInner> getRolesForResponseDto(User user) {
+        List<UserLoginResponseDtoRolesInner> roles = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            UserLoginResponseDtoRolesInner userRole = new UserLoginResponseDtoRolesInner();
+            userRole.setRoleName(role.getName());
+
+            List<String> userOperations = new ArrayList<>();
+            for (Operation userOperation : role.getOperations()) {
+                userOperations.add(userOperation.getName());
+            }
+            userRole.setOperations(userOperations);
+            roles.add(userRole);
+        }
+        return roles;
     }
 
 }

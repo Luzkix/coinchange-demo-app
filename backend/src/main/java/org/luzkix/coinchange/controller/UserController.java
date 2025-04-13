@@ -2,6 +2,7 @@ package org.luzkix.coinchange.controller;
 
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.uiapi.api.UserApi;
+import org.luzkix.coinchange.openapi.uiapi.model.RefreshTokenResponseDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginRequestDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserLoginResponseDto;
 import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
@@ -36,10 +37,12 @@ public class UserController extends UIAPIController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserLoginResponseDto> getUser(Integer id, String authorization) {
+    public ResponseEntity<RefreshTokenResponseDto> refreshToken() {
         User user = getUserFromAuthentication();
 
-        return ResponseEntity.status(201).body(new UserLoginResponseDto());
+        RefreshTokenResponseDto refreshTokenDto = userService.refreshToken(user);
+
+        return ResponseEntity.status(201).body(refreshTokenDto);
     }
 
     private void validateUserRegistrationRequestDto(UserRegistrationRequestDto registrationDto) {
