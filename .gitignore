@@ -8,3 +8,6 @@
 # Generic files
 .DS_Store
 .idea/
+
+# Private files
+private-notes.docx
