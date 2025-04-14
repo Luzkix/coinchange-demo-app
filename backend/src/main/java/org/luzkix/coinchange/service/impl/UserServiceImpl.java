@@ -1,5 +1,8 @@
 package org.luzkix.coinchange.service.impl;
 
+import org.luzkix.coinchange.config.security.jwt.JwtProvider;
+import org.luzkix.coinchange.dao.RoleDao;
+import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
@@ -7,11 +10,8 @@ import org.luzkix.coinchange.model.Operation;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.uiapi.model.*;
-import org.luzkix.coinchange.dao.RoleDao;
-import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
-import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
