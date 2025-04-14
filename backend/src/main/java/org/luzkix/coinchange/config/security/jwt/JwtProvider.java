@@ -1,6 +1,9 @@
 package org.luzkix.coinchange.config.security.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
@@ -58,12 +61,8 @@ public class JwtProvider {
                     .parseSignedClaims(token); // Parse and validate the signed claims
 
             return claims;
-        } catch (ExpiredJwtException e) {
-            throw new InvalidJwtTokenException("Token has expired.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
-        } catch (MalformedJwtException e) {
-            throw new InvalidJwtTokenException("Malformed token.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidJwtTokenException("Token is empty or null.", ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
+        } catch (Exception e) { //in case of any JWT exception return exception with type IMVALID_JWT_TOKEN and custom message specifying what was wrong
+            throw new InvalidJwtTokenException(e.getMessage(), ErrorBusinessCodeEnum.INVALID_JWT_TOKEN);
         }
     }
 

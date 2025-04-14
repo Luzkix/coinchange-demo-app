@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -31,21 +32,28 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-            InvalidJwtTokenException.class
+            InvalidJwtTokenException.class,
+            AuthenticationException.class
     })
     public ResponseEntity<Object> handleType401exceptions(final Exception exception,
                                                           final WebRequest request) {
+        if (exception instanceof AuthenticationException) {
+            CustomAuthenticationException customException = new CustomAuthenticationException(ErrorBusinessCodeEnum.AUTHENTICATION_GENERAL_FAILURE.getMessage(), ErrorBusinessCodeEnum.AUTHENTICATION_GENERAL_FAILURE);
+            return handleException(customException, new HttpHeaders(), UNAUTHORIZED, request);
+        }
 
         return handleException(exception, new HttpHeaders(), UNAUTHORIZED, request);
     }
 
     @ExceptionHandler({
-            AccessDeniedException.class
+            AccessDeniedException.class,
     })
     public ResponseEntity<Object> handleType403exceptions(final Exception exception,
                                                               final WebRequest request) {
 
-        return handleException(exception, new HttpHeaders(), FORBIDDEN, request);
+        CustomAccessDeniedException accessDeniedException = new CustomAccessDeniedException(ErrorBusinessCodeEnum.ACCESS_DENIED.getMessage(),ErrorBusinessCodeEnum.ACCESS_DENIED);
+
+        return handleException(accessDeniedException, new HttpHeaders(), FORBIDDEN, request);
     }
 
     @ExceptionHandler({
