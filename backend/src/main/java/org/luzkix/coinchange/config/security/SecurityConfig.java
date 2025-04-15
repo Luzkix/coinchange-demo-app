@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // Custom handling of exceptions which are being processed within security layer before the request reaches its endpoint
-                // The exceptions will be resolved within common handlerExceptionResolver == processed by my own ExceptionHandlerAdvice (which ensures creation of proper ErrorDTO).
+                // The exceptions will be resolved within common handlerExceptionResolver == processed by my own ExceptionHandlerAdvice (which ensures creation of proper ErrorDto).
                 .exceptionHandling(exceptions -> exceptions
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);

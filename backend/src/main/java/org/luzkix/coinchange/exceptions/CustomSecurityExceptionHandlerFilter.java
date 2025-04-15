@@ -28,7 +28,7 @@ public class CustomSecurityExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (InvalidJwtTokenException e) {
             // All exceptions from security layer will be resolved within common handlerExceptionResolver, i.e. by ExceptionHandlerAdvice
-            // This ensures that the custom ErrorDTO is always returned in response even from security layer
+            // This ensures that the custom ErrorDto is always returned in response even from security layer
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }

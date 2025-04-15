@@ -1,7 +1,7 @@
 package org.luzkix.coinchange.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
-import org.luzkix.coinchange.openapi.uiapi.model.ErrorDTO;
+import org.luzkix.coinchange.openapi.uiapi.model.ErrorDto;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleException(Exception e, HttpHeaders headers,
                                                    HttpStatus status, WebRequest request) {
 
-        ErrorDTO errorDto = new ErrorDTO();
+        ErrorDto errorDto = new ErrorDto();
         errorDto.setErrorStatusValue(status.value());
         errorDto.setErrorStatus(status.name());
         errorDto.setErrorTime(DateUtils.convertToSystemOffsetDateTime(LocalDateTime.now()));
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errorDto.setErrorBusinessCode(((ErrorBusinessCodeProvider) e).getErrorBusinessCode().getCode());
         } else errorDto.setErrorBusinessCode(null);
 
-        log.error("An exception was thrown from a REST controller. Creating an ErrorDTO (errorStatusValue: {}, errorMessage: {}, errorBusinessCode: {})",
+        log.error("An exception was thrown from a REST controller. Creating an ErrorDto (errorStatusValue: {}, errorMessage: {}, errorBusinessCode: {})",
                         errorDto.getErrorStatusValue(), e.getMessage(), errorDto.getErrorBusinessCode(), e);
 
         return super.handleExceptionInternal(e, errorDto, headers, status, request);

@@ -112,10 +112,10 @@ public class UserServiceImpl implements UserService {
         return passwordEncoder.matches(plainTextPassword, encodedPassword);
     }
 
-    private List<UserLoginResponseDtoRolesInner> getRolesForResponseDto(User user) {
-        List<UserLoginResponseDtoRolesInner> roles = new ArrayList<>();
+    private List<RoleDto> getRolesForResponseDto(User user) {
+        List<RoleDto> roles = new ArrayList<>();
         for (Role role : user.getRoles()) {
-            UserLoginResponseDtoRolesInner userRole = new UserLoginResponseDtoRolesInner();
+            RoleDto userRole = new RoleDto();
             userRole.setRoleName(role.getName());
 
             List<String> userOperations = new ArrayList<>();

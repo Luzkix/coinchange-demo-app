@@ -15,7 +15,7 @@ components:
       bearerFormat: JWT
       description: JWT Authorization header using the Bearer scheme.
   schemas:
-    ErrorDTO:
+    ErrorDto:
       properties:
         errorStatusValue:
           type: integer
@@ -55,6 +55,20 @@ components:
         password:
           type: string
           example: JohnDowPassw
+    RoleDto:
+      type: object
+      properties:
+        roleName:
+          type: string
+          description: Name of the role.
+          example: ADMIN
+        operations:
+          type: array
+          description: List of operations associated with the role.
+          items:
+            type: string
+            description: Name of the operation.
+            example: ACCESS_ADMIN_SECTION
     UserLoginResponseDto:
       type: object
       properties:
@@ -87,19 +101,7 @@ components:
           type: array
           description: List of roles and their associated operations.
           items:
-            type: object
-            properties:
-              roleName:
-                type: string
-                description: Name of the role.
-                example: ADMIN
-              operations:
-                type: array
-                description: List of operations associated with the role.
-                items:
-                  type: string
-                  description: Name of the operation.
-                  example: ACCESS_ADMIN_SECTION
+            $ref: '#/components/schemas/RoleDto'
     RefreshTokenResponseDto:
       type: object
       properties:
@@ -130,11 +132,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserLoginResponseDto'
         400:
-          description: Variants of Bad request - returned ErrorDTO will specify particular type of thrown error.
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ErrorDto'
   /user/register:
     post:
       summary: Register a new user
@@ -156,11 +158,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserLoginResponseDto'
         400:
-          description: Variants of Bad request - returned ErrorDTO will specify particular type of thrown error.
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ErrorDto'
   /user/refresh-token:
     post:
       summary: Refresh JWT token
@@ -181,10 +183,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ErrorDto'
         400:
           description: Bad Request - Invalid parameters or missing required fields.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ErrorDto'
