@@ -1,0 +1,3 @@
+Coinchange-demo-app is demo application of small crypto currency exchange which allows users to perform fictive buys of cryptocurrencies and build their own crypto portfolio. The app was created with the goal to learn and practice java and especially react.
+It has a backend part in java spring boot which provides api for administration of users and their portfolios and allows persistence of the data in database. 
+It also has own frontend in react which directly communicates with public API of Coinbase exchange to get list of cryptocurrencies, their prices etc.
