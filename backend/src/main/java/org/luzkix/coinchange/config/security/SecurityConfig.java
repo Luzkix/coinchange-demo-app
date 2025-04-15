@@ -2,6 +2,7 @@ package org.luzkix.coinchange.config.security;
 
 import org.luzkix.coinchange.config.security.jwt.JwtFilter;
 import org.luzkix.coinchange.controller.UIAPIController;
+import org.luzkix.coinchange.exceptions.CustomSecurityExceptionHandlerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,9 @@ public class SecurityConfig {
 
     @Autowired
     private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Autowired
+    private CustomSecurityExceptionHandlerFilter customSecurityExceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,6 +53,10 @@ public class SecurityConfig {
                             handlerExceptionResolver.resolveException(request, response, null, authException);
                         })
                 )
+                // Add filter to handle custom security exceptions such as InvalidJwtTokenException
+                //  - this filter ensures that these custom exceptions are not converted into more general exceptions and are directly handed over to common handlerExceptionResolver == processed by my own ExceptionHandlerAdvice
+                .addFilterBefore(customSecurityExceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
+                // Add filter to process authentication using JWT token
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
