@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "services": "SERVICES",
+    "coinChange": "COINCHANGE",
+    "education": "EDUCATION",
+    "newsletter": "SUBSCRIBE TO NEWSLETTER"
+  },
+  "links": {
+    "services": {
+      "registration": "Registration",
+      "buySell": "Buy and Sell",
+      "advancedTrading": "Advanced Trading",
+      "recurringBuy": "Recurring Buy",
+      "otcDesk": "OTC Desk",
+      "apiServices": "API Services"
+    },
+    "coinChange": {
+      "aboutUs": "About Us",
+      "careers": "Careers",
+      "legalDocuments": "Legal Documents",
+      "bugBounty": "Bug Bounty",
+      "faq": "FAQ",
+      "contact": "Contact"
+    },
+    "education": {
+      "cryptoAcademy": "Crypto Academy",
+      "articles": "Articles",
+      "glossary": "Glossary"
+    }
+  },
+  "newsletterForm": {
+    "placeholder": "Email address",
+    "subscribe": "Subscribe"
+  }
+}

@@ -1,5 +1,158 @@
 openapi: 3.0.1
+
 info:
-  title: CoinChange Backend API
+  title: Coinbase Public API
   version: 1.0.0
-  description: API definition for the CoinChange application.
+  description: Public API for accessing data from Coinbase Exchange
+
+paths:
+  /products:
+    get:
+      tags:
+        - Coin
+      summary: Get all trading pairs
+      description: Retrieves a list of all available trading pairs on Coinbase Exchange
+      operationId: getCoins
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coin'
+        '500':
+          description: Unexpected error
+
+  /products/{product_id}/ticker:
+    get:
+      tags:
+        - Coin
+      summary: Get coin ticker
+      description: Retrieves current information about the latest trade for a specific product (pair)
+      operationId: getCoinTicker
+      parameters:
+        - name: product_id
+          in: path
+          description: Product identifier, e.g. BTC-USD
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinTicker'
+        '400':
+          description: Bad request. Invalid product_id.
+        '500':
+          description: Unexpected error
+
+components:
+  schemas:
+    Coin:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Trading pair identifier, e.g. BTC-USD
+          example: BTC-USD
+        base_currency:
+          type: string
+          description: Base currency, e.g. BTC
+          example: BTC
+        quote_currency:
+          type: string
+          description: Quote currency, e.g. USD
+          example: USD
+        base_min_size:
+          type: string
+          description: Minimum amount of base currency that can be traded
+          example: "0.00100000"
+        base_max_size:
+          type: string
+          description: Maximum amount of base currency that can be traded
+          example: "100.00000000"
+        quote_increment:
+          type: string
+          description: Minimum quote currency increment
+          example: "0.01"
+        display_name:
+          type: string
+          description: Display name of the currency pair
+          example: BTC/USD
+        status:
+          type: string
+          description: Status of the currency pair (online, offline)
+          example: online
+        min_market_funds:
+          type: string
+          description: Minimum funds required for trading
+          example: "1"
+        max_market_funds:
+          type: string
+          description: Maximum allowed funds for trading
+          example: "1000000"
+        post_only:
+          type: boolean
+          description: Whether the pair allows only post-only orders
+          example: false
+        limit_only:
+          type: boolean
+          description: Whether the pair allows only limit orders
+          example: false
+        cancel_only:
+          type: boolean
+          description: Whether the pair allows only cancellation operations
+          example: false
+        trading_disabled:
+          type: boolean
+          description: Whether trading for this pair is currently disabled
+          example: false
+      required:
+        - id
+        - base_currency
+        - quote_currency
+        - status
+
+    CoinTicker:
+      type: object
+      properties:
+        trade_id:
+          type: integer
+          format: int64
+          description: ID of the last trade
+          example: 4729088
+        price:
+          type: string
+          description: Price of the last trade
+          example: "33485.15"
+        size:
+          type: string
+          description: Size of the last trade
+          example: "0.00952975"
+        time:
+          type: string
+          format: date-time
+          description: Time of the last trade
+          example: "2023-01-01T12:00:00.000Z"
+        bid:
+          type: string
+          description: Highest bid price
+          example: "33485.14"
+        ask:
+          type: string
+          description: Lowest ask price
+          example: "33485.15"
+        volume:
+          type: string
+          description: 24-hour volume
+          example: "1234.56"
+      required:
+        - trade_id
+        - price
+        - size
+        - time

@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Route, Routes } from 'react-router-dom';
+import theme from './styles/theme';
+import ROUTES from './constants/routes';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Layouts
+import PublicAccessLayout from './layouts/skeleton/publicAccessLayout';
 
+// Pages (obsahují pouze specifický obsah dané stránky)
+import HomePage from './pages/HomePage';
+// import CryptocurrenciesPage from './pages/CryptocurrenciesPage'; // budoucí stránky
+// import SignInPage from './pages/SignInPage';
+// import SignUpPage from './pages/SignUpPage';
+
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Routes>
+        {/* Veřejné stránky - používají publicAccessLayout */}
+        <Route element={<PublicAccessLayout />}>
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          {/* <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} /> */}
+          {/* <Route path={ROUTES.SIGNIN} element={<SignInPage />} /> */}
+          {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage />} /> */}
+        </Route>
 
-export default App
+        {/* Zde by v budoucnu byly další routy, např. pro přihlášené uživatele s jiným layoutem */}
+
+        {/* Fallback route */}
+        <Route path="*" element={<PublicAccessLayout />}>
+          <Route index element={<HomePage />} />
+        </Route>
+      </Routes>
+    </ThemeProvider>
+  );
+};
+
+export default App;

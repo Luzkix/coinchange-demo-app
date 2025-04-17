@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "services": "SLUŽBY",
+    "coinChange": "COINCHANGE",
+    "education": "VZDĚLÁVÁNÍ",
+    "newsletter": "PŘIHLAŠTE SE K NEWSLETTERU"
+  },
+  "links": {
+    "services": {
+      "registration": "Registrace",
+      "buySell": "Nákup a prodej",
+      "advancedTrading": "Pokročilé obchodování",
+      "recurringBuy": "Pravidelný nákup",
+      "otcDesk": "OTC Desk",
+      "apiServices": "API služby"
+    },
+    "coinChange": {
+      "aboutUs": "O nás",
+      "careers": "Kariéra",
+      "legalDocuments": "Smluvní dokumenty",
+      "bugBounty": "Bug bounty",
+      "faq": "Otázky a odpovědi",
+      "contact": "Kontakt"
+    },
+    "education": {
+      "cryptoAcademy": "Krypto akademie",
+      "articles": "Články",
+      "glossary": "Slovník"
+    }
+  },
+  "newsletterForm": {
+    "placeholder": "E-mailová adresa",
+    "subscribe": "Odebírat newsletter"
+  }
+}

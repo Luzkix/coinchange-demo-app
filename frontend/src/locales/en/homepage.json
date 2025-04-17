@@ -1,0 +1,14 @@
+{
+  "introduction": {
+    "title": "Start building financial independence right now!",
+    "description": "CoinChange demo app will show you, how easy it is to start building your own crypto portfolio. Just sign up and try it...",
+    "signUp": "Sign up"
+  },
+  "hotCoins": {
+    "title": "Explore crypto like Bitcoin, Ethereum, and Solana",
+    "subtitle": "Simply and securely buy, sell, and manage hundreds of cryptocurrencies.",
+    "tradable": "Tradable",
+    "topGainers": "Top gainers",
+    "seeMoreAssets": "See more assets"
+  }
+}

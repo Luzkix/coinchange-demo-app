@@ -1,0 +1,14 @@
+{
+  "introduction": {
+    "title": "Začni budovat finanční nezávislost právě teď!",
+    "description": "Demo aplikace CoinChange ti ukáže, jak snadné je začít budovat vlastní krypto portfolio. Stačí se zaregistrovat a pustit se do toho...",
+    "signUp": "Registrovat se"
+  },
+  "hotCoins": {
+    "title": "Objev kryptoměny jako je Bitcoin, Ethereum a Solana",
+    "subtitle": "Jednoduše a bezpečně nakupuj, prodávej a spravuj stovky kryptoměn.",
+    "tradable": "Obchodovatelné",
+    "topGainers": "Nejvyšší růst",
+    "seeMoreAssets": "Zobrazit více aktiv"
+  }
+}
