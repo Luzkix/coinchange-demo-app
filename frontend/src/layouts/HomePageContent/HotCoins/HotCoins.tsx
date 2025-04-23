@@ -1,7 +1,7 @@
 import React from 'react';
 import HotCoinsInfo from './HotCoinsInfo';
 import HotCoinsTabs from './HotCoinsTabs';
-import { dummyCryptoAssets } from '../../../constants/cryptoAssets.ts';
+import { dummyCryptoAssets } from '../../../constants/mockedCryptoAssets.ts';
 import { hotCoinsStyles } from './styles.ts';
 import { Box } from '@mui/material';
 

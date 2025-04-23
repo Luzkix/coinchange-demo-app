@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
+import { CryptoAsset } from '../../../../constants/mockedCryptoAssets.ts';
 import CoinCard from '../../../../components/common/CoinCard';
-import { CryptoAsset } from '../../../../constants/cryptoAssets.ts';
 
 interface HotCoinsTabsProps {
   cryptoAssets: CryptoAsset[];
@@ -45,6 +45,7 @@ export const HotCoinsTabs: React.FC<HotCoinsTabsProps> = ({ cryptoAssets }) => {
       <Box sx={hotCoinsTabsStyles.coinsGrid}>
         {displayedCoins.map((coin) => (
           <CoinCard key={coin.id} coin={coin} />
+          //<CoinsCardNew key={coin.id} coinSymbol={coin.symbol} currency={'USD'} />
         ))}
       </Box>
     </Box>

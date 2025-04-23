@@ -1,4 +1,4 @@
-// Keys for footer links - actual texts are in translations
+// Keys for footer links -> to be further used in translations
 export const footerLinks = {
   services: [
     'registration',

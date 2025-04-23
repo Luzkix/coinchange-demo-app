@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
-import { CryptoAsset } from '../../../constants/cryptoAssets.ts';
-import { usePublicLayout } from '../../../hooks/usePublicLayout.ts';
+import { CryptoAsset } from '../../../constants/mockedCryptoAssets.ts';
+import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 interface CoinCardProps {
   coin: CryptoAsset;
@@ -12,7 +12,7 @@ interface CoinCardProps {
 
 export const CoinCard: React.FC<CoinCardProps> = ({ coin }) => {
   const { name, symbol, price, priceChange, iconColor } = coin;
-  const { language } = usePublicLayout();
+  const { language } = useGeneralContext();
 
   // Format price with local currency formatting
   const formattedPrice = new Intl.NumberFormat(language === 'cs' ? 'cs-CZ' : 'en-US', {
