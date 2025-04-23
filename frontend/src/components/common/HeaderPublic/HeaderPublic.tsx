@@ -14,13 +14,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
-
-import { usePublicLayout } from '../../../hooks/usePublicLayout';
 import ContentBox from '../../ui/ContentBox';
+import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 export const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation('common');
-  const { language, setLanguage } = usePublicLayout();
+  const { language, setLanguage } = useGeneralContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
