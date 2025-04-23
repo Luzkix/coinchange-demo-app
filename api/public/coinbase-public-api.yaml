@@ -3,156 +3,153 @@ openapi: 3.0.1
 info:
   title: Coinbase Public API
   version: 1.0.0
-  description: Public API for accessing data from Coinbase Exchange
+  description: Public API for accessing data from Coinbase
+
+servers:
+  - url: https://api.coinbase.com
+    description: Coinbase main API
 
 paths:
-  /products:
+  /api/v3/brokerage/market/products:
     get:
       tags:
-        - Coin
-      summary: Get all trading pairs
-      description: Retrieves a list of all available trading pairs on Coinbase Exchange
-      operationId: getCoins
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Coin'
-        '500':
-          description: Unexpected error
-
-  /products/{product_id}/ticker:
-    get:
-      tags:
-        - Coin
-      summary: Get coin ticker
-      description: Retrieves current information about the latest trade for a specific product (pair)
-      operationId: getCoinTicker
+        - ApiCoinPair
+      summary: Get list of coins
+      description: Retrieves list of coins with detailed trading information as described on https://docs.cdp.coinbase.com/advanced-trade/reference/retailbrokerageapi_getproducts
+      operationId: getListOfCoinsWithTradingDetails
       parameters:
-        - name: product_id
-          in: path
-          description: Product identifier, e.g. BTC-USD
-          required: true
+        - name: limit
+          in: query
+          description: Number of results per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 250
+        - name: offset
+          in: query
+          description: Pagination offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - name: product_type
+          in: query
+          description: Filter by product type
+          required: false
           schema:
             type: string
+            enum: [SPOT, FUTURE]
+          example: SPOT
+        - name: product_ids
+          in: query
+          description: Comma-separated list of product IDs
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          example: BTC-USD, BTC-EUR
+        - name: products_sort_order
+          in: query
+          description: Sort order for results
+          required: false
+          schema:
+            type: string
+            enum: [PRODUCTS_SORT_ORDER_UNDEFINED, PRODUCTS_SORT_ORDER_VOLUME_24H_DESCENDING, PRODUCTS_SORT_ORDER_LIST_TIME_DESCENDING]
+          example: PRODUCTS_SORT_ORDER_VOLUME_24H_DESCENDING
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CoinTicker'
-        '400':
-          description: Bad request. Invalid product_id.
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CoinPair'
+                  num_products:
+                    type: integer
         '500':
           description: Unexpected error
 
 components:
   schemas:
-    Coin:
+    CoinPair:
       type: object
       properties:
-        id:
+        product_id:
           type: string
-          description: Trading pair identifier, e.g. BTC-USD
-          example: BTC-USD
-        base_currency:
+          description: Unique identifier for the product pair
+          example: "BTC-USD"
+        base_currency_id:
           type: string
-          description: Base currency, e.g. BTC
-          example: BTC
-        quote_currency:
+          description: Unique identifier for the base currency
+          example: "BTC"
+        quote_currency_id:
           type: string
-          description: Quote currency, e.g. USD
-          example: USD
-        base_min_size:
+          description: Unique identifier for the quote currency
+          example: "USD"
+        base_display_symbol:
           type: string
-          description: Minimum amount of base currency that can be traded
-          example: "0.00100000"
-        base_max_size:
+          description: Display symbol for base currency
+          example: "BTC"
+        quote_display_symbol:
           type: string
-          description: Maximum amount of base currency that can be traded
-          example: "100.00000000"
-        quote_increment:
+          description: Display symbol for quote currency
+          example: "USD"
+        base_name:
           type: string
-          description: Minimum quote currency increment
-          example: "0.01"
-        display_name:
+          description: Display name of the base currency
+          example: "Bitcoin"
+        quote_name:
           type: string
-          description: Display name of the currency pair
-          example: BTC/USD
-        status:
-          type: string
-          description: Status of the currency pair (online, offline)
-          example: online
-        min_market_funds:
-          type: string
-          description: Minimum funds required for trading
-          example: "1"
-        max_market_funds:
-          type: string
-          description: Maximum allowed funds for trading
-          example: "1000000"
-        post_only:
-          type: boolean
-          description: Whether the pair allows only post-only orders
-          example: false
-        limit_only:
-          type: boolean
-          description: Whether the pair allows only limit orders
-          example: false
-        cancel_only:
-          type: boolean
-          description: Whether the pair allows only cancellation operations
-          example: false
-        trading_disabled:
-          type: boolean
-          description: Whether trading for this pair is currently disabled
-          example: false
-      required:
-        - id
-        - base_currency
-        - quote_currency
-        - status
-
-    CoinTicker:
-      type: object
-      properties:
-        trade_id:
-          type: integer
-          format: int64
-          description: ID of the last trade
-          example: 4729088
+          description: Display name of the quote currency
+          example: "US Dollar"
         price:
           type: string
-          description: Price of the last trade
-          example: "33485.15"
-        size:
+          description: Current price of the product pair
+          example: "88828.96"
+        price_percentage_change_24h:
           type: string
-          description: Size of the last trade
-          example: "0.00952975"
-        time:
+          description: 24-hour price percentage change
+          example: "1.97654041425943"
+        volume_24h:
           type: string
-          format: date-time
-          description: Time of the last trade
-          example: "2023-01-01T12:00:00.000Z"
-        bid:
+          description: 24-hour trading volume in base currency
+          example: "11537.70988692"
+        approximate_quote_24h_volume:
           type: string
-          description: Highest bid price
-          example: "33485.14"
-        ask:
+          description: Approximate quote currency volume (i.e. base currency volume * quote currency price) in USD/EUR/...
+          example: "1024882770.04"
+        volume_percentage_change_24h:
           type: string
-          description: Lowest ask price
-          example: "33485.15"
-        volume:
+          description: 24-hour volume percentage change
+          example: "143.92418656128531"
+        is_disabled:
+          type: boolean
+          description: Indicates if trading is disabled
+          example: false
+        new:
+          type: boolean
+          description: Indicates if the product is newly listed
+          example: false
+        status:
           type: string
-          description: 24-hour volume
-          example: "1234.56"
+          description: Current status of the product
+          example: "online"
+        product_type:
+          type: string
+          description: Type of product (e.g. SPOT)
+          example: "SPOT"
       required:
-        - trade_id
+        - product_id
+        - base_currency_id
+        - quote_currency_id
         - price
-        - size
-        - time
+        - price_percentage_change_24h
+        - volume_24h
+        - volume_percentage_change_24h
+

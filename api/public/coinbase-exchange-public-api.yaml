@@ -1,0 +1,77 @@
+openapi: 3.0.1
+
+info:
+  title: Coinbase Exchange Public API
+  version: 1.0.0
+  description: Public API for accessing data from Coinbase Exchange
+
+servers:
+  - url: https://api.exchange.coinbase.com
+    description: Coinbase Exchange main API
+
+paths:
+  /products/{product_id}/ticker:
+    get:
+      tags:
+        - ApiCoinTicker
+      summary: Get coin ticker
+      description: Retrieves current information about the latest trade for a specific product (pair) as described on https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductticker
+      operationId: getCoinTicker
+      parameters:
+        - name: product_id
+          in: path
+          description: Product identifier, e.g. BTC-USD
+          required: true
+          schema:
+            type: string
+          example: BTC-USD
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinTicker'
+        '400':
+          description: Bad request. Invalid product_id.
+        '500':
+          description: Unexpected error
+
+components:
+  schemas:
+    CoinTicker:
+      type: object
+      properties:
+        price:
+          type: string
+          description: Price of the last trade
+          example: "89907.44"
+        trade_id:
+          type: integer
+          format: int64
+          description: ID of the last trade
+          example: 815001016
+        size:
+          type: string
+          description: Size of the last trade
+          example: "0.00952975"
+        time:
+          type: string
+          format: date-time
+          description: Time of the last trade
+          example: "2025-04-22T13:36:02.965117Z"
+        bid:
+          type: string
+          description: Highest bid price
+          example: "89900.01"
+        ask:
+          type: string
+          description: Lowest ask price
+          example: "89907.55"
+        volume:
+          type: string
+          description: 24-hour volume
+          example: "11474.7926622"
+      required:
+        - price
+        - time
