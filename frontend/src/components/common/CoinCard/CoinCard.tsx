@@ -3,28 +3,37 @@ import { Box, Typography } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
-import { CryptoAsset } from '../../../constants/mockedCryptoAssets.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
+import { createCoinColor } from '../../../services/utils/coinsUtils.ts';
 
 interface CoinCardProps {
-  coin: CryptoAsset;
+  coinSymbol: string;
+  coinName: string;
+  coinPrice: number;
+  coinPriceChange: number;
+  currency: string;
 }
 
-export const CoinCard: React.FC<CoinCardProps> = ({ coin }) => {
-  const { name, symbol, price, priceChange, iconColor } = coin;
+export const CoinCard: React.FC<CoinCardProps> = ({
+  coinSymbol,
+  coinName,
+  coinPrice,
+  coinPriceChange,
+  currency,
+}) => {
   const { language } = useGeneralContext();
 
   // Format price with local currency formatting
   const formattedPrice = new Intl.NumberFormat(language === 'cs' ? 'cs-CZ' : 'en-US', {
     style: 'currency',
-    currency: 'CZK',
+    currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(price);
+  }).format(coinPrice);
 
   // Determine price change color and icon
-  const isPriceUp = priceChange > 0;
-  const isPriceDown = priceChange < 0;
+  const isPriceUp = coinPriceChange > 0;
+  const isPriceDown = coinPriceChange < 0;
   const priceChangeColor = isPriceUp
     ? coinCardStyles.positive
     : isPriceDown
@@ -34,17 +43,17 @@ export const CoinCard: React.FC<CoinCardProps> = ({ coin }) => {
   return (
     <Box sx={coinCardStyles.card}>
       <Box sx={coinCardStyles.header}>
-        <Box sx={{ ...coinCardStyles.icon, bgcolor: iconColor }}>
+        <Box sx={{ ...coinCardStyles.icon, bgcolor: createCoinColor(coinSymbol) }}>
           <Typography variant="h6" color="white">
-            {symbol.charAt(0)}
+            {coinSymbol.charAt(0)}
           </Typography>
         </Box>
         <Box>
           <Typography variant="body1" sx={coinCardStyles.name}>
-            {name}
+            {coinName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {symbol}
+            {coinSymbol}
           </Typography>
         </Box>
       </Box>
@@ -54,7 +63,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({ coin }) => {
       <Box sx={{ ...coinCardStyles.priceChange, ...priceChangeColor }}>
         {isPriceUp && <ArrowDropUpIcon />}
         {isPriceDown && <ArrowDropDownIcon />}
-        <Typography variant="body2">{Math.abs(priceChange)}%</Typography>
+        <Typography variant="body2">{Math.abs(coinPriceChange)}%</Typography>
       </Box>
     </Box>
   );

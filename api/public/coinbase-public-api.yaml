@@ -148,6 +148,9 @@ components:
         - product_id
         - base_currency_id
         - quote_currency_id
+        - base_display_symbol
+        - quote_display_symbol
+        - base_name
         - price
         - price_percentage_change_24h
         - volume_24h

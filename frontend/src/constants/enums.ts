@@ -14,3 +14,19 @@ export enum CoinsTypeEnum {
   SPOT = 'SPOT',
   FUTURE = 'FUTURE',
 }
+
+/**
+ * Enum defining color of tradable coins
+ */
+export enum CoinsColorEnum {
+  BTC = '#F7931A',
+  ETH = '#627EEA',
+  XRP = '#000000',
+  BNB = '#F0B90B',
+  SOL = '#14F195',
+  DOGE = '#C3A634',
+  TRX = '#E60815',
+  ADA = '#0033AD',
+  LINK = '#2A5ADA',
+  AVAX = '#E84142',
+}

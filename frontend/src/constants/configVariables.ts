@@ -3,12 +3,12 @@ import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './enums.ts';
 /**
  * Default interval for fetching coins details from coinbase api
  */
-export const DEFAULT_COINS_REFRESH_INTERVAL = 10000;
+export const DEFAULT_COINS_REFRESH_INTERVAL = 30000;
 
 /**
  * Maximum number of coins for fetching coins details from coinbase api
  */
-export const DEFAULT_LOADED_COINS_LIMIT = 50;
+export const DEFAULT_LOADED_COINS_LIMIT = 1000;
 
 /**
  * Type of coins for fetching coins details from coinbase api

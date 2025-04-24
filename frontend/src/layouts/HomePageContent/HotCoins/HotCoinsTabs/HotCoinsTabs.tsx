@@ -1,27 +1,38 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
-import { CryptoAsset } from '../../../../constants/mockedCryptoAssets.ts';
 import CoinCard from '../../../../components/common/CoinCard';
+import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
+import { SUPPORTED_CURRENCIES } from '../../../../constants/configVariables.ts';
+import { getTopGainers, getTradableCoins } from '../../../../services/utils/coinsUtils.ts';
+import { convertStringNumberToRoundedNumber } from '../../../../services/utils/numbersUtils.ts';
 
-interface HotCoinsTabsProps {
-  cryptoAssets: CryptoAsset[];
-}
-
-export const HotCoinsTabs: React.FC<HotCoinsTabsProps> = ({ cryptoAssets }) => {
+export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation('homepage');
-  const [view, setView] = useState<string>('tradable');
+  const [view, setView] = useState('tradable');
+  const { coinsData } = useCoinsDataContext();
+  const selectedCurrency = SUPPORTED_CURRENCIES[0]; //USD
 
-  const handleViewChange = (_event: React.MouseEvent<HTMLElement>, newView: string | null) => {
-    if (newView !== null) {
-      setView(newView);
-    }
+  // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
+  const tradableCoins = useMemo(
+    () => getTradableCoins(coinsData, selectedCurrency),
+    [coinsData, selectedCurrency],
+  );
+
+  const topGainerCoins = useMemo(
+    () => getTopGainers(coinsData, selectedCurrency),
+    [coinsData, selectedCurrency],
+  );
+
+  const handleViewChange = (_event: React.MouseEvent, newView: string | null) => {
+    if (newView !== null) setView(newView);
   };
 
-  // Filter coins based on selected view
   const displayedCoins =
-    view === 'tradable' ? cryptoAssets : cryptoAssets.filter((coin) => coin.priceChange > 0);
+    view === 'tradable'
+      ? tradableCoins.slice(0, 6) //slice vrati z array pouze hodnoty v uvedenem rozsahu
+      : topGainerCoins.slice(0, 6);
 
   return (
     <Box sx={hotCoinsTabsStyles.container}>
@@ -44,8 +55,17 @@ export const HotCoinsTabs: React.FC<HotCoinsTabsProps> = ({ cryptoAssets }) => {
 
       <Box sx={hotCoinsTabsStyles.coinsGrid}>
         {displayedCoins.map((coin) => (
-          <CoinCard key={coin.id} coin={coin} />
-          //<CoinsCardNew key={coin.id} coinSymbol={coin.symbol} currency={'USD'} />
+          <CoinCard
+            key={coin.base_currency_id}
+            coinSymbol={coin.base_display_symbol}
+            coinName={coin.base_name}
+            coinPrice={Number(coin.price)}
+            coinPriceChange={convertStringNumberToRoundedNumber(
+              coin.price_percentage_change_24h,
+              2,
+            )}
+            currency={selectedCurrency}
+          />
         ))}
       </Box>
     </Box>

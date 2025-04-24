@@ -31,7 +31,7 @@ interface CoinsDataContextProviderProps {
  */
 export const CoinsDataContextProvider: React.FC<CoinsDataContextProviderProps> = ({
   children,
-  refreshInterval = DEFAULT_COINS_REFRESH_INTERVAL, // 10 seconds by default
+  refreshInterval = DEFAULT_COINS_REFRESH_INTERVAL, // 30 seconds by default
 }) => {
   const [coinsData, setCoinsData] = useState<CoinsMap>(new Map());
   const [isLoading, setIsLoading] = useState<boolean>(false);
