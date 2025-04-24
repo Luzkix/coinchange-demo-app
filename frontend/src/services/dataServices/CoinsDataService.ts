@@ -1,4 +1,4 @@
-import { ApiCoinPairService, CoinPair } from '../../api-generated/coinbase';
+import { ApiCoinPairService } from '../../api-generated/coinbase';
 import {
   DEFAULT_COINS_SORTING,
   DEFAULT_COINS_TYPE,
@@ -8,21 +8,7 @@ import {
 } from '../../constants/configVariables.ts';
 import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from '../../constants/enums.ts';
 import { setApiBaseToProxyUrl } from '../../../proxy-server/setApiBase.ts';
-
-/**
- * Type definition for FetchedCoinPair specifying CoinPair and boolean defining whether CoinPair is tradable on CoinChange exchange,
- * example: {coinPair : BTC-USD CoinPair, isTradable: true}
- */
-export type FetchedCoinPair = { coinPair: CoinPair; isTradable: boolean };
-/**
- * Type definition for resulting map (currencies -> coins map),
- * example:
- *  (
- *  USD : (BTC : {coinPair : BTC-USD CoinPair, isTradable: true}, {coinPair : SOL-USD CoinPair, isTradable: true}, ...)
- *  EUR : (BTC : {coinPair : BTC-EUR CoinPair, isTradable: true}, {coinPair : UBT-EUR CoinPair, isTradable: false}, ...)
- *  )
- */
-export type CoinsMap = Map<string, Map<string, FetchedCoinPair>>;
+import { CoinsMap, FetchedCoinPair } from '../../constants/customTypes.ts';
 
 /**
  * Service for fetching and processing coin data from Coinbase API

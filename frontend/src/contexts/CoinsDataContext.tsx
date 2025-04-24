@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { CoinsDataService, CoinsMap } from '../services/dataServices/CoinsDataService';
-import { DEFAULT_COINS_REFRESH_INTERVAL } from '../constants/configVariables.ts';
+import { CoinsDataService } from '../services/dataServices/CoinsDataService';
+import { DEFAULT_ALL_COINS_REFRESH_INTERVAL } from '../constants/configVariables.ts';
+import { CoinsMap } from '../constants/customTypes.ts';
 
 interface CoinsDataContextType {
   coinsData: CoinsMap;
@@ -31,7 +32,7 @@ interface CoinsDataContextProviderProps {
  */
 export const CoinsDataContextProvider: React.FC<CoinsDataContextProviderProps> = ({
   children,
-  refreshInterval = DEFAULT_COINS_REFRESH_INTERVAL, // 30 seconds by default
+  refreshInterval = DEFAULT_ALL_COINS_REFRESH_INTERVAL,
 }) => {
   const [coinsData, setCoinsData] = useState<CoinsMap>(new Map());
   const [isLoading, setIsLoading] = useState<boolean>(false);

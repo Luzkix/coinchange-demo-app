@@ -1,6 +1,6 @@
 import { CoinsColorEnum } from '../../constants/enums';
-import { CoinsMap } from '../dataServices/CoinsDataService.ts';
 import { CoinPair } from '../../api-generated/coinbase';
+import { CoinsMap } from '../../constants/customTypes.ts';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.

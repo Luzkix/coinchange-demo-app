@@ -31,7 +31,7 @@ interface GeneralContextProviderProps {
 // Provider komponenta, která poskytuje kontext
 export const GeneralContextProvider: React.FC<GeneralContextProviderProps> = ({ children }) => {
   // Globální stavy sdílené přes kontext
-  const [language, setLanguage] = useState<string>(localStorage.getItem('language') || 'en');
+  const [language, setLanguage] = useState<string>(localStorage.getItem('language') || 'EN');
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(
     localStorage.getItem('cookiesAccepted') === 'true',
   );

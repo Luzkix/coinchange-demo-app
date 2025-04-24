@@ -16,6 +16,7 @@ import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
 import ContentBox from '../../ui/ContentBox';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
+import { Languages } from '../../../constants/configVariables.ts';
 
 export const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation('common');
@@ -55,11 +56,11 @@ export const HeaderPublic: React.FC = () => {
             </IconButton>
 
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              <MenuItem selected={language === 'en'} onClick={() => changeLanguage('en')}>
-                English
+              <MenuItem selected={language === 'EN'} onClick={() => changeLanguage('EN')}>
+                {Languages.EN.localizedName}
               </MenuItem>
-              <MenuItem selected={language === 'cs'} onClick={() => changeLanguage('cs')}>
-                Čeština
+              <MenuItem selected={language === 'CS'} onClick={() => changeLanguage('CS')}>
+                {Languages.CS.localizedName}
               </MenuItem>
             </Menu>
 

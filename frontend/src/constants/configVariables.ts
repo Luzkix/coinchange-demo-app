@@ -1,9 +1,10 @@
 import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './enums.ts';
+import { Language } from './customTypes.ts';
 
 /**
  * Default interval for fetching coins details from coinbase api
  */
-export const DEFAULT_COINS_REFRESH_INTERVAL = 30000;
+export const DEFAULT_ALL_COINS_REFRESH_INTERVAL = 3600000; //1hour (coinbase free api refreshes data once per several hours so it is sufficient)
 
 /**
  * Maximum number of coins for fetching coins details from coinbase api
@@ -42,3 +43,20 @@ export const SUPPORTED_COINS = [
   'LINK',
   'AVAX',
 ];
+
+export const Languages: Record<string, Language> = {
+  EN: {
+    id: 'EN',
+    engName: 'English',
+    localizedName: 'English',
+    languageCountryCode: 'en-US',
+    currency: 'USD',
+  },
+  CS: {
+    id: 'CS',
+    engName: 'Czech',
+    localizedName: 'Čeština',
+    languageCountryCode: 'cs-CZ',
+    currency: 'EUR',
+  },
+};

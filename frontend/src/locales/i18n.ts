@@ -15,18 +15,18 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: {
+      EN: {
         common: enCommon,
         homepage: enHomepage,
         footer: enFooter,
       },
-      cs: {
+      CS: {
         common: csCommon,
         homepage: csHomepage,
         footer: csFooter,
       },
     },
-    fallbackLng: 'en',
+    fallbackLng: 'EN',
     ns: ['common', 'homepage', 'footer'],
     defaultNS: 'common',
     interpolation: {

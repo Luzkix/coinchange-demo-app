@@ -4,15 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
 import CoinCard from '../../../../components/common/CoinCard';
 import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
-import { SUPPORTED_CURRENCIES } from '../../../../constants/configVariables.ts';
+import { Languages } from '../../../../constants/configVariables.ts';
 import { getTopGainers, getTradableCoins } from '../../../../services/utils/coinsUtils.ts';
 import { convertStringNumberToRoundedNumber } from '../../../../services/utils/numbersUtils.ts';
+import { useGeneralContext } from '../../../../contexts/GeneralContext.tsx';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation('homepage');
   const [view, setView] = useState('tradable');
   const { coinsData } = useCoinsDataContext();
-  const selectedCurrency = SUPPORTED_CURRENCIES[0]; //USD
+  const { language } = useGeneralContext();
+  const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
   const tradableCoins = useMemo(

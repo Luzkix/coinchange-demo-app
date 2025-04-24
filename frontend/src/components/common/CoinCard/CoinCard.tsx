@@ -5,6 +5,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { createCoinColor } from '../../../services/utils/coinsUtils.ts';
+import { Languages } from '../../../constants/configVariables.ts';
 
 interface CoinCardProps {
   coinSymbol: string;
@@ -24,7 +25,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({
   const { language } = useGeneralContext();
 
   // Format price with local currency formatting
-  const formattedPrice = new Intl.NumberFormat(language === 'cs' ? 'cs-CZ' : 'en-US', {
+  const formattedPrice = new Intl.NumberFormat(Languages[language].languageCountryCode, {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
