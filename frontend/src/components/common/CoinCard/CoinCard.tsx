@@ -5,7 +5,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { createCoinColor } from '../../../services/utils/coinsUtils.ts';
-import { Languages } from '../../../constants/configVariables.ts';
+import { Languages } from '../../../constants/customConstants.ts';
 
 interface CoinCardProps {
   coinSymbol: string;

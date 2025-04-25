@@ -1,4 +1,4 @@
-import { CoinsColorEnum } from '../../constants/enums';
+import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
 
@@ -10,14 +10,18 @@ import { CoinsMap } from '../../constants/customTypes.ts';
  */
 export const createCoinColor = (coinSymbol: string): string => {
   // collect all keys from CoinsColorEnum (enum contains all coins with predefined colors)
-  const availableSymbols = Object.keys(CoinsColorEnum) as (keyof typeof CoinsColorEnum)[];
+  const coinsWithDefaultColor = Object.keys(
+    CoinsDefaultColorEnum,
+  ) as (keyof typeof CoinsDefaultColorEnum)[];
 
-  // find symbol in enum (case-insensitive)
-  const foundSymbol = availableSymbols.find((s) => s.toLowerCase() === coinSymbol.toLowerCase());
+  // find coinSymbol in enum (case-insensitive)
+  const foundSymbol = coinsWithDefaultColor.find(
+    (predefinedCoin) => predefinedCoin.toLowerCase() === coinSymbol.toLowerCase(),
+  );
 
   // if symbol found, return related color
   if (foundSymbol) {
-    return CoinsColorEnum[foundSymbol];
+    return CoinsDefaultColorEnum[foundSymbol];
   }
 
   // otherwise generate random color in hex format

@@ -1,5 +1,6 @@
 // src/contexts/GeneralContext.tsx
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { SupportedLanguageEnum } from '../constants/customEnums.ts';
 
 // Interface pro data kontextu
 export interface GeneralContextType {
@@ -31,7 +32,9 @@ interface GeneralContextProviderProps {
 // Provider komponenta, která poskytuje kontext
 export const GeneralContextProvider: React.FC<GeneralContextProviderProps> = ({ children }) => {
   // Globální stavy sdílené přes kontext
-  const [language, setLanguage] = useState<string>(localStorage.getItem('language') || 'EN');
+  const [language, setLanguage] = useState<string>(
+    localStorage.getItem('language') || SupportedLanguageEnum.ENGLISH,
+  ); //default context language is ENG
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(
     localStorage.getItem('cookiesAccepted') === 'true',
   );

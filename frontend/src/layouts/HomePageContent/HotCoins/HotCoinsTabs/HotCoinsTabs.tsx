@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
 import CoinCard from '../../../../components/common/CoinCard';
 import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
-import { Languages } from '../../../../constants/configVariables.ts';
 import { getTopGainers, getTradableCoins } from '../../../../services/utils/coinsUtils.ts';
 import { convertStringNumberToRoundedNumber } from '../../../../services/utils/numbersUtils.ts';
 import { useGeneralContext } from '../../../../contexts/GeneralContext.tsx';
+import { Languages } from '../../../../constants/customConstants.ts';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation('homepage');

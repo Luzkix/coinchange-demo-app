@@ -6,7 +6,7 @@ import {
   SUPPORTED_COINS,
   SUPPORTED_CURRENCIES,
 } from '../../constants/configVariables.ts';
-import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from '../../constants/enums.ts';
+import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from '../../constants/customEnums.ts';
 import { setApiBaseToProxyUrl } from '../../../proxy-server/setApiBase.ts';
 import { CoinsMap, FetchedCoinPair } from '../../constants/customTypes.ts';
 

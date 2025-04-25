@@ -1,5 +1,4 @@
-import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './enums.ts';
-import { Language } from './customTypes.ts';
+import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './customEnums.ts';
 
 /**
  * Default interval for fetching coins details from coinbase api
@@ -43,20 +42,3 @@ export const SUPPORTED_COINS = [
   'LINK',
   'AVAX',
 ];
-
-export const Languages: Record<string, Language> = {
-  EN: {
-    id: 'EN',
-    engName: 'English',
-    localizedName: 'English',
-    languageCountryCode: 'en-US',
-    currency: 'USD',
-  },
-  CS: {
-    id: 'CS',
-    engName: 'Czech',
-    localizedName: 'Čeština',
-    languageCountryCode: 'cs-CZ',
-    currency: 'EUR',
-  },
-};

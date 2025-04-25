@@ -1,5 +1,5 @@
 /**
- * Enum representing possible sorting when fetching details from coinbase api
+ * Enum representing possible sorting when fetching coins details from coinbase api
  */
 export enum CoinsSortOrderTypeEnum {
   UNDEFINED = 'PRODUCTS_SORT_ORDER_UNDEFINED',
@@ -8,7 +8,7 @@ export enum CoinsSortOrderTypeEnum {
 }
 
 /**
- * Enum representing type of cryptocurrency for fetching details from coinbase api
+ * Enum representing type of cryptocurrency for fetching coins details from coinbase api
  */
 export enum CoinsTypeEnum {
   SPOT = 'SPOT',
@@ -18,7 +18,7 @@ export enum CoinsTypeEnum {
 /**
  * Enum defining color of tradable coins
  */
-export enum CoinsColorEnum {
+export enum CoinsDefaultColorEnum {
   BTC = '#F7931A',
   ETH = '#627EEA',
   XRP = '#000000',
@@ -29,4 +29,12 @@ export enum CoinsColorEnum {
   ADA = '#0033AD',
   LINK = '#2A5ADA',
   AVAX = '#E84142',
+}
+
+/**
+ * Enum defining color of tradable coins
+ */
+export enum SupportedLanguageEnum {
+  ENGLISH = 'EN',
+  CZECH = 'CS',
 }

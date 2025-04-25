@@ -16,7 +16,8 @@ import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
 import ContentBox from '../../ui/ContentBox';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
-import { Languages } from '../../../constants/configVariables.ts';
+import { SupportedLanguageEnum } from '../../../constants/customEnums.ts';
+import { Languages } from '../../../constants/customConstants.ts';
 
 export const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation('common');
@@ -56,11 +57,17 @@ export const HeaderPublic: React.FC = () => {
             </IconButton>
 
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              <MenuItem selected={language === 'EN'} onClick={() => changeLanguage('EN')}>
-                {Languages.EN.localizedName}
+              <MenuItem
+                selected={language === SupportedLanguageEnum.ENGLISH}
+                onClick={() => changeLanguage(SupportedLanguageEnum.ENGLISH)}
+              >
+                {Languages[SupportedLanguageEnum.ENGLISH].localizedName}
               </MenuItem>
-              <MenuItem selected={language === 'CS'} onClick={() => changeLanguage('CS')}>
-                {Languages.CS.localizedName}
+              <MenuItem
+                selected={language === SupportedLanguageEnum.CZECH}
+                onClick={() => changeLanguage(SupportedLanguageEnum.CZECH)}
+              >
+                {Languages[SupportedLanguageEnum.CZECH].localizedName}
               </MenuItem>
             </Menu>
 
