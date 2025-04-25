@@ -16,11 +16,6 @@ export const footerStyles: Record<string, SxProps<Theme>> = {
     underline: 'hover',
     mb: 0.5,
   },
-  socialContainer: {
-    display: 'flex',
-    gap: 1,
-    mb: 2,
-  },
   newsletterForm: {
     display: 'flex',
     gap: 1,

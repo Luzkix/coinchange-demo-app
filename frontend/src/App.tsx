@@ -13,9 +13,7 @@ import HomePage from './pages/HomePage';
 import { CoinsDataContextProvider } from './contexts/CoinsDataContext.tsx';
 import { CoinsDataService } from './services/dataServices/CoinsDataService.ts';
 import { GeneralContextProvider } from './contexts/GeneralContext.tsx';
-// import CryptocurrenciesPage from './pages/CryptocurrenciesPage'; // budoucí stránky
-// import SignInPage from './pages/SignInPage';
-// import SignUpPage from './pages/SignUpPage';
+import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
 
 const App: React.FC = () => {
   // Initialization of alternative BASE urls at app startup using own proxy server to deal with CORS errors
@@ -30,7 +28,7 @@ const App: React.FC = () => {
             {/* Veřejné stránky (== ty bez přihlášení uživatele) - používají publicLayout */}
             <Route element={<PublicLayout />}>
               <Route path={ROUTES.HOME} element={<HomePage />} />
-              {/* <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} /> */}
+              <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
               {/* <Route path={ROUTES.SIGNIN} element={<SignInPage />} /> */}
               {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage />} /> */}
             </Route>

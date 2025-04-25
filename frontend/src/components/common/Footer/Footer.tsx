@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
     <Box component="footer" sx={footerStyles.footer}>
       <ContentBox>
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={3}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="h6" sx={footerStyles.sectionTitle}>
               {t('sections.services')}
             </Typography>
@@ -24,7 +24,7 @@ export const Footer: React.FC = () => {
             ))}
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="h6" sx={footerStyles.sectionTitle}>
               {t('sections.coinChange')}
             </Typography>
@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
             ))}
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="h6" sx={footerStyles.sectionTitle}>
               {t('sections.education')}
             </Typography>
@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
             ))}
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="h6" sx={footerStyles.sectionTitle}>
               {t('sections.newsletter')}
             </Typography>
