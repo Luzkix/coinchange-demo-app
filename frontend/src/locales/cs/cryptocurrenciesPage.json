@@ -3,6 +3,7 @@
 
   },
   "topCoins": {
-
+    "topGainers": "Nejvyšší růst",
+    "newOnCoinChange": "Nové na CoinChange"
   }
 }

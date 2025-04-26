@@ -72,3 +72,23 @@ export const getTopGainers = (fetchedCoinsData: CoinsMap, currency: string): Coi
       return changeB - changeA;
     });
 };
+
+/**
+ * Returns array of newly added CoinPairs to CoinChange exchange for specified currency sorted by 24h volume
+ * @param fetchedCoinsData - Data from CoinsDataService
+ * @param currency - Target currency (USD/EUR)
+ * @returns Array of CoinPair sorted by volume descending
+ */
+export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
+  const currencyData = fetchedCoinsData.get(currency);
+  if (!currencyData) return [];
+
+  return Array.from(currencyData.entries())
+    .map(([_, { coinPair }]) => coinPair)
+    .filter((coinPair) => coinPair.new)
+    .sort((a, b) => {
+      const volumeA = Number(a.approximate_quote_24h_volume || 0);
+      const volumeB = Number(b.approximate_quote_24h_volume || 0);
+      return volumeB - volumeA;
+    });
+};

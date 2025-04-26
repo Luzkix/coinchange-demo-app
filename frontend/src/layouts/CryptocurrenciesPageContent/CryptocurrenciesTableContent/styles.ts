@@ -2,7 +2,7 @@ import { SxProps, Theme } from '@mui/material';
 
 export const cryptocurrenciesTableContentStyles: Record<string, SxProps<Theme>> = {
   container: {
-    bgcolor: 'background.paper',
+    //bgcolor: 'background.paper',
     borderRadius: 2,
     boxShadow: 1,
     p: 3,

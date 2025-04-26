@@ -13,9 +13,7 @@ export const hotCoinsTabsStyles: Record<string, SxProps<Theme>> = {
     borderRadius: 100,
     px: 3,
   },
-  coinsGrid: {
-    display: 'grid',
-    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr' },
-    gap: 3,
+  coinsGridContainer: {
+    mt: 2,
   },
 };

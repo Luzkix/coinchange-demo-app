@@ -6,12 +6,13 @@ import { coinCardStyles } from './styles.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../constants/customConstants.ts';
 import { CoinHeader } from '../CoinHeader';
+import { convertStringNumberToRoundedNumber } from '../../../services/utils/numbersUtils.ts';
 
 interface CoinCardProps {
   coinSymbol: string;
   coinName: string;
-  coinPrice: number;
-  coinPriceChange: number;
+  coinPrice: string;
+  coinPriceChange: string;
   currency: string;
   size?: 'small' | 'medium' | 'large';
 }
@@ -26,17 +27,21 @@ export const CoinCard: React.FC<CoinCardProps> = ({
 }) => {
   const { language } = useGeneralContext();
 
+  //conversion of string formats into number formats for select input variables
+  const coinPriceNum = Number(coinPrice);
+  const coinPriceChangeNum = convertStringNumberToRoundedNumber(coinPriceChange, 2);
+
   // Format price with local currency formatting
   const formattedPrice = new Intl.NumberFormat(Languages[language].languageCountryCode, {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(coinPrice);
+  }).format(coinPriceNum);
 
   // Determine price change color and icon
-  const isPriceUp = coinPriceChange > 0;
-  const isPriceDown = coinPriceChange < 0;
+  const isPriceUp = coinPriceChangeNum > 0;
+  const isPriceDown = coinPriceChangeNum < 0;
   const priceChangeColor = isPriceUp
     ? coinCardStyles.positive
     : isPriceDown
@@ -75,7 +80,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({
       <Box sx={priceChangeStyle}>
         {isPriceUp && <ArrowDropUpIcon />}
         {isPriceDown && <ArrowDropDownIcon />}
-        {Math.abs(coinPriceChange)}%
+        {Math.abs(coinPriceChangeNum)}%
       </Box>
     </Box>
   );

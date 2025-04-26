@@ -5,9 +5,9 @@ import { hotCoinsTabsStyles } from './styles.ts';
 import CoinCard from '../../../../components/common/CoinCard';
 import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
 import { getTopGainers, getTradableCoins } from '../../../../services/utils/coinsUtils.ts';
-import { convertStringNumberToRoundedNumber } from '../../../../services/utils/numbersUtils.ts';
 import { useGeneralContext } from '../../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../../constants/customConstants.ts';
+import Grid from '@mui/material/Grid';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation('homepage');
@@ -55,22 +55,19 @@ export const HotCoinsTabs: React.FC = () => {
         </ToggleButtonGroup>
       </Box>
 
-      <Box sx={hotCoinsTabsStyles.coinsGrid}>
+      <Grid container spacing={2} sx={hotCoinsTabsStyles.coinsGridContainer}>
         {displayedCoins.map((coin) => (
           <CoinCard
             key={coin.base_currency_id}
             coinSymbol={coin.base_display_symbol}
             coinName={coin.base_name}
-            coinPrice={Number(coin.price)}
-            coinPriceChange={convertStringNumberToRoundedNumber(
-              coin.price_percentage_change_24h,
-              2,
-            )}
+            coinPrice={coin.price}
+            coinPriceChange={coin.price_percentage_change_24h}
             currency={selectedCurrency}
             size={'large'}
           />
         ))}
-      </Box>
+      </Grid>
     </Box>
   );
 };

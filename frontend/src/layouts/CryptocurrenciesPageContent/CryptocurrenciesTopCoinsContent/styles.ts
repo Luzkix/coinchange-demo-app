@@ -7,7 +7,7 @@ export const cryptocurrenciesTopCoinsContentStyles: Record<string, SxProps<Theme
     gap: 4,
   },
   sectionContainer: {
-    bgcolor: 'background.paper',
+    //bgcolor: 'background.paper',
     borderRadius: 2,
     boxShadow: 1,
     p: 3,
@@ -17,20 +17,7 @@ export const cryptocurrenciesTopCoinsContentStyles: Record<string, SxProps<Theme
     mb: 2,
     color: 'text.primary',
   },
-  coinsGrid: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2,
-  },
-  viewAllLink: {
-    display: 'block',
-    textAlign: 'center',
+  coinsGridContainer: {
     mt: 2,
-    color: 'primary.main',
-    fontWeight: 'medium',
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
   },
 };

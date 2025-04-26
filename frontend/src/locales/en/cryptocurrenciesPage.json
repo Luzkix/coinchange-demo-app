@@ -3,6 +3,7 @@
 
   },
   "topCoins": {
-
+    "topGainers": "Top gainers",
+    "newOnCoinChange": "New on CoinChange"
   }
 }

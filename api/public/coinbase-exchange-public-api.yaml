@@ -10,13 +10,13 @@ servers:
     description: Coinbase Exchange main API
 
 paths:
-  /products/{product_id}/ticker:
+  /products/{product_id}/stats:
     get:
       tags:
-        - ApiCoinTicker
-      summary: Get coin ticker
-      description: Retrieves current information about the latest trade for a specific product (pair) as described on https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductticker
-      operationId: getCoinTicker
+        - ApiCoinStats
+      summary: Get select coin-pair statistics
+      description: Retrieves 30day and 24hour stats including last known price for a selected coin-pair as described on https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductstats
+      operationId: getCoinStats
       parameters:
         - name: product_id
           in: path
@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CoinTicker'
+                $ref: '#/components/schemas/CoinStats'
         '400':
           description: Bad request. Invalid product_id.
         '500':
@@ -39,39 +39,37 @@ paths:
 
 components:
   schemas:
-    CoinTicker:
+    CoinStats:
       type: object
       properties:
-        price:
+        open:
           type: string
-          description: Price of the last trade
+          description: Open price for coin-pair in current trading day
           example: "89907.44"
-        trade_id:
-          type: integer
-          format: int64
-          description: ID of the last trade
-          example: 815001016
-        size:
+        high:
           type: string
-          description: Size of the last trade
-          example: "0.00952975"
-        time:
+          description: Highest price for coin-pair in current trading day
+          example: "92907.44"
+        low:
           type: string
-          format: date-time
-          description: Time of the last trade
-          example: "2025-04-22T13:36:02.965117Z"
-        bid:
+          description: Lowest price for coin-pair in current trading day
+          example: "87907.44"
+        last:
           type: string
-          description: Highest bid price
-          example: "89900.01"
-        ask:
-          type: string
-          description: Lowest ask price
-          example: "89907.55"
+          description: Last known price for coin-pair
+          example: "91907.44"
         volume:
           type: string
-          description: 24-hour volume
-          example: "11474.7926622"
+          description: 24-hour volume in selected currency (e.g. amount of BTC traded in last 24 hours)
+          example: "10710.55244289"
+        volume_30day:
+          type: string
+          description: 30-day volume in selected currency (e.g. amount of BTC traded in last 30 days)
+          example: "285985.01131518"
       required:
-        - price
-        - time
+        - open
+        - high
+        - low
+        - last
+        - volume
+        - volume_30day
