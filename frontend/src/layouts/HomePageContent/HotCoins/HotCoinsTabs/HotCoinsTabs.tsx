@@ -33,7 +33,7 @@ export const HotCoinsTabs: React.FC = () => {
 
   const displayedCoins =
     view === 'tradable'
-      ? tradableCoins.slice(0, 6) //slice vrati z array pouze hodnoty v uvedenem rozsahu
+      ? tradableCoins.slice(0, 6) //slice vrati z array pouze hodnoty v uvedenem rozsahu, tzn prvnich 6 coins
       : topGainerCoins.slice(0, 6);
 
   return (
@@ -67,6 +67,7 @@ export const HotCoinsTabs: React.FC = () => {
               2,
             )}
             currency={selectedCurrency}
+            size={'large'}
           />
         ))}
       </Box>

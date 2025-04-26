@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
-import { createCoinColor } from '../../../services/utils/coinsUtils.ts';
 import { Languages } from '../../../constants/customConstants.ts';
+import { CoinHeader } from '../CoinHeader';
 
 interface CoinCardProps {
   coinSymbol: string;
@@ -13,6 +13,7 @@ interface CoinCardProps {
   coinPrice: number;
   coinPriceChange: number;
   currency: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const CoinCard: React.FC<CoinCardProps> = ({
@@ -21,6 +22,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({
   coinPrice,
   coinPriceChange,
   currency,
+  size = 'medium',
 }) => {
   const { language } = useGeneralContext();
 
@@ -41,30 +43,39 @@ export const CoinCard: React.FC<CoinCardProps> = ({
       ? coinCardStyles.negative
       : coinCardStyles.neutral;
 
+  // Apply styles based on size
+  const cardStyle = {
+    ...coinCardStyles.card,
+    ...(size === 'small' ? coinCardStyles.smallCard : {}),
+    ...(size === 'medium' ? coinCardStyles.mediumCard : {}),
+    ...(size === 'large' ? coinCardStyles.largeCard : {}),
+  };
+
+  const priceStyle = {
+    ...coinCardStyles.price,
+    ...(size === 'small' ? coinCardStyles.smallPrice : {}),
+    ...(size === 'medium' ? coinCardStyles.mediumPrice : {}),
+    ...(size === 'large' ? coinCardStyles.largePrice : {}),
+  };
+
+  const priceChangeStyle = {
+    ...coinCardStyles.priceChange,
+    ...priceChangeColor,
+    ...(size === 'small' ? coinCardStyles.smallPriceChange : {}),
+    ...(size === 'medium' ? coinCardStyles.mediumPriceChange : {}),
+    ...(size === 'large' ? coinCardStyles.largePriceChange : {}),
+  };
+
   return (
-    <Box sx={coinCardStyles.card}>
-      <Box sx={coinCardStyles.header}>
-        <Box sx={{ ...coinCardStyles.icon, bgcolor: createCoinColor(coinSymbol) }}>
-          <Typography variant="h6" color="white">
-            {coinSymbol.charAt(0)}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="body1" sx={coinCardStyles.name}>
-            {coinName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {coinSymbol}
-          </Typography>
-        </Box>
-      </Box>
-      <Typography variant="h6" sx={coinCardStyles.price}>
-        {formattedPrice}
-      </Typography>
-      <Box sx={{ ...coinCardStyles.priceChange, ...priceChangeColor }}>
+    <Box sx={cardStyle}>
+      <CoinHeader coinSymbol={coinSymbol} coinName={coinName} size={size} />
+
+      <Box sx={priceStyle}>{formattedPrice}</Box>
+
+      <Box sx={priceChangeStyle}>
         {isPriceUp && <ArrowDropUpIcon />}
         {isPriceDown && <ArrowDropDownIcon />}
-        <Typography variant="body2">{Math.abs(coinPriceChange)}%</Typography>
+        {Math.abs(coinPriceChange)}%
       </Box>
     </Box>
   );

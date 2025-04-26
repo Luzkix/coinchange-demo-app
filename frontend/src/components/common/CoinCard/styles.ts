@@ -1,53 +1,99 @@
 import { SystemStyleObject, Theme } from '@mui/system';
 
 export const coinCardStyles: Record<string, SystemStyleObject<Theme>> = {
+  // overall card styles
   card: {
     p: 3,
     borderRadius: 4,
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
     backgroundColor: 'background.default',
-    //rectangular shape of CoinCard
     aspectRatio: '1 / 1',
-    width: '55%',
-    minWidth: '55%', // nebo konkrétní velikost,
-    maxWidth: '55%',
-    //maxHeight: '80%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     margin: 'auto',
+    overflow: 'hidden', // Zabrání přetékání obsahu
   },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    mb: 2,
+
+  // size variants of the card
+  smallCard: {
+    maxWidth: '140px',
+    p: 2,
   },
-  icon: {
-    width: 60,
-    height: 60,
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    mr: 2,
+
+  mediumCard: {
+    maxWidth: '170px',
+    p: 3,
   },
-  name: {
-    fontWeight: 600,
+
+  largeCard: {
+    maxWidth: '210px',
+    p: 3,
   },
+
+  // price styles
   price: {
     fontWeight: 600,
-    mb: 1,
+    mt: 1,
+    mb: 0,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
+
+  // size variants for price
+  smallPrice: {
+    fontSize: '1.15rem',
+  },
+
+  mediumPrice: {
+    fontSize: '1.25rem',
+    mt: 1,
+  },
+
+  largePrice: {
+    fontSize: '1.75rem',
+  },
+
+  // priceChange styles
   priceChange: {
     display: 'flex',
     alignItems: 'center',
+    ml: -1,
   },
+
+  // size variants for price change
+  smallPriceChange: {
+    fontSize: '1.05rem',
+    '& .MuiSvgIcon-root': {
+      fontSize: '1.5rem',
+    },
+  },
+
+  mediumPriceChange: {
+    fontSize: '1.2rem',
+    '& .MuiSvgIcon-root': {
+      fontSize: '2rem',
+    },
+  },
+
+  largePriceChange: {
+    fontSize: '1.5rem',
+    '& .MuiSvgIcon-root': {
+      fontSize: '3rem',
+    },
+  },
+
+  // color variants
   positive: {
     color: '#00C087',
   },
+
   negative: {
     color: '#FF4D4F',
   },
+
   neutral: {
     color: '#71717A',
   },
