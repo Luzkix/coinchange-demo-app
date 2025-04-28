@@ -1,40 +1,95 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
 import CoinCard from '../../../../components/common/CoinCard';
 import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
-import { getTopGainers, getTradableCoins } from '../../../../services/utils/coinsUtils.ts';
+import {
+  getTopGainers,
+  getTradableCoins,
+  updateCoinsPrices,
+} from '../../../../services/utils/coinsUtils.ts';
 import { useGeneralContext } from '../../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../../constants/customConstants.ts';
 import Grid from '@mui/material/Grid';
+import {
+  DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
+  DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
+} from '../../../../constants/configVariables.ts';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation('homepage');
-  const [view, setView] = useState('tradable');
   const { coinsData } = useCoinsDataContext();
   const { language } = useGeneralContext();
+
+  //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
-  const tradableCoins = useMemo(
-    () => getTradableCoins(coinsData, selectedCurrency),
-    [coinsData, selectedCurrency],
-  );
-
   const topGainerCoins = useMemo(
     () => getTopGainers(coinsData, selectedCurrency),
     [coinsData, selectedCurrency],
-  );
+  ).slice(0, DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED); //slice vrati z array pouze hodnoty v uvedenem rozsahu
+
+  const tradableCoins = useMemo(
+    () => getTradableCoins(coinsData, selectedCurrency),
+    [coinsData, selectedCurrency],
+  ).slice(0, DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED);
+
+  //to store info about selected view (tradable/topGainers)
+  const [view, setView] = useState('tradable');
 
   const handleViewChange = (_event: React.MouseEvent, newView: string | null) => {
     if (newView !== null) setView(newView);
   };
 
-  const displayedCoins =
-    view === 'tradable'
-      ? tradableCoins.slice(0, 6) //slice vrati z array pouze hodnoty v uvedenem rozsahu, tzn prvnich 6 coins
-      : topGainerCoins.slice(0, 6);
+  //using useState to re-render component each time the new price of topGainer or tradable coins is fetched.
+  const [displayedTopGainers, setDisplayedTopGainers] = useState(topGainerCoins);
+  const [displayedTradableCoins, setDisplayedTradableCoins] = useState(tradableCoins);
+
+  // using useEffect to monitor changes in coinsData or language (changes coming from initial fetching or refreshing of coinsData)
+  useEffect(() => {
+    if (coinsData.size > 0) {
+      setDisplayedTopGainers(topGainerCoins);
+      setDisplayedTradableCoins(tradableCoins);
+    }
+  }, [coinsData, selectedCurrency]);
+
+  // displayedTopGainers: using useEffect to fetch and assign most recent price for each coin
+  useEffect(() => {
+    const fetchAndUpdate = async () => {
+      try {
+        if (displayedTopGainers.length === 0) return;
+        const updatedCoinPrices = await updateCoinsPrices(displayedTopGainers);
+        setDisplayedTopGainers(updatedCoinPrices);
+      } catch (error) {
+        console.error('Error updating prices:', error);
+      }
+    };
+
+    const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);
+
+    return () => clearInterval(interval);
+  }, [displayedTopGainers]);
+
+  // displayedTradableCoins: using useEffect to fetch and assign most recent price for each coin
+  useEffect(() => {
+    const fetchAndUpdate = async () => {
+      try {
+        if (displayedTradableCoins.length === 0) return;
+        const updatedCoinPrices = await updateCoinsPrices(displayedTradableCoins);
+        setDisplayedTradableCoins(updatedCoinPrices);
+      } catch (error) {
+        console.error('Error updating prices:', error);
+      }
+    };
+
+    const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);
+
+    return () => clearInterval(interval);
+  }, [displayedTradableCoins]);
+
+  const displayedCoins = view === 'tradable' ? displayedTradableCoins : displayedTopGainers;
 
   return (
     <Box sx={hotCoinsTabsStyles.container}>

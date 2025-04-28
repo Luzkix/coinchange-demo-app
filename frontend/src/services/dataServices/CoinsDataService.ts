@@ -9,6 +9,8 @@ import {
 import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from '../../constants/customEnums.ts';
 import { setApiBaseToProxyUrl } from '../../../proxy-server/setApiBase.ts';
 import { CoinsMap, FetchedCoinPair } from '../../constants/customTypes.ts';
+import { ApiCoinStatsService, CoinStats } from '../../api-generated/coinbase-exchange';
+import { FetchCoinsDataError, FetchCoinStatsError } from './errors.ts';
 
 /**
  * Service for fetching and processing coin data from Coinbase API
@@ -81,9 +83,22 @@ export class CoinsDataService {
 
       return resultMap;
     } catch (error) {
-      console.error('Error fetching coins data:', error);
-      // Return empty map in case of error
-      return new Map();
+      throw new FetchCoinsDataError(
+        'Failed to fetch coins data',
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    }
+  }
+
+  public static async fetchCoinPairStats(productId: string): Promise<CoinStats> {
+    try {
+      return await ApiCoinStatsService.getCoinStats(productId);
+    } catch (error) {
+      throw new FetchCoinStatsError(
+        productId,
+        `Failed to fetch stats for ${productId}`,
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }
 }

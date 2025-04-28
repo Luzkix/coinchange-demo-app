@@ -1,6 +1,7 @@
 import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
+import { CoinsDataService } from '../dataServices/CoinsDataService.ts';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
@@ -32,6 +33,20 @@ export const createCoinColor = (coinSymbol: string): string => {
       .padStart(6, '0')
       .toUpperCase()
   );
+};
+
+/**
+ * Calculates percentage change between 2 string numbers. Can be used e.g. for calculation of 24h price change percentage.
+ * @param initialPrice - initial price, e.g. "100"
+ * @param currentPrice - most recent price, e.g. "120"
+ * @returns string number rounded to 2 decimal points representing % change between currentPrice and initialPrice, e.g. "20.00"
+ */
+export const getPriceChangePercentageFromStringNumbers = (
+  initialPrice: string,
+  currentPrice: string,
+): string => {
+  const pricePercentageChange = (parseFloat(currentPrice) / parseFloat(initialPrice) - 1) * 100;
+  return pricePercentageChange.toFixed(2);
 };
 
 /**
@@ -91,4 +106,20 @@ export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinP
       const volumeB = Number(b.approximate_quote_24h_volume || 0);
       return volumeB - volumeA;
     });
+};
+
+export const updateCoinsPrices = async (displayedCoins: CoinPair[]): Promise<CoinPair[]> => {
+  return Promise.all(
+    displayedCoins.map(async (coin) => {
+      const coinStats = await CoinsDataService.fetchCoinPairStats(coin.product_id);
+      return {
+        ...coin,
+        price: coinStats.last,
+        price_percentage_change_24h: getPriceChangePercentageFromStringNumbers(
+          coinStats.open,
+          coinStats.last,
+        ),
+      };
+    }),
+  );
 };

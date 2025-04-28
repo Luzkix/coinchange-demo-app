@@ -42,3 +42,13 @@ export const SUPPORTED_COINS = [
   'LINK',
   'AVAX',
 ];
+
+/**
+ * Default number of "top" coins to be displayed (e.g.Tradable,Top fainers, New on CoinChange...)
+ */
+export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
+
+/**
+ * Default time in miliseconds for refreshing "top" coins price data (e.g.Tradable,Top fainers, New on CoinChange...)
+ */
+export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 5000; //10sec
