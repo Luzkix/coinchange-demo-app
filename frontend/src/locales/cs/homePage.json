@@ -7,8 +7,8 @@
   "hotCoins": {
     "title": "Objev kryptoměny jako je Bitcoin, Ethereum a Solana",
     "subtitle": "Jednoduše a bezpečně nakupuj, prodávej a spravuj stovky kryptoměn.",
-    "tradable": "Obchodovatelné",
-    "topGainers": "Nejvyšší růst",
+    "tradeable": "Obchodovatelné",
+    "topGainers": "Největší růst",
     "seeMoreAssets": "Zobrazit více aktiv"
   }
 }

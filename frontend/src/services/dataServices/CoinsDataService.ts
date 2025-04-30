@@ -63,17 +63,17 @@ export class CoinsDataService {
             // Get the appropriate USD/EUR... currency map
             const currencyMap = resultMap.get(coinPair.quote_currency_id);
 
-            // set the coinPair to the appropriate currency map with proper isTradable boolean value
+            // set the coinPair to the appropriate currency map with proper isTradeable boolean value
             if (currencyMap) {
               if (SUPPORTED_COINS.includes(coinPair.base_currency_id)) {
                 currencyMap.set(coinPair.base_currency_id, {
                   coinPair: coinPair,
-                  isTradable: true,
+                  isTradeable: true,
                 });
               } else {
                 currencyMap.set(coinPair.base_currency_id, {
                   coinPair: coinPair,
-                  isTradable: false,
+                  isTradeable: false,
                 });
               }
             }

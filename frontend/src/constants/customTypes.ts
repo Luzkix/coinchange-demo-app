@@ -13,17 +13,17 @@ export type Language = {
 };
 
 /**
- * Type definition for FetchedCoinPair specifying CoinPair and boolean defining whether CoinPair is tradable on CoinChange exchange,
- * example: {coinPair : BTC-USD CoinPair, isTradable: true}
+ * Type definition for FetchedCoinPair specifying CoinPair and boolean defining whether CoinPair is tradeable on CoinChange exchange,
+ * example: {coinPair : BTC-USD CoinPair, isTradeable: true}
  */
-export type FetchedCoinPair = { coinPair: CoinPair; isTradable: boolean };
+export type FetchedCoinPair = { coinPair: CoinPair; isTradeable: boolean };
 
 /**
  * Type definition for resulting map (currencies -> coins map),
  * example:
  *  (
- *  USD : (BTC : {coinPair : BTC-USD CoinPair, isTradable: true}, {coinPair : SOL-USD CoinPair, isTradable: true}, ...)
- *  EUR : (BTC : {coinPair : BTC-EUR CoinPair, isTradable: true}, {coinPair : UBT-EUR CoinPair, isTradable: false}, ...)
+ *  USD : (BTC : {coinPair : BTC-USD CoinPair, isTradeable: true}, {coinPair : SOL-USD CoinPair, isTradeable: true}, ...)
+ *  EUR : (BTC : {coinPair : BTC-EUR CoinPair, isTradeable: true}, {coinPair : UBT-EUR CoinPair, isTradeable: false}, ...)
  *  )
  */
 export type CoinsMap = Map<string, Map<string, FetchedCoinPair>>;

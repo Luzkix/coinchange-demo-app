@@ -1,9 +1,18 @@
 {
+  "tableFilter": {
+    "all": "Vše",
+    "tradeable": "Obchodovatelné",
+    "new": "Nové",
+    "gainers": "Největší růst",
+    "losers": "Největší ztráty"
+  },
+
   "table": {
 
   },
+
   "topCoins": {
-    "topGainers": "Nejvyšší růst",
+    "topGainers": "Největší růst",
     "newOnCoinChange": "Nové na CoinChange"
   }
 }

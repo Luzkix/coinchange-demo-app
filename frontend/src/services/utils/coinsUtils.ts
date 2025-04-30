@@ -50,17 +50,17 @@ export const getPriceChangePercentageFromStringNumbers = (
 };
 
 /**
- * Returns array of tradable CoinPairs for specified currency sorted by 24h volume
+ * Returns array of tradeable CoinPairs for specified currency sorted by 24h volume
  * @param fetchedCoinsData - Data from CoinsDataService
  * @param currency - Target currency (USD/EUR)
  * @returns Array of CoinPair sorted by volume descending
  */
-export const getTradableCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
+export const getTradeableCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
   const currencyData = fetchedCoinsData.get(currency);
   if (!currencyData) return [];
 
   return Array.from(currencyData.entries())
-    .filter(([_, { isTradable }]) => isTradable)
+    .filter(([_, { isTradeable }]) => isTradeable)
     .map(([_, { coinPair }]) => coinPair)
     .sort((a, b) => {
       const volumeA = Number(a.approximate_quote_24h_volume || 0);

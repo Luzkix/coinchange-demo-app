@@ -1,7 +1,16 @@
 {
+  "tableFilter": {
+    "all": "All",
+    "tradeable": "Tradeable",
+    "new": "New",
+    "gainers": "Top Gainers",
+    "losers": "Top Losers"
+  },
+
   "table": {
 
   },
+
   "topCoins": {
     "topGainers": "Top gainers",
     "newOnCoinChange": "New on CoinChange"

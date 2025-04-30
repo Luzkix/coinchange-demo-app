@@ -16,7 +16,7 @@ export enum CoinsTypeEnum {
 }
 
 /**
- * Enum defining color of tradable coins
+ * Enum defining color of tradeable coins
  */
 export enum CoinsDefaultColorEnum {
   BTC = '#F7931A',
@@ -32,9 +32,17 @@ export enum CoinsDefaultColorEnum {
 }
 
 /**
- * Enum defining color of tradable coins
+ * Enum defining color of tradeable coins
  */
 export enum SupportedLanguageEnum {
   ENGLISH = 'EN',
   CZECH = 'CS',
+}
+
+export enum CoinsFilterType {
+  ALL = 'all',
+  TRADEABLE = 'tradeable',
+  NEW = 'new',
+  GAINERS = 'gainers',
+  LOSERS = 'losers',
 }

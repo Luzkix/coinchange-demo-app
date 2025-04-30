@@ -20,12 +20,6 @@ export const coinsDataGridStyles: Record<string, SxProps<Theme>> = {
       backgroundColor: 'action.hover',
     },
   },
-  toolbar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    px: 2,
-    py: 1,
-  },
   toggleGroup: {
     mb: 2,
   },
@@ -57,9 +51,5 @@ export const coinsDataGridStyles: Record<string, SxProps<Theme>> = {
     '&:hover': {
       backgroundColor: 'primary.dark',
     },
-  },
-  filterButton: {
-    textTransform: 'none',
-    minWidth: 80,
   },
 };
