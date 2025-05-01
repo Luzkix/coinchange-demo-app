@@ -4,89 +4,77 @@ import { Box, Button, Typography } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from 'react-i18next';
-import { coinsDataGridStyles } from './styles';
+import { coinsTableStyles } from './styles';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import { Languages } from '../../../constants/customConstants';
 import { CoinHeader } from '../CoinHeader';
-import { CoinsFilterType } from '../../../constants/customEnums.ts';
-import CoinsTableFilter from './CoinsTableFilter';
+import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts';
+import { Link } from 'react-router-dom';
+import ROUTES from '../../../constants/routes.ts';
 
-export interface CoinRowData {
+export interface CoinsTableRowData {
   id: string;
-  symbol: string;
-  name: string;
+  coinSymbol: string;
+  coinName: string;
   price: number;
-  priceChange: number;
-  volume: number;
+  priceChange24: number;
+  volume24: number;
   isTradeable: boolean;
   isNew: boolean;
-  fullData: any;
+  fullCoinPairData: any;
 }
 
 interface CoinsDataGridProps {
-  data: CoinRowData[];
+  data: CoinsTableRowData[];
   isLoading: boolean;
   selectedCurrency: string;
-  setSelectedCurrency: (currency: string) => void;
 }
 
-const CoinsTable: React.FC<CoinsDataGridProps> = ({
-  data,
-  isLoading,
-  selectedCurrency,
-  setSelectedCurrency,
-}) => {
+const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, isLoading, selectedCurrency }) => {
   const { t } = useTranslation('cryptocurrenciesPage');
   const { language } = useGeneralContext();
 
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
+    pageSize: DEFAUL_PAGE_SIZE_OPTIONS[0],
     page: 0,
   });
 
-  const [coinsFilterType, setCoinsFilterType] = useState(CoinsFilterType.ALL);
-
-  const filteredData = React.useMemo(() => {
-    switch (coinsFilterType) {
-      case CoinsFilterType.TRADEABLE:
-        return data.filter((coin) => coin.isTradeable);
-      case CoinsFilterType.NEW:
-        return data.filter((coin) => coin.isNew);
-      case CoinsFilterType.GAINERS:
-        return [...data].sort((a, b) => b.priceChange - a.priceChange);
-      case CoinsFilterType.LOSERS:
-        return [...data].sort((a, b) => a.priceChange - b.priceChange);
-      default:
-        return data;
-    }
-  }, [data, coinsFilterType]);
-
   const formatPrice = (value: number) => {
-    return new Intl.NumberFormat(Languages[language]?.languageCountryCode || 'en-US', {
-      style: 'currency',
-      currency: selectedCurrency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+    return new Intl.NumberFormat(
+      Languages[language]?.languageCountryCode || Languages.EN.languageCountryCode,
+      {
+        style: 'currency',
+        currency: selectedCurrency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      },
+    ).format(value);
   };
 
   const formatVolume = (value: number) => {
-    return new Intl.NumberFormat(Languages[language]?.languageCountryCode || 'en-US', {
-      style: 'currency',
-      currency: selectedCurrency,
-      notation: 'compact',
-      maximumFractionDigits: 2,
-    }).format(value);
+    return new Intl.NumberFormat(
+      Languages[language]?.languageCountryCode || Languages.EN.languageCountryCode,
+      {
+        style: 'currency',
+        currency: selectedCurrency,
+        notation: 'compact',
+        maximumFractionDigits: 2,
+      },
+    ).format(value);
   };
 
   const columns: GridColDef[] = [
     {
-      field: 'name',
-      headerName: t('asset', 'Asset'),
+      field: 'coinName',
+      headerName: t('table.coinName'),
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       renderCell: (params: GridRenderCellParams) => (
-        <CoinHeader coinSymbol={params.row.symbol} coinName={params.row.name} size="small" />
+        <CoinHeader
+          coinSymbol={params.row.coinSymbol}
+          coinName={params.row.coinName}
+          size="small"
+        />
       ),
       sortable: true,
       filterable: true,
@@ -94,8 +82,8 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({
     },
     {
       field: 'price',
-      headerName: t('price', 'Price'),
-      width: 130,
+      headerName: t('table.price'),
+      minWidth: 150,
       valueFormatter: (value) => {
         if (typeof value === 'number') {
           return formatPrice(value);
@@ -107,10 +95,10 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({
       headerAlign: 'right',
     },
     {
-      field: 'priceChange',
-      headerName: t('change', 'Change'),
-      width: 130,
-      renderCell: (params: GridRenderCellParams<any, CoinRowData>) => {
+      field: 'priceChange24',
+      headerName: t('table.priceChange24'),
+      minWidth: 150,
+      renderCell: (params: GridRenderCellParams<any, CoinsTableRowData>) => {
         const value = typeof params.value === 'number' ? params.value : 0;
         const isPositive = value > 0;
         const isNegative = value < 0;
@@ -134,9 +122,9 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({
       headerAlign: 'right',
     },
     {
-      field: 'volume',
-      headerName: t('volume', 'Volume'),
-      width: 140,
+      field: 'volume24',
+      headerName: t('table.volume24'),
+      minWidth: 150,
       valueFormatter: (value) => {
         if (typeof value === 'number') {
           return formatVolume(value);
@@ -149,13 +137,19 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({
     },
     {
       field: 'actions',
-      headerName: t('actions', 'Actions'),
-      width: 150,
-      renderCell: (params: GridRenderCellParams<any, CoinRowData>) => (
-        <Box sx={coinsDataGridStyles.actionsCell}>
+      headerName: t('table.actions'),
+      minWidth: 150,
+      renderCell: (params: GridRenderCellParams<any, CoinsTableRowData>) => (
+        <Box sx={coinsTableStyles.actionsCell}>
           {params.row.isTradeable && (
-            <Button variant="contained" size="small" sx={coinsDataGridStyles.tradeButton}>
-              {t('trade', 'Trade')}
+            <Button
+              component={Link}
+              to={ROUTES.SIGNIN}
+              variant="contained"
+              size="small"
+              sx={coinsTableStyles.tradeButton}
+            >
+              {t('table.trade')}
             </Button>
           )}
         </Box>
@@ -168,24 +162,18 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({
   ];
 
   return (
-    <Box sx={coinsDataGridStyles.gridContainer}>
-      <CoinsTableFilter
-        coinsFilterType={coinsFilterType}
-        setCoinsFilterType={setCoinsFilterType}
-        selectedCurrency={selectedCurrency}
-        setSelectedCurrency={setSelectedCurrency}
-      />
+    <Box sx={coinsTableStyles.gridContainer}>
       <DataGrid
-        rows={filteredData}
+        rows={data}
         columns={columns}
         loading={isLoading}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[10, 30, 50]}
+        pageSizeOptions={DEFAUL_PAGE_SIZE_OPTIONS}
         disableRowSelectionOnClick
         disableColumnMenu
         sx={{
-          ...coinsDataGridStyles.dataGrid,
+          ...coinsTableStyles.dataGrid,
           height: 'auto',
         }}
       />

@@ -51,4 +51,9 @@ export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
 /**
  * Default time in miliseconds for refreshing "top" coins price data (e.g.Tradeable,Top fainers, New on CoinChange...)
  */
-export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 5000; //10sec
+export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 5000; //milisec
+
+/**
+ * Default pagination options
+ */
+export const DEFAUL_PAGE_SIZE_OPTIONS = [10, 30, 50];

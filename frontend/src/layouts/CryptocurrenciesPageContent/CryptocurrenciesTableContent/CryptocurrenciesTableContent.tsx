@@ -5,8 +5,11 @@ import { cryptocurrenciesTableContentStyles } from './styles';
 import { useCoinsDataContext } from '../../../contexts/CoinsDataContext';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import { Languages } from '../../../constants/customConstants';
-import CoinsTable, { CoinRowData } from '../../../components/common/CoinsTable';
+import CoinsTable, { CoinsTableRowData } from '../../../components/common/CoinsTable';
 import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
+import CoinsTableFilter from '../../../components/common/CoinsTableFilter';
+import { CoinsFilterType } from '../../../constants/customEnums.ts';
+import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 
 const CryptocurrenciesTableContent: React.FC = () => {
   const { t } = useTranslation('cryptocurrenciesPage');
@@ -24,25 +27,29 @@ const CryptocurrenciesTableContent: React.FC = () => {
   }, [language]);
 
   // Conversion of data from context into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
-  const gridData = useMemo(() => {
-    if (!coinsData || !coinsData.get(selectedCurrency)) return [] as CoinRowData[];
+  const coinsTableRowData = useMemo(() => {
+    if (!coinsData || !coinsData.get(selectedCurrency)) return [] as CoinsTableRowData[];
 
-    // @ts-ignore
-    return Array.from(coinsData.get(selectedCurrency).values()).map(
-      ({ coinPair, isTradeable }) => ({
-        id: coinPair.product_id,
-        symbol: coinPair.base_currency_id,
-        name: coinPair.base_name,
-        price: parseFloat(coinPair.price || '0'),
-        priceChange: parseFloat(coinPair.price_percentage_change_24h || '0'),
-        volume: parseFloat(coinPair.approximate_quote_24h_volume || '0'),
-        isTradeable: isTradeable,
-        isNew: Boolean(coinPair.new), // ensuring that the value will always be boolean
-        fullData: coinPair,
-        currency: selectedCurrency,
-      }),
-    ) as CoinRowData[];
+    return convertCoinsDataIntoCoinsTableRowData(coinsData, selectedCurrency);
   }, [coinsData, selectedCurrency]);
+
+  //setting selected coin filter from CoinsTableFilter, default is ALL
+  const [coinsFilterType, setCoinsFilterType] = useState(CoinsFilterType.ALL);
+
+  const filteredData = React.useMemo(() => {
+    switch (coinsFilterType) {
+      case CoinsFilterType.TRADEABLE:
+        return coinsTableRowData.filter((coin) => coin.isTradeable);
+      case CoinsFilterType.NEW:
+        return coinsTableRowData.filter((coin) => coin.isNew);
+      case CoinsFilterType.GAINERS:
+        return [...coinsTableRowData].sort((a, b) => b.priceChange24 - a.priceChange24);
+      case CoinsFilterType.LOSERS:
+        return [...coinsTableRowData].sort((a, b) => a.priceChange24 - b.priceChange24);
+      default:
+        return coinsTableRowData;
+    }
+  }, [coinsTableRowData, coinsFilterType]);
 
   return (
     <Box sx={cryptocurrenciesTableContentStyles.container}>
@@ -51,16 +58,18 @@ const CryptocurrenciesTableContent: React.FC = () => {
           {t('tableTitle', 'Crypto prices')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {gridData.length} {t('assets', 'assets')}
+          {t('tableContent.total')} {coinsTableRowData.length}
         </Typography>
       </Box>
 
-      <CoinsTable
-        data={gridData}
-        isLoading={isLoading}
+      <CoinsTableFilter
+        coinsFilterType={coinsFilterType}
+        setCoinsFilterType={setCoinsFilterType}
         selectedCurrency={selectedCurrency}
         setSelectedCurrency={setSelectedCurrency}
       />
+
+      <CoinsTable data={filteredData} isLoading={isLoading} selectedCurrency={selectedCurrency} />
     </Box>
   );
 };

@@ -2,6 +2,7 @@ import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
 import { CoinsDataService } from '../dataServices/CoinsDataService.ts';
+import { CoinsTableRowData } from '../../components/common/CoinsTable';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
@@ -108,6 +109,11 @@ export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinP
     });
 };
 
+/**
+ * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
+ * @param displayedCoins - coins to be displayed within e.g. CoinCard
+ * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
+ */
 export const updateCoinsPrices = async (displayedCoins: CoinPair[]): Promise<CoinPair[]> => {
   return Promise.all(
     displayedCoins.map(async (coin) => {
@@ -122,4 +128,29 @@ export const updateCoinsPrices = async (displayedCoins: CoinPair[]): Promise<Coi
       };
     }),
   );
+};
+
+/**
+ * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
+ * @param coinsData - original coinsData to be converted
+ * @param selectedCurrency - currency to be used to filter coins matching this currency
+ * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
+ */
+export const convertCoinsDataIntoCoinsTableRowData = (
+  coinsData: CoinsMap,
+  selectedCurrency: string,
+): CoinsTableRowData[] => {
+  // @ts-ignore
+  return Array.from(coinsData.get(selectedCurrency).values()).map(({ coinPair, isTradeable }) => ({
+    id: coinPair.product_id,
+    coinSymbol: coinPair.base_currency_id,
+    coinName: coinPair.base_name,
+    price: parseFloat(coinPair.price || '0'),
+    priceChange24: parseFloat(coinPair.price_percentage_change_24h || '0'),
+    volume24: parseFloat(coinPair.approximate_quote_24h_volume || '0'),
+    isNew: Boolean(coinPair.new), // ensuring that the value will always be boolean
+    isTradeable: isTradeable,
+    fiatCurrency: selectedCurrency,
+    fullCoinPairData: coinPair,
+  }));
 };

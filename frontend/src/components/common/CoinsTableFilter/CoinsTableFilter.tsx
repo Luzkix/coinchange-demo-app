@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CoinsFilterType } from '../../../../constants/customEnums.ts';
+import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { Box, Button, Menu, MenuItem } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { SUPPORTED_CURRENCIES } from '../../../../constants/configVariables.ts';
-import { coinsTableFilterStyles } from './styles';
+import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
+import { coinsTableFilterStyles } from './styles.ts';
 
 interface CoinsTableFilterProps {
   coinsFilterType: CoinsFilterType;

@@ -52,5 +52,5 @@ app.get('/health', (req, res) => {
 
 // Spuštění serveru
 app.listen(PORT, () => {
-  console.log(`Proxy server běží na http://localhost:${PORT}`);
+  console.log(`Proxy server is running on http://localhost:${PORT}`);
 });
