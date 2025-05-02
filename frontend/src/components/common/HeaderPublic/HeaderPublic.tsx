@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
@@ -24,6 +24,7 @@ export const HeaderPublic: React.FC = () => {
   const { language, setLanguage } = useGeneralContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const location = useLocation();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -32,6 +33,11 @@ export const HeaderPublic: React.FC = () => {
     setLanguage(lng);
     i18n.changeLanguage(lng);
     handleClose();
+  };
+
+  // Funtion for checking whether the path is active
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -43,7 +49,14 @@ export const HeaderPublic: React.FC = () => {
           </Typography>
 
           <Box sx={headerStyles.navContainer}>
-            <Button component={Link} to={ROUTES.CRYPTOCURRENCIES} color="inherit">
+            <Button
+              component={Link}
+              to={ROUTES.CRYPTOCURRENCIES}
+              sx={{
+                ...headerStyles.navButton,
+                ...(isActive(ROUTES.CRYPTOCURRENCIES) && headerStyles.activeNavButton),
+              }}
+            >
               {t('header.cryptocurrencies')}
             </Button>
 
@@ -71,7 +84,14 @@ export const HeaderPublic: React.FC = () => {
               </MenuItem>
             </Menu>
 
-            <Button component={Link} to={ROUTES.SIGNIN} color="inherit">
+            <Button
+              component={Link}
+              to={ROUTES.SIGNIN}
+              sx={{
+                ...headerStyles.navButton,
+                ...(isActive(ROUTES.SIGNIN) && headerStyles.activeNavButton),
+              }}
+            >
               {t('header.signIn')}
             </Button>
             <Button component={Link} to={ROUTES.SIGNUP} variant="contained" color="primary">

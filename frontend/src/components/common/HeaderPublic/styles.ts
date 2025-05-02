@@ -21,4 +21,14 @@ export const headerStyles: Record<string, SxProps<Theme>> = {
     gap: 2,
     color: '#0A0B0D',
   },
+  navButton: {
+    textTransform: 'none',
+    color: 'inherit',
+    '&:hover': {
+      backgroundColor: 'action.hover',
+    },
+  },
+  activeNavButton: {
+    backgroundColor: 'action.hover',
+  },
 };
