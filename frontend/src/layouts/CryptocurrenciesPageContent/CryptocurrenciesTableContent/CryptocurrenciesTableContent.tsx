@@ -55,7 +55,7 @@ const CryptocurrenciesTableContent: React.FC = () => {
     <Box sx={cryptocurrenciesTableContentStyles.container}>
       <Box sx={cryptocurrenciesTableContentStyles.titleContainer}>
         <Typography variant="h5" sx={cryptocurrenciesTableContentStyles.title}>
-          {t('tableTitle', 'Crypto prices')}
+          {t('tableContent.cryptocurrenciesTableTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {t('tableContent.total')} {coinsTableRowData.length}

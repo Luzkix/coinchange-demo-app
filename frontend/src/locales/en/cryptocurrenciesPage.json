@@ -16,6 +16,11 @@
     "trade": "Trade"
   },
 
+  "tableContent": {
+    "total": "Total:",
+    "cryptocurrenciesTableTitle": "Cryptocurrencies Overview"
+  },
+
   "topCoins": {
     "topGainers": "Top gainers",
     "newOnCoinChange": "New on CoinChange"
