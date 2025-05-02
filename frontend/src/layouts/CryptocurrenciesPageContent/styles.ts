@@ -3,7 +3,7 @@ import { SxProps, Theme } from '@mui/material';
 export const cryptocurrenciesPageContentStyles: Record<string, SxProps<Theme>> = {
   container: {
     display: 'flex',
-    gap: 1,
+    gap: 2,
     p: 0,
     mt: 2,
     '@media (max-width: 900px)': {
