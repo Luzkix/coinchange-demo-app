@@ -8,7 +8,7 @@ import ROUTES from '../../../constants/routes.ts';
 const introPicture = '/intro_pic.webp';
 
 export const Introduction: React.FC = () => {
-  const { t } = useTranslation('homepage');
+  const { t } = useTranslation(['homepage']);
 
   return (
     <Box sx={introductionStyles.container}>

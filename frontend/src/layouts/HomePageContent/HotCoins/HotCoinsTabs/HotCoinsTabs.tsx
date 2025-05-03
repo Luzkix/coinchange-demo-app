@@ -16,14 +16,29 @@ import {
   DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../../constants/configVariables.ts';
+import { ErrorPopup } from '../../../../components/common/ErrorPopup/ErrorPopup.tsx';
+import { FetchCoinStatsError } from '../../../../services/dataServices/errors.ts';
 
 export const HotCoinsTabs: React.FC = () => {
-  const { t } = useTranslation('homepage');
+  const { t } = useTranslation(['homepage']);
   const { coinsData } = useCoinsDataContext();
   const { language } = useGeneralContext();
 
   //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
+
+  // Error states + error handling functions
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleDisplayError = (message: string) => {
+    setErrorMessage(message);
+    setDisplayError(true);
+  };
+
+  const handleCloseError = () => {
+    setDisplayError(false);
+  };
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
   const topGainerCoins = useMemo(
@@ -64,6 +79,10 @@ export const HotCoinsTabs: React.FC = () => {
         setDisplayedTopGainers(updatedCoinPrices);
       } catch (error) {
         console.error('Error updating prices:', error);
+
+        if (error instanceof FetchCoinStatsError) {
+          handleDisplayError(t('errors:message.fetchCoinStatsError'));
+        }
       }
     };
 
@@ -81,6 +100,10 @@ export const HotCoinsTabs: React.FC = () => {
         setDisplayedTradeableCoins(updatedCoinPrices);
       } catch (error) {
         console.error('Error updating prices:', error);
+
+        if (error instanceof FetchCoinStatsError) {
+          handleDisplayError(t('errors:message.fetchCoinStatsError'));
+        }
       }
     };
 
@@ -123,6 +146,9 @@ export const HotCoinsTabs: React.FC = () => {
           />
         ))}
       </Grid>
+
+      {/* Error popup */}
+      <ErrorPopup open={displayError} onClose={handleCloseError} errorMessage={errorMessage} />
     </Box>
   );
 };

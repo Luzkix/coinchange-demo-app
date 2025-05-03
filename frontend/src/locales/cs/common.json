@@ -12,5 +12,8 @@
     "cookiePolicy": "Zásady cookies",
     "acceptAll": "Přijmout vše",
     "close": "Zavřít"
+  },
+  "button": {
+    "close": "Zavřít"
   }
 }

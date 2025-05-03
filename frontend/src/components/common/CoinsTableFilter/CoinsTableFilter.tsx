@@ -20,7 +20,7 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
   selectedCurrency,
   setSelectedCurrency,
 }) => {
-  const { t } = useTranslation('cryptocurrenciesPage');
+  const { t } = useTranslation(['cryptocurrenciesPage']);
 
   // Constants + state for managing 'coins filter type' menu
   const [coinFilterTypeAnchorEl, setCoinFilterTypeAnchorEl] = useState<null | HTMLElement>(null);

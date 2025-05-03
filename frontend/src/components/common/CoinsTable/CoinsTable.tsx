@@ -31,7 +31,7 @@ interface CoinsDataGridProps {
 }
 
 const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, isLoading, selectedCurrency }) => {
-  const { t } = useTranslation('cryptocurrenciesPage');
+  const { t } = useTranslation(['cryptocurrenciesPage']);
   const { language } = useGeneralContext();
 
   const [paginationModel, setPaginationModel] = useState({

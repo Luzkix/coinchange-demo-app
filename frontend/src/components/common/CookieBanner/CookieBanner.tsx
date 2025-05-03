@@ -8,7 +8,7 @@ interface CookieBannerProps {
 }
 
 export const CookieBanner: React.FC<CookieBannerProps> = ({ onAccept, onClose }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common']);
 
   const handleAccept = () => {
     onAccept();

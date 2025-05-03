@@ -12,7 +12,7 @@ import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 
 const CryptocurrenciesTableContent: React.FC = () => {
-  const { t } = useTranslation('cryptocurrenciesPage');
+  const { t } = useTranslation(['cryptocurrenciesPage']);
   const { coinsData, isLoading } = useCoinsDataContext();
   const { language } = useGeneralContext();
 

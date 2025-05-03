@@ -1,0 +1,9 @@
+{
+  "title": {
+    "genericErrorTitle": "Error occurred!"
+  },
+  "message": {
+    "fetchCoinsDataError": "Unable to fetch data about cryptoassets.",
+    "fetchCoinStatsError": "Unable to refresh the price of cryptoasset."
+  }
+}

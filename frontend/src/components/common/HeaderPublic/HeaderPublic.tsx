@@ -20,7 +20,7 @@ import { SupportedLanguageEnum } from '../../../constants/customEnums.ts';
 import { Languages } from '../../../constants/customConstants.ts';
 
 export const HeaderPublic: React.FC = () => {
-  const { t, i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation(['common']);
   const { language, setLanguage } = useGeneralContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

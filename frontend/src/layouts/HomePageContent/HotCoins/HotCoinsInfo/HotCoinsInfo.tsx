@@ -6,7 +6,7 @@ import { hotCoinsInfoStyles } from './styles.ts';
 import ROUTES from '../../../../constants/routes.ts';
 
 export const HotCoinsInfo: React.FC = () => {
-  const { t } = useTranslation('homepage');
+  const { t } = useTranslation(['homepage']);
 
   return (
     <Box sx={hotCoinsInfoStyles.container}>

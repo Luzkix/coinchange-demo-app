@@ -16,14 +16,29 @@ import {
   DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../constants/configVariables.ts';
+import { FetchCoinStatsError } from '../../../services/dataServices/errors.ts';
+import { ErrorPopup } from '../../../components/common/ErrorPopup/ErrorPopup.tsx';
 
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
-  const { t } = useTranslation('cryptocurrenciesPage');
+  const { t } = useTranslation(['cryptocurrenciesPage', 'errors']);
   const { coinsData } = useCoinsDataContext();
   const { language } = useGeneralContext();
 
   //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency;
+
+  // Error states + error handling functions
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleDisplayError = (message: string) => {
+    setErrorMessage(message);
+    setDisplayError(true);
+  };
+
+  const handleCloseError = () => {
+    setDisplayError(false);
+  };
 
   //initial generation of topGainerCoins and newCoins from coinsData (note: these constants will be updated whenever coinsData are refreshed and changed)
   const topGainerCoins = useMemo(
@@ -48,7 +63,7 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
     }
   }, [coinsData, selectedCurrency]);
 
-  // displayedTopGainers: using useEffect to fetch and assign most recent price for each coin
+  // displayedTopGainers: using useEffect to fetch and assign most recent price for each coin every x seconds
   useEffect(() => {
     const fetchAndUpdate = async () => {
       try {
@@ -57,6 +72,10 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
         setDisplayedTopGainers(updatedCoinPrices);
       } catch (error) {
         console.error('Error updating prices:', error);
+
+        if (error instanceof FetchCoinStatsError) {
+          handleDisplayError(t('errors:message.fetchCoinStatsError'));
+        }
       }
     };
 
@@ -67,7 +86,7 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
     };
   }, [displayedTopGainers]);
 
-  // displayedNewCoins: using useEffect to fetch and assign most recent price for each coin
+  // displayedNewCoins: using useEffect to fetch and assign most recent price for each coin every x seconds
   useEffect(() => {
     const fetchAndUpdate = async () => {
       try {
@@ -76,6 +95,9 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
         setDisplayedNewCoins(updatedCoinPrices);
       } catch (error) {
         console.error('Error updating prices:', error);
+        if (error instanceof FetchCoinStatsError) {
+          handleDisplayError(t('errors:message.fetchCoinStatsError'));
+        }
       }
     };
 
@@ -129,6 +151,9 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Error popup */}
+      <ErrorPopup open={displayError} onClose={handleCloseError} errorMessage={errorMessage} />
     </Box>
   );
 };

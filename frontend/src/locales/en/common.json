@@ -12,5 +12,8 @@
     "cookiePolicy": "Cookie Policy",
     "acceptAll": "Accept all",
     "close": "Close"
+  },
+  "button": {
+    "close": "Close"
   }
 }
