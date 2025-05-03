@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Route, Routes } from 'react-router-dom';
@@ -11,14 +11,10 @@ import PublicLayout from './layouts/skeleton/publicLayout';
 // Pages (obsahují pouze specifický obsah dané stránky)
 import HomePage from './pages/HomePage';
 import { CoinsDataContextProvider } from './contexts/CoinsDataContext.tsx';
-import { CoinsDataService } from './services/dataServices/CoinsDataService.ts';
 import { GeneralContextProvider } from './contexts/GeneralContext.tsx';
 import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
 
-const App: React.FC = () => {
-  // Initialization of alternative BASE urls at app startup using own proxy server to deal with CORS errors
-  CoinsDataService.initializeApi();
-
+const App: FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
