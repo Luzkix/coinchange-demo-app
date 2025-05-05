@@ -3,7 +3,6 @@ import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
 import CoinCard from '../../../../components/common/CoinCard';
-import { useCoinsDataContext } from '../../../../contexts/CoinsDataContext.tsx';
 import {
   getTopGainers,
   getTradeableCoins,
@@ -17,12 +16,17 @@ import {
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../../constants/configVariables.ts';
 import { ErrorPopup } from '../../../../components/common/ErrorPopup/ErrorPopup.tsx';
-import { FetchCoinStatsError } from '../../../../services/dataServices/errors.ts';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { creteFetchCoinsDataOptions } from '../../../../constants/customQueryOptions.ts';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation(['homepage']);
-  const { coinsData } = useCoinsDataContext();
   const { language } = useGeneralContext();
+
+  const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
+  const coinsData = fetchedCoinsDataResult.data;
+
+  const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used
 
   //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
@@ -73,17 +77,14 @@ export const HotCoinsTabs: React.FC = () => {
   // displayedTopGainers: using useEffect to fetch and assign most recent price for each coin
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      try {
-        if (displayedTopGainers.length === 0) return;
-        const updatedCoinPrices = await updateCoinsPrices(displayedTopGainers);
-        setDisplayedTopGainers(updatedCoinPrices);
-      } catch (error) {
-        console.error('Error updating prices:', error);
-
-        if (error instanceof FetchCoinStatsError) {
-          handleDisplayError(t('errors:message.fetchCoinStatsError'));
-        }
-      }
+      if (displayedTopGainers.length === 0) return;
+      const updatedCoinPrices = await updateCoinsPrices(
+        displayedTopGainers,
+        queryClient,
+        t,
+        handleDisplayError,
+      );
+      setDisplayedTopGainers(updatedCoinPrices);
     };
 
     const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);
@@ -94,17 +95,14 @@ export const HotCoinsTabs: React.FC = () => {
   // displayedTradeableCoins: using useEffect to fetch and assign most recent price for each coin
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      try {
-        if (displayedTradeableCoins.length === 0) return;
-        const updatedCoinPrices = await updateCoinsPrices(displayedTradeableCoins);
-        setDisplayedTradeableCoins(updatedCoinPrices);
-      } catch (error) {
-        console.error('Error updating prices:', error);
-
-        if (error instanceof FetchCoinStatsError) {
-          handleDisplayError(t('errors:message.fetchCoinStatsError'));
-        }
-      }
+      if (displayedTradeableCoins.length === 0) return;
+      const updatedCoinPrices = await updateCoinsPrices(
+        displayedTradeableCoins,
+        queryClient,
+        t,
+        handleDisplayError,
+      );
+      setDisplayedTradeableCoins(updatedCoinPrices);
     };
 
     const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTopCoinsContentStyles } from './styles';
-import { useCoinsDataContext } from '../../../contexts/CoinsDataContext.tsx';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../constants/customConstants.ts';
 import {
@@ -16,13 +15,18 @@ import {
   DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../constants/configVariables.ts';
-import { FetchCoinStatsError } from '../../../services/dataServices/errors.ts';
 import { ErrorPopup } from '../../../components/common/ErrorPopup/ErrorPopup.tsx';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const { t } = useTranslation(['cryptocurrenciesPage', 'errors']);
-  const { coinsData } = useCoinsDataContext();
   const { language } = useGeneralContext();
+
+  const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
+  const coinsData = fetchedCoinsDataResult.data;
+
+  const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used
 
   //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency;
@@ -66,17 +70,14 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
   // displayedTopGainers: using useEffect to fetch and assign most recent price for each coin every x seconds
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      try {
-        if (displayedTopGainers.length === 0) return;
-        const updatedCoinPrices = await updateCoinsPrices(displayedTopGainers);
-        setDisplayedTopGainers(updatedCoinPrices);
-      } catch (error) {
-        console.error('Error updating prices:', error);
-
-        if (error instanceof FetchCoinStatsError) {
-          handleDisplayError(t('errors:message.fetchCoinStatsError'));
-        }
-      }
+      if (displayedTopGainers.length === 0) return;
+      const updatedCoinPrices = await updateCoinsPrices(
+        displayedTopGainers,
+        queryClient,
+        t,
+        handleDisplayError,
+      );
+      setDisplayedTopGainers(updatedCoinPrices);
     };
 
     const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);
@@ -89,16 +90,14 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
   // displayedNewCoins: using useEffect to fetch and assign most recent price for each coin every x seconds
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      try {
-        if (displayedNewCoins.length === 0) return;
-        const updatedCoinPrices = await updateCoinsPrices(displayedNewCoins);
-        setDisplayedNewCoins(updatedCoinPrices);
-      } catch (error) {
-        console.error('Error updating prices:', error);
-        if (error instanceof FetchCoinStatsError) {
-          handleDisplayError(t('errors:message.fetchCoinStatsError'));
-        }
-      }
+      if (displayedNewCoins.length === 0) return;
+      const updatedCoinPrices = await updateCoinsPrices(
+        displayedNewCoins,
+        queryClient,
+        t,
+        handleDisplayError,
+      );
+      setDisplayedNewCoins(updatedCoinPrices);
     };
 
     const interval = setInterval(fetchAndUpdate, DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED);

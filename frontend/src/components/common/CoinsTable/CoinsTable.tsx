@@ -26,11 +26,10 @@ export interface CoinsTableRowData {
 
 interface CoinsDataGridProps {
   data: CoinsTableRowData[];
-  isLoading: boolean;
   selectedCurrency: string;
 }
 
-const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, isLoading, selectedCurrency }) => {
+const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) => {
   const { t } = useTranslation(['cryptocurrenciesPage']);
   const { language } = useGeneralContext();
 
@@ -166,7 +165,6 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, isLoading, selectedCur
       <DataGrid
         rows={data}
         columns={columns}
-        loading={isLoading}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={DEFAUL_PAGE_SIZE_OPTIONS}

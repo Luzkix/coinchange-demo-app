@@ -1,4 +1,5 @@
 import { CoinPair } from '../api-generated/coinbase';
+import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './customEnums.ts';
 
 /**
  * Type for storing basic data about languages. Properties are:
@@ -27,3 +28,11 @@ export type FetchedCoinPair = { coinPair: CoinPair; isTradeable: boolean };
  *  )
  */
 export type CoinsMap = Map<string, Map<string, FetchedCoinPair>>;
+
+export interface FetchCoinsDataOptions {
+  limit?: number;
+  offset?: number;
+  productType?: CoinsTypeEnum;
+  productIds?: Array<string>;
+  productsSortOrder?: CoinsSortOrderTypeEnum;
+}

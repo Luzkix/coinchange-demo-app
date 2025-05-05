@@ -1,8 +1,11 @@
 import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
-import { CoinsDataService } from '../dataServices/CoinsDataService.ts';
 import { CoinsTableRowData } from '../../components/common/CoinsTable';
+import { QueryClient } from '@tanstack/react-query';
+import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
+import { FetchCoinStatsError } from '../dataServices/errors.ts';
+import { TFunction } from 'i18next';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
@@ -112,20 +115,40 @@ export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinP
 /**
  * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
  * @param displayedCoins - coins to be displayed within e.g. CoinCard
+ * @param queryClient - queryClient handed over from main component to be used for handling fetching calls
+ * @param t - translation hook handed over from main component to be used for creating error message
+ * @param handleDisplayError - displayError function handed over from main component to be used for creating error message
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
-export const updateCoinsPrices = async (displayedCoins: CoinPair[]): Promise<CoinPair[]> => {
+export const updateCoinsPrices = async (
+  displayedCoins: CoinPair[],
+  queryClient: QueryClient,
+  t?: TFunction<string[], undefined>,
+  handleDisplayError?: (errorMessage: string) => void,
+): Promise<CoinPair[]> => {
   return Promise.all(
     displayedCoins.map(async (coin) => {
-      const coinStats = await CoinsDataService.fetchCoinPairStats(coin.product_id);
-      return {
-        ...coin,
-        price: coinStats.last,
-        price_percentage_change_24h: getPriceChangePercentageFromStringNumbers(
-          coinStats.open,
-          coinStats.last,
-        ),
-      };
+      try {
+        const coinStats = await queryClient.fetchQuery(
+          createFetchCoinPairStatsOptions(coin.product_id),
+        );
+
+        return {
+          ...coin,
+          price: coinStats.last,
+          price_percentage_change_24h: getPriceChangePercentageFromStringNumbers(
+            coinStats.open,
+            coinStats.last,
+          ),
+        };
+      } catch (error) {
+        console.error('Error updating prices:', error);
+
+        if (error instanceof FetchCoinStatsError && handleDisplayError && t) {
+          handleDisplayError(t('errors:message.fetchCoinStatsError') + coin.product_id);
+        }
+        return coin;
+      }
     }),
   );
 };

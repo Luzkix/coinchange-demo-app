@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import HotCoinsInfo from './HotCoinsInfo';
 import HotCoinsTabs from './HotCoinsTabs';
 import { hotCoinsStyles } from './styles.ts';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 export const HotCoins: React.FC = () => {
   return (
     <Box sx={hotCoinsStyles.container}>
       <HotCoinsInfo />
-      <HotCoinsTabs />
+      <Suspense fallback={<CircularProgress />}>
+        <HotCoinsTabs />
+      </Suspense>
     </Box>
   );
 };

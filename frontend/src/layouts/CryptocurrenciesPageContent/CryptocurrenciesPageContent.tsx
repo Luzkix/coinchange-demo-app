@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import React, { Suspense } from 'react';
+import { Box, CircularProgress } from '@mui/material';
 import CryptocurrenciesTableContent from './CryptocurrenciesTableContent';
 import CryptocurrenciesTopCoinsContent from './CryptocurrenciesTopCoinsContent';
 import { cryptocurrenciesPageContentStyles } from './styles';
@@ -10,10 +10,14 @@ const CryptocurrenciesPageContent: React.FC = () => {
     <ContentBoxLarge>
       <Box sx={cryptocurrenciesPageContentStyles.container}>
         <Box sx={cryptocurrenciesPageContentStyles.mainColumn}>
-          <CryptocurrenciesTableContent />
+          <Suspense fallback={<CircularProgress />}>
+            <CryptocurrenciesTableContent />
+          </Suspense>
         </Box>
         <Box sx={cryptocurrenciesPageContentStyles.sideColumn}>
-          <CryptocurrenciesTopCoinsContent />
+          <Suspense fallback={<CircularProgress />}>
+            <CryptocurrenciesTopCoinsContent />
+          </Suspense>
         </Box>
       </Box>
     </ContentBoxLarge>

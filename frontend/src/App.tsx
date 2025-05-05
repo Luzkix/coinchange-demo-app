@@ -10,7 +10,6 @@ import PublicLayout from './layouts/skeleton/publicLayout';
 
 // Pages (obsahují pouze specifický obsah dané stránky)
 import HomePage from './pages/HomePage';
-import { CoinsDataContextProvider } from './contexts/CoinsDataContext.tsx';
 import { GeneralContextProvider } from './contexts/GeneralContext.tsx';
 import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
 
@@ -19,24 +18,22 @@ const App: FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GeneralContextProvider>
-        <CoinsDataContextProvider>
-          <Routes>
-            {/* Veřejné stránky (== ty bez přihlášení uživatele) - používají publicLayout */}
-            <Route element={<PublicLayout />}>
-              <Route path={ROUTES.HOME} element={<HomePage />} />
-              <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
-              {/* <Route path={ROUTES.SIGNIN} element={<SignInPage />} /> */}
-              {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage />} /> */}
-            </Route>
+        <Routes>
+          {/* Veřejné stránky (== ty bez přihlášení uživatele) - používají publicLayout */}
+          <Route element={<PublicLayout />}>
+            <Route path={ROUTES.HOME} element={<HomePage />} />
+            <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
+            {/* <Route path={ROUTES.SIGNIN} element={<SignInPage />} /> */}
+            {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage />} /> */}
+          </Route>
 
-            {/* Zde by v budoucnu byly další routy, např. pro přihlášené uživatele s jiným layoutem */}
+          {/* Zde by v budoucnu byly další routy, např. pro přihlášené uživatele s jiným layoutem */}
 
-            {/* Fallback route */}
-            <Route path="*" element={<PublicLayout />}>
-              <Route index element={<HomePage />} />
-            </Route>
-          </Routes>
-        </CoinsDataContextProvider>
+          {/* Fallback route */}
+          <Route path="*" element={<PublicLayout />}>
+            <Route index element={<HomePage />} />
+          </Route>
+        </Routes>
       </GeneralContextProvider>
     </ThemeProvider>
   );

@@ -6,9 +6,8 @@ import {
   SUPPORTED_COINS,
   SUPPORTED_CURRENCIES,
 } from '../../constants/configVariables.ts';
-import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from '../../constants/customEnums.ts';
 import { setApiBaseToProxyUrl } from '../../../proxy-server/setApiBase.ts';
-import { CoinsMap, FetchedCoinPair } from '../../constants/customTypes.ts';
+import { CoinsMap, FetchCoinsDataOptions, FetchedCoinPair } from '../../constants/customTypes.ts';
 import { ApiCoinStatsService, CoinStats } from '../../api-generated/coinbase-exchange';
 import { FetchCoinsDataError, FetchCoinStatsError } from './errors.ts';
 
@@ -30,21 +29,15 @@ export class CoinsDataService {
    *
    * @returns Promise returning loaded coins data organized as a CoinsMap data type
    */
-  public static async fetchCoinsData(
-    limit?: number,
-    offset?: number,
-    productType?: CoinsTypeEnum,
-    productIds?: Array<string>,
-    productsSortOrder?: CoinsSortOrderTypeEnum,
-  ): Promise<CoinsMap> {
+  public static async fetchCoinsData(options?: FetchCoinsDataOptions): Promise<CoinsMap> {
     try {
       // Step 1: Call the API with specified parameters or default ones if not specified
       const response = await ApiCoinPairService.getListOfCoinsWithTradingDetails(
-        limit ? limit : DEFAULT_LOADED_COINS_LIMIT, // limit
-        offset ? offset : undefined, // offset
-        productType ? productType : DEFAULT_COINS_TYPE, // productType
-        productIds ? productIds : undefined, // productIds
-        productsSortOrder ? productsSortOrder : DEFAULT_COINS_SORTING, // productsSortOrder
+        options && options.limit ? options.limit : DEFAULT_LOADED_COINS_LIMIT, // limit
+        options && options.offset ? options.offset : undefined, // offset
+        options && options.productType ? options.productType : DEFAULT_COINS_TYPE, // productType
+        options && options.productIds ? options.productIds : undefined, // productIds
+        options && options.productsSortOrder ? options.productsSortOrder : DEFAULT_COINS_SORTING, // productsSortOrder
       );
 
       // Step 2: Initialize the resulting map

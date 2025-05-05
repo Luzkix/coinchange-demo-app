@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
-import { useCoinsDataContext } from '../../../contexts/CoinsDataContext';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import { Languages } from '../../../constants/customConstants';
 import CoinsTable, { CoinsTableRowData } from '../../../components/common/CoinsTable';
@@ -10,11 +9,15 @@ import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
 import CoinsTableFilter from '../../../components/common/CoinsTableFilter';
 import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 
 const CryptocurrenciesTableContent: React.FC = () => {
   const { t } = useTranslation(['cryptocurrenciesPage']);
-  const { coinsData, isLoading } = useCoinsDataContext();
   const { language } = useGeneralContext();
+
+  const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
+  const coinsData = fetchedCoinsDataResult.data;
 
   const [selectedCurrency, setSelectedCurrency] = useState(
     Languages[language]?.currency || SUPPORTED_CURRENCIES[0],
@@ -69,7 +72,7 @@ const CryptocurrenciesTableContent: React.FC = () => {
         setSelectedCurrency={setSelectedCurrency}
       />
 
-      <CoinsTable data={filteredData} isLoading={isLoading} selectedCurrency={selectedCurrency} />
+      <CoinsTable data={filteredData} selectedCurrency={selectedCurrency} />
     </Box>
   );
 };
