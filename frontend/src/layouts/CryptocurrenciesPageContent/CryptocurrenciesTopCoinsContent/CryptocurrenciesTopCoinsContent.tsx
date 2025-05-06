@@ -19,8 +19,8 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
-  const { t } = useTranslation(['cryptocurrenciesPage', 'errors']);
-  const { language, addErrorPopup } = useGeneralContext();
+  const { t, i18n } = useTranslation(['cryptocurrenciesPage', 'errors']);
+  const { addErrorPopup } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
   const coinsData = fetchedCoinsDataResult.data;
@@ -28,7 +28,7 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used
 
   //currency is derived from selected language (English = USD, Czech = EUR)
-  const selectedCurrency = Languages[language].currency;
+  const selectedCurrency = Languages[i18n.language].currency;
 
   //initial generation of topGainerCoins and newCoins from coinsData (note: these constants will be updated whenever coinsData are refreshed and changed)
   const topGainerCoins = useMemo(

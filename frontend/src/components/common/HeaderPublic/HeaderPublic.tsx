@@ -15,13 +15,12 @@ import { useTranslation } from 'react-i18next';
 import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
 import ContentBox from '../../ui/ContentBox';
-import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { SupportedLanguageEnum } from '../../../constants/customEnums.ts';
 import { Languages } from '../../../constants/customConstants.ts';
+import { changeAndSaveLanguage } from '../../../locales/i18nConfig.ts';
 
 export const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation(['common']);
-  const { language, setLanguage } = useGeneralContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const location = useLocation();
@@ -30,8 +29,7 @@ export const HeaderPublic: React.FC = () => {
   const handleClose = () => setAnchorEl(null);
 
   const changeLanguage = (lng: string) => {
-    setLanguage(lng);
-    i18n.changeLanguage(lng);
+    changeAndSaveLanguage(lng);
     handleClose();
   };
 
@@ -71,13 +69,13 @@ export const HeaderPublic: React.FC = () => {
 
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
               <MenuItem
-                selected={language === SupportedLanguageEnum.ENGLISH}
+                selected={i18n.language === SupportedLanguageEnum.ENGLISH}
                 onClick={() => changeLanguage(SupportedLanguageEnum.ENGLISH)}
               >
                 {Languages[SupportedLanguageEnum.ENGLISH].localizedName}
               </MenuItem>
               <MenuItem
-                selected={language === SupportedLanguageEnum.CZECH}
+                selected={i18n.language === SupportedLanguageEnum.CZECH}
                 onClick={() => changeLanguage(SupportedLanguageEnum.CZECH)}
               >
                 {Languages[SupportedLanguageEnum.CZECH].localizedName}

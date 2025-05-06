@@ -19,8 +19,8 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../../constants/customQueryOptions.ts';
 
 export const HotCoinsTabs: React.FC = () => {
-  const { t } = useTranslation(['homepage']);
-  const { language, addErrorPopup } = useGeneralContext();
+  const { t, i18n } = useTranslation(['homepage']);
+  const { addErrorPopup } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
   const coinsData = fetchedCoinsDataResult.data;
@@ -28,7 +28,7 @@ export const HotCoinsTabs: React.FC = () => {
   const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used
 
   //currency is derived from selected language (English = USD, Czech = EUR)
-  const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
+  const selectedCurrency = Languages[i18n.language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
   const topGainerCoins = useMemo(

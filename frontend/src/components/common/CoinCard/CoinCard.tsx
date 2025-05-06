@@ -3,10 +3,10 @@ import { Box } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
-import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../constants/customConstants.ts';
 import { CoinHeader } from '../CoinHeader';
 import { convertStringNumberToRoundedNumber } from '../../../services/utils/numbersUtils.ts';
+import { useTranslation } from 'react-i18next';
 
 interface CoinCardProps {
   coinSymbol: string;
@@ -25,14 +25,14 @@ export const CoinCard: React.FC<CoinCardProps> = ({
   currency,
   size = 'medium',
 }) => {
-  const { language } = useGeneralContext();
+  const { i18n } = useTranslation();
 
   //conversion of string formats into number formats for select input variables
   const coinPriceNum = Number(coinPrice);
   const coinPriceChangeNum = convertStringNumberToRoundedNumber(coinPriceChange, 2);
 
   // Format price with local currency formatting
-  const formattedPrice = new Intl.NumberFormat(Languages[language].languageCountryCode, {
+  const formattedPrice = new Intl.NumberFormat(Languages[i18n.language].languageCountryCode, {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,

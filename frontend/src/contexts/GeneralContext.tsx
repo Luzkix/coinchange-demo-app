@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { SupportedLanguageEnum } from '../constants/customEnums.ts';
 import { ErrorPopup } from '../components/common/ErrorPopup/ErrorPopup.tsx';
 import { ErrorModal } from '../components/common/ErrorModal/ErrorModal.tsx';
 
@@ -15,8 +14,6 @@ interface ErrorModalState {
 
 // Interface pro data kontextu
 interface GeneralContextType {
-  language: string;
-  setLanguage: (lang: string) => void;
   cookiesAccepted: boolean;
   setCookiesAccepted: (accepted: boolean) => void;
   isAuthenticated: boolean;
@@ -35,9 +32,6 @@ export const useGeneralContext = (): GeneralContextType => {
 
 // Provider komponenta, která poskytuje kontext
 export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState(
-    localStorage.getItem('language') || SupportedLanguageEnum.ENGLISH,
-  );
   const [cookiesAccepted, setCookiesAccepted] = useState(
     localStorage.getItem('cookiesAccepted') === 'true',
   );
@@ -66,11 +60,6 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     setModalError(null);
   };
 
-  // Uložení jazykové preference do localStorage
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
   // Uložení preference cookies do localStorage
   useEffect(() => {
     localStorage.setItem('cookiesAccepted', cookiesAccepted.toString());
@@ -79,8 +68,6 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   return (
     <GeneralContext.Provider
       value={{
-        language,
-        setLanguage,
         cookiesAccepted,
         setCookiesAccepted,
         isAuthenticated,

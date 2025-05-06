@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
-import { useGeneralContext } from '../../../contexts/GeneralContext';
 import { Languages } from '../../../constants/customConstants';
 import CoinsTable, { CoinsTableRowData } from '../../../components/common/CoinsTable';
 import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
@@ -13,21 +12,20 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 
 const CryptocurrenciesTableContent: React.FC = () => {
-  const { t } = useTranslation(['cryptocurrenciesPage']);
-  const { language } = useGeneralContext();
+  const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
 
   const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
   const coinsData = fetchedCoinsDataResult.data;
 
   const [selectedCurrency, setSelectedCurrency] = useState(
-    Languages[language]?.currency || SUPPORTED_CURRENCIES[0],
+    Languages[i18n.language]?.currency || SUPPORTED_CURRENCIES[0],
   );
 
   useEffect(() => {
-    if (language) {
-      setSelectedCurrency(Languages[language].currency);
+    if (i18n.language) {
+      setSelectedCurrency(Languages[i18n.language].currency);
     }
-  }, [language]);
+  }, [i18n.language]);
 
   // Conversion of data from context into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
   const coinsTableRowData = useMemo(() => {

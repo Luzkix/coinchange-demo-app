@@ -5,7 +5,6 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from 'react-i18next';
 import { coinsTableStyles } from './styles';
-import { useGeneralContext } from '../../../contexts/GeneralContext';
 import { Languages } from '../../../constants/customConstants';
 import { CoinHeader } from '../CoinHeader';
 import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts';
@@ -30,8 +29,7 @@ interface CoinsDataGridProps {
 }
 
 const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) => {
-  const { t } = useTranslation(['cryptocurrenciesPage']);
-  const { language } = useGeneralContext();
+  const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
 
   const [paginationModel, setPaginationModel] = useState({
     pageSize: DEFAUL_PAGE_SIZE_OPTIONS[0],
@@ -40,7 +38,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat(
-      Languages[language]?.languageCountryCode || Languages.EN.languageCountryCode,
+      Languages[i18n.language]?.languageCountryCode || Languages.EN.languageCountryCode,
       {
         style: 'currency',
         currency: selectedCurrency,
@@ -52,7 +50,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
 
   const formatVolume = (value: number) => {
     return new Intl.NumberFormat(
-      Languages[language]?.languageCountryCode || Languages.EN.languageCountryCode,
+      Languages[i18n.language]?.languageCountryCode || Languages.EN.languageCountryCode,
       {
         style: 'currency',
         currency: selectedCurrency,
