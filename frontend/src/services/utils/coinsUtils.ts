@@ -117,14 +117,14 @@ export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinP
  * @param displayedCoins - coins to be displayed within e.g. CoinCard
  * @param queryClient - queryClient handed over from main component to be used for handling fetching calls
  * @param t - translation hook handed over from main component to be used for creating error message
- * @param handleDisplayError - displayError function handed over from main component to be used for creating error message
+ * @param addErrorPopup - error function handed over from main component to be used for creating error message
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
 export const updateCoinsPrices = async (
   displayedCoins: CoinPair[],
   queryClient: QueryClient,
+  addErrorPopup?: (message: string) => void,
   t?: TFunction<string[], undefined>,
-  handleDisplayError?: (errorMessage: string) => void,
 ): Promise<CoinPair[]> => {
   return Promise.all(
     displayedCoins.map(async (coin) => {
@@ -144,8 +144,8 @@ export const updateCoinsPrices = async (
       } catch (error) {
         console.error('Error updating prices:', error);
 
-        if (error instanceof FetchCoinStatsError && handleDisplayError && t) {
-          handleDisplayError(t('errors:message.fetchCoinStatsError') + coin.product_id);
+        if (error instanceof FetchCoinStatsError && addErrorPopup && t) {
+          addErrorPopup(t('errors:message.fetchCoinStatsError') + coin.product_id);
         }
         return coin;
       }

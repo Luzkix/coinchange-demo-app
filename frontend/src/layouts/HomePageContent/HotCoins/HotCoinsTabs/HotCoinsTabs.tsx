@@ -15,13 +15,12 @@ import {
   DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../../constants/configVariables.ts';
-import { ErrorPopup } from '../../../../components/common/ErrorPopup/ErrorPopup.tsx';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../../constants/customQueryOptions.ts';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t } = useTranslation(['homepage']);
-  const { language } = useGeneralContext();
+  const { language, addErrorPopup } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
   const coinsData = fetchedCoinsDataResult.data;
@@ -30,19 +29,6 @@ export const HotCoinsTabs: React.FC = () => {
 
   //currency is derived from selected language (English = USD, Czech = EUR)
   const selectedCurrency = Languages[language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
-
-  // Error states + error handling functions
-  const [displayError, setDisplayError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleDisplayError = (message: string) => {
-    setErrorMessage(message);
-    setDisplayError(true);
-  };
-
-  const handleCloseError = () => {
-    setDisplayError(false);
-  };
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
   const topGainerCoins = useMemo(
@@ -81,8 +67,8 @@ export const HotCoinsTabs: React.FC = () => {
       const updatedCoinPrices = await updateCoinsPrices(
         displayedTopGainers,
         queryClient,
+        addErrorPopup,
         t,
-        handleDisplayError,
       );
       setDisplayedTopGainers(updatedCoinPrices);
     };
@@ -99,8 +85,8 @@ export const HotCoinsTabs: React.FC = () => {
       const updatedCoinPrices = await updateCoinsPrices(
         displayedTradeableCoins,
         queryClient,
+        addErrorPopup,
         t,
-        handleDisplayError,
       );
       setDisplayedTradeableCoins(updatedCoinPrices);
     };
@@ -144,9 +130,6 @@ export const HotCoinsTabs: React.FC = () => {
           />
         ))}
       </Grid>
-
-      {/* Error popup */}
-      <ErrorPopup open={displayError} onClose={handleCloseError} errorMessage={errorMessage} />
     </Box>
   );
 };

@@ -1,8 +1,5 @@
 export const errorPopupStyles = {
   popup: {
-    position: 'fixed',
-    bottom: '20px',
-    right: '20px',
     zIndex: 2000,
     minWidth: '200px',
     maxWidth: '400px',

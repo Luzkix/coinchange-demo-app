@@ -54,6 +54,16 @@ export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
 export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 5000; //milisec
 
 /**
+ * Default time in miliseconds for automatic hiding of popup error messages
+ */
+export const DEFAULT_ERROR_POPUP_AUTOHIDE_TIME = 4000; //milisec
+
+/**
+ * Default number of popup error messages to be displayed simultaneously
+ */
+export const DEFAULT_NUMBER_OF_POPUP_ERROR_MESSAGES = 6;
+
+/**
  * Default pagination options
  */
 export const DEFAUL_PAGE_SIZE_OPTIONS = [10, 30, 50];
