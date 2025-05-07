@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
-import HeaderPublic from '../../../components/common/HeaderPublic/HeaderPublic.tsx';
+import HeaderPublic from '../../../components/common/navBar/HeaderPublic/HeaderPublic.tsx';
 import Footer from '../../../components/common/Footer/Footer.tsx';
 import CookieBanner from '../../../components/common/CookieBanner/CookieBanner.tsx';
 

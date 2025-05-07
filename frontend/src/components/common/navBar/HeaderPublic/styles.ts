@@ -1,5 +1,5 @@
 import { SxProps, Theme } from '@mui/material';
-import { signatureBlue } from '../../../styles/theme.ts';
+import { signatureBlue } from '../../../../styles/theme.ts';
 
 export const headerStyles: Record<string, SxProps<Theme>> = {
   appBar: {
