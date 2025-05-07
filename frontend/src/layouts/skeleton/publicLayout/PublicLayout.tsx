@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
-import HeaderPublic from '../../../components/common/HeaderPublic';
-import Footer from '../../../components/common/Footer';
-import CookieBanner from '../../../components/common/CookieBanner';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
+import HeaderPublic from '../../../components/common/HeaderPublic/HeaderPublic.tsx';
+import Footer from '../../../components/common/Footer/Footer.tsx';
+import CookieBanner from '../../../components/common/CookieBanner/CookieBanner.tsx';
 
 const PublicLayout: React.FC = () => {
   const { cookiesAccepted, setCookiesAccepted } = useGeneralContext();

@@ -1,7 +1,7 @@
 import React from 'react';
-import Introduction from './Introduction';
-import HotCoins from './HotCoins';
-import ContentBox from '../../components/ui/ContentBox';
+import Introduction from './Introduction/Introduction.tsx';
+import HotCoins from './HotCoins/HotCoins.tsx';
+import ContentBox from '../../components/ui/ContentBox/ContentBox.tsx';
 
 export const HomePageContent: React.FC = () => {
   return (

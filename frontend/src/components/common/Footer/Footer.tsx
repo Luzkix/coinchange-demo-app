@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import { useTranslation } from 'react-i18next';
 import { footerStyles } from './styles';
 import footerLinks from '../../../constants/footerLinks';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/ContentBox/ContentBox.tsx';
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation(['footer']);

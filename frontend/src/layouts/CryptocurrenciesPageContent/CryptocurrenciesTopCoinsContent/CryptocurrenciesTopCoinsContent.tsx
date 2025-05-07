@@ -9,7 +9,6 @@ import {
   getTopGainers,
   updateCoinsPrices,
 } from '../../../services/utils/coinsUtils.ts';
-import CoinCard from '../../../components/common/CoinCard';
 import Grid from '@mui/material/Grid';
 import {
   DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED,
@@ -17,6 +16,7 @@ import {
 } from '../../../constants/configVariables.ts';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
+import CoinCard from '../../../components/common/CoinCard/CoinCard.tsx';
 
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const { t, i18n } = useTranslation(['cryptocurrenciesPage', 'errors']);

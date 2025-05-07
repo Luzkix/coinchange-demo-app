@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
-import HotCoinsInfo from './HotCoinsInfo';
-import HotCoinsTabs from './HotCoinsTabs';
 import { hotCoinsStyles } from './styles.ts';
 import { Box, CircularProgress } from '@mui/material';
+import HotCoinsInfo from './HotCoinsInfo/HotCoinsInfo.tsx';
+import HotCoinsTabs from './HotCoinsTabs/HotCoinsTabs.tsx';
 
 export const HotCoins: React.FC = () => {
   return (

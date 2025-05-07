@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
-import CoinCard from '../../../../components/common/CoinCard';
 import {
   getTopGainers,
   getTradeableCoins,
@@ -17,6 +16,7 @@ import {
 } from '../../../../constants/configVariables.ts';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../../constants/customQueryOptions.ts';
+import CoinCard from '../../../../components/common/CoinCard/CoinCard.tsx';
 
 export const HotCoinsTabs: React.FC = () => {
   const { t, i18n } = useTranslation(['homepage']);

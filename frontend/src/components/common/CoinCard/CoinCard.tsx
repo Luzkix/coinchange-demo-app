@@ -4,9 +4,9 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { coinCardStyles } from './styles.ts';
 import { Languages } from '../../../constants/customConstants.ts';
-import { CoinHeader } from '../CoinHeader';
 import { convertStringNumberToRoundedNumber } from '../../../services/utils/numbersUtils.ts';
 import { useTranslation } from 'react-i18next';
+import CoinHeader from '../CoinHeader/CoinHeader.tsx';
 
 interface CoinCardProps {
   coinSymbol: string;

@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react';
 import { Box, CircularProgress } from '@mui/material';
-import CryptocurrenciesTableContent from './CryptocurrenciesTableContent';
-import CryptocurrenciesTopCoinsContent from './CryptocurrenciesTopCoinsContent';
 import { cryptocurrenciesPageContentStyles } from './styles';
-import ContentBoxLarge from '../../components/ui/ContentBoxLarge';
+import CryptocurrenciesTableContent from './CryptocurrenciesTableContent/CryptocurrenciesTableContent.tsx';
+import CryptocurrenciesTopCoinsContent from './CryptocurrenciesTopCoinsContent/CryptocurrenciesTopCoinsContent.tsx';
+import ContentBoxLarge from '../../components/ui/ContentBoxLarge/ContentBoxLarge.tsx';
 
 const CryptocurrenciesPageContent: React.FC = () => {
   return (

@@ -6,10 +6,10 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from 'react-i18next';
 import { coinsTableStyles } from './styles';
 import { Languages } from '../../../constants/customConstants';
-import { CoinHeader } from '../CoinHeader';
 import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts';
 import { Link } from 'react-router-dom';
 import ROUTES from '../../../constants/routes.ts';
+import CoinHeader from '../CoinHeader/CoinHeader.tsx';
 
 export interface CoinsTableRowData {
   id: string;

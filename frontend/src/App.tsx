@@ -6,7 +6,7 @@ import theme from './styles/theme';
 import ROUTES from './constants/routes';
 
 // Výchozí 'skeleton' layout je použit na všech stránkách dané sekce (typicky obsahuje hlavičku a patičku případně cookies banner)
-import PublicLayout from './layouts/skeleton/publicLayout';
+import PublicLayout from './layouts/skeleton/publicLayout/PublicLayout.tsx';
 
 // Pages (obsahují pouze specifický obsah dané stránky)
 import HomePage from './pages/HomePage';

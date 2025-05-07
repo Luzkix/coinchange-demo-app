@@ -14,10 +14,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { headerStyles } from './styles';
 import ROUTES from '../../../constants/routes';
-import ContentBox from '../../ui/ContentBox';
 import { SupportedLanguageEnum } from '../../../constants/customEnums.ts';
 import { Languages } from '../../../constants/customConstants.ts';
 import { changeAndSaveLanguage } from '../../../locales/i18nConfig.ts';
+import ContentBox from '../../ui/ContentBox/ContentBox.tsx';
 
 export const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation(['common']);

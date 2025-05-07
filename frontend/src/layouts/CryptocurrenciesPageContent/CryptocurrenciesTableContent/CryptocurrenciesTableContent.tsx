@@ -3,13 +3,15 @@ import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
 import { Languages } from '../../../constants/customConstants';
-import CoinsTable, { CoinsTableRowData } from '../../../components/common/CoinsTable';
 import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
-import CoinsTableFilter from '../../../components/common/CoinsTableFilter';
 import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
+import CoinsTable, {
+  CoinsTableRowData,
+} from '../../../components/common/CoinsTable/CoinsTable.tsx';
+import CoinsTableFilter from '../../../components/common/CoinsTableFilter/CoinsTableFilter.tsx';
 
 const CryptocurrenciesTableContent: React.FC = () => {
   const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
