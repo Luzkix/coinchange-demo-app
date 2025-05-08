@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import { navTabStyles } from './styles';
 
 interface NavTabProps {
@@ -16,17 +17,19 @@ const NavTab: React.FC<NavTabProps> = ({
   active = false,
   variant = 'default',
   onClick,
-}) => (
-  <Button
-    component="a"
-    href={to}
-    onClick={onClick}
-    variant={variant === 'primary' ? 'contained' : 'text'}
-    color={variant === 'primary' ? 'primary' : 'inherit'}
-    sx={navTabStyles.button(active, variant)}
-  >
-    {label}
-  </Button>
-);
+}) => {
+  return (
+    <Button
+      component={RouterLink}
+      to={to}
+      onClick={onClick}
+      variant={variant === 'primary' ? 'contained' : 'text'}
+      color={variant === 'primary' ? 'primary' : 'inherit'}
+      sx={navTabStyles.button(active, variant)}
+    >
+      {label}
+    </Button>
+  );
+};
 
 export default NavTab;

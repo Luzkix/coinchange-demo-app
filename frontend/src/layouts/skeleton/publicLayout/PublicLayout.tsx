@@ -5,14 +5,15 @@ import { useGeneralContext } from '../../../contexts/GeneralContext';
 import HeaderPublic from '../../../components/common/navBar/HeaderPublic/HeaderPublic.tsx';
 import Footer from '../../../components/common/Footer/Footer.tsx';
 import CookieBanner from '../../../components/common/CookieBanner/CookieBanner.tsx';
+import { publicLayoutStyles } from './styles.ts';
 
 const PublicLayout: React.FC = () => {
   const { cookiesAccepted, setCookiesAccepted } = useGeneralContext();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={publicLayoutStyles.root}>
       <HeaderPublic />
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={publicLayoutStyles.main}>
         <Outlet />
       </Box>
       <Footer />

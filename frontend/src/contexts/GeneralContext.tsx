@@ -7,7 +7,7 @@ interface ErrorPopupMessage {
   text: string;
 }
 
-interface ErrorModalState {
+interface ErrorModalMessage {
   title?: string;
   message: string;
 }
@@ -17,6 +17,7 @@ interface GeneralContextType {
   cookiesAccepted: boolean;
   setCookiesAccepted: (accepted: boolean) => void;
   isAuthenticated: boolean;
+  setIsAuthenticated: (authenticated: boolean) => void;
   addErrorPopup: (message: string) => void;
   addErrorModal: (message: string, title?: string) => void;
 }
@@ -35,11 +36,11 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   const [cookiesAccepted, setCookiesAccepted] = useState(
     localStorage.getItem('cookiesAccepted') === 'true',
   );
-  const [isAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Správa 2 typů errorů (popup a modal)
   const [errorPopupMessages, setErrorPopupMessages] = useState<ErrorPopupMessage[]>([]);
-  const [modalError, setModalError] = useState<ErrorModalState | null>(null);
+  const [modalError, setModalError] = useState<ErrorModalMessage | null>(null);
   const [messageId, setMessageId] = useState(0);
 
   const addErrorPopup = (message: string) => {
@@ -71,6 +72,7 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         cookiesAccepted,
         setCookiesAccepted,
         isAuthenticated,
+        setIsAuthenticated,
         addErrorPopup,
         addErrorModal,
       }}
