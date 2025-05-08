@@ -141,7 +141,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           {params.row.isTradeable && (
             <Button
               component={Link}
-              to={ROUTES.SIGNIN}
+              to={ROUTES.LOGIN}
               variant="contained"
               size="small"
               sx={coinsTableStyles.tradeButton}

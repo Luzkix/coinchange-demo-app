@@ -6,6 +6,7 @@ import './locales/i18nConfig.ts'; // Initialize i18n
 import App from './App';
 import { CoinsDataService } from './services/dataServices/CoinsDataService.ts';
 import { GeneralContextProvider } from './contexts/GeneralContext.tsx';
+import { AuthProvider } from './contexts/AuthContext.tsx';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -26,7 +27,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <GeneralContextProvider>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </GeneralContextProvider>
       </QueryClientProvider>
     </BrowserRouter>

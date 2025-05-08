@@ -1,9 +1,10 @@
 {
   "header": {
     "cryptocurrencies": "Kryptoměny",
-    "signIn": "Přihlásit se",
+    "login": "Přihlásit se",
     "signUp": "Registrovat se",
-    "language": "Jazyk"
+    "language": "Jazyk",
+    "logout": "Odhlásit se"
   },
   "cookieBanner": {
     "message": "Používáme cookies a podobné technologie na našich webových stránkách pro zlepšení a přizpůsobení vašeho zážitku, analýzu našeho provozu a pro bezpečnostní a marketingové účely. Vyberte \"Přijmout vše\" pro povolení CoinChange a jeho důvěryhodným partnerům používat cookies nebo klikněte na",

@@ -36,11 +36,7 @@ const HeaderPublic: React.FC = () => {
               currentLanguage={i18n.language}
               handleLanguageChange={handleLanguageChange}
             />
-            <NavTab
-              label={t('header.signIn')}
-              to={ROUTES.SIGNIN}
-              active={isActive(ROUTES.SIGNIN)}
-            />
+            <NavTab label={t('header.login')} to={ROUTES.LOGIN} active={isActive(ROUTES.LOGIN)} />
             <NavTab
               label={t('header.signUp')}
               to={ROUTES.SIGNUP}

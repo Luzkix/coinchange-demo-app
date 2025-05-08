@@ -9,10 +9,12 @@ import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher.tsx';
 import LogoLink from '../LogoLink/LogoLink.tsx';
 import ContentBox from '../../../ui/ContentBox/ContentBox.tsx';
 import { headerStyles } from '../HeaderPublic/styles.ts';
+import { useAuth } from '../../../../contexts/AuthContext.tsx';
 
-const HeaderPublic: React.FC = () => {
+const HeaderPrivate: React.FC = () => {
   const { t, i18n } = useTranslation(['common']);
   const location = useLocation();
+  const { logout } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -24,7 +26,7 @@ const HeaderPublic: React.FC = () => {
     <AppBar position="sticky" sx={headerStyles.appBar}>
       <ContentBox>
         <Toolbar sx={headerStyles.toolbar} disableGutters>
-          <LogoLink to={ROUTES.HOME} />
+          <LogoLink to={ROUTES.DASHBOARD} />
 
           <Box sx={headerStyles.navContainer}>
             <NavTab
@@ -36,6 +38,13 @@ const HeaderPublic: React.FC = () => {
               currentLanguage={i18n.language}
               handleLanguageChange={handleLanguageChange}
             />
+            <NavTab
+              label={t('header.logout')}
+              to={ROUTES.HOME}
+              active={false}
+              variant="primary"
+              onClick={logout}
+            />
           </Box>
         </Toolbar>
       </ContentBox>
@@ -43,4 +52,4 @@ const HeaderPublic: React.FC = () => {
   );
 };
 
-export default HeaderPublic;
+export default HeaderPrivate;

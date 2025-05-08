@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import theme from './styles/theme';
 import ROUTES from './constants/routes';
 
@@ -10,25 +10,44 @@ import PublicLayout from './layouts/skeleton/publicLayout/PublicLayout.tsx';
 
 import HomePage from './pages/HomePage';
 import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
+import DashboardPage from './pages/DashboardPage.tsx';
+import PrivateLayout from './layouts/skeleton/privateLayout/PrivateLayout.tsx';
+import { useAuth } from './contexts/AuthContext.tsx';
+import LoginPage from './pages/LoginPage.tsx';
+import SignUpPage from './pages/SignUpPage.tsx';
+
+// Komponenta pro kontrolu přihlášení
+const ProtectedRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} />;
+};
 
 const App: FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
-        {/* Veřejné stránky (== ty bez přihlášení uživatele) - používají publicLayout */}
+        {/* Veřejné routy */}
         <Route element={<PublicLayout />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
           <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
-          {/* <Route path={ROUTES.SIGNIN} element={<SignInPage />} /> */}
-          {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage />} /> */}
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         </Route>
-        {/* Zde by v budoucnu byly další routy, např. pro přihlášené uživatele s jiným layoutem */}
+
+        {/* Privátní routy */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <PrivateLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+        </Route>
 
         {/* Fallback route */}
-        <Route path="*" element={<PublicLayout />}>
-          <Route index element={<HomePage />} />
-        </Route>
+        <Route path="*" element={<Navigate to={ROUTES.HOME} />} />
       </Routes>
     </ThemeProvider>
   );

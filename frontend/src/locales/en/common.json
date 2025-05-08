@@ -1,9 +1,10 @@
 {
   "header": {
     "cryptocurrencies": "Cryptocurrencies",
-    "signIn": "Sign in",
+    "login": "Sign in",
     "signUp": "Sign up",
-    "language": "Language"
+    "language": "Language",
+    "logout": "Logout"
   },
   "cookieBanner": {
     "message": "We use cookies and similar technologies on our websites to enhance and tailor your experience, analyze our traffic, and for security and marketing. Select \"Accept All\" to allow CoinChange and its trusted affiliates and partners to use cookies or click",

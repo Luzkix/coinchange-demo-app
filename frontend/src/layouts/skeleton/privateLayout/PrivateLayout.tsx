@@ -3,12 +3,12 @@ import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import Footer from '../../../components/common/Footer/Footer.tsx';
 import { publicLayoutStyles } from '../publicLayout/styles.ts';
-import HeaderSignedIn from '../../../components/common/navBar/HeaderSignedIn/HeaderSignedIn.tsx';
+import HeaderPrivate from '../../../components/common/navBar/HeaderPrivate/HeaderPrivate.tsx';
 
-const SignedInLayout: React.FC = () => {
+const PrivateLayout: React.FC = () => {
   return (
     <Box sx={publicLayoutStyles.root}>
-      <HeaderSignedIn />
+      <HeaderPrivate />
       <Box component="main" sx={publicLayoutStyles.main}>
         <Outlet />
       </Box>
@@ -17,4 +17,4 @@ const SignedInLayout: React.FC = () => {
   );
 };
 
-export default SignedInLayout;
+export default PrivateLayout;
