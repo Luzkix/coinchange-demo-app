@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppBar, Box, Toolbar } from '@mui/material';
+import { AppBar, Box, Drawer, IconButton, Toolbar } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { headerStyles } from './styles.ts';
@@ -8,11 +9,15 @@ import { changeAndSaveLanguage } from '../../../../locales/i18nConfig.ts';
 import NavTab from '../NavTab/NavTab.tsx';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher.tsx';
 import LogoLink from '../LogoLink/LogoLink.tsx';
-import ContentBox from '../../../ui/ContentBox/ContentBox.tsx';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation(['common']);
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -21,11 +26,12 @@ const HeaderPublic: React.FC = () => {
   };
 
   return (
-    <AppBar position="sticky" sx={headerStyles.appBar}>
-      <ContentBox>
-        <Toolbar sx={headerStyles.toolbar} disableGutters>
-          <LogoLink to={ROUTES.HOME} />
+    <AppBar sx={headerStyles.appBar}>
+      <Toolbar sx={headerStyles.toolbar}>
+        <LogoLink to={ROUTES.HOME} sx={headerStyles.logo} />
 
+        {/* Desktop navigace */}
+        {!isMobile && (
           <Box sx={headerStyles.navContainer}>
             <NavTab
               label={t('header.cryptocurrencies')}
@@ -44,8 +50,51 @@ const HeaderPublic: React.FC = () => {
               variant="primary"
             />
           </Box>
-        </Toolbar>
-      </ContentBox>
+        )}
+
+        {/* Mobilní menu */}
+        {isMobile && (
+          <>
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={headerStyles.menuIconButton}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+              <Box sx={headerStyles.drawerContent} role="presentation">
+                <Box sx={theme.mixins.toolbar} />
+                <NavTab
+                  label={t('header.cryptocurrencies')}
+                  to={ROUTES.CRYPTOCURRENCIES}
+                  active={isActive(ROUTES.CRYPTOCURRENCIES)}
+                  onClick={() => setDrawerOpen(false)}
+                />
+                <LanguageSwitcher
+                  currentLanguage={i18n.language}
+                  handleLanguageChange={handleLanguageChange}
+                />
+                <NavTab
+                  label={t('header.login')}
+                  to={ROUTES.LOGIN}
+                  active={isActive(ROUTES.LOGIN)}
+                  onClick={() => setDrawerOpen(false)}
+                />
+                <NavTab
+                  label={t('header.signUp')}
+                  to={ROUTES.SIGNUP}
+                  active={isActive(ROUTES.SIGNUP)}
+                  variant="primary"
+                  onClick={() => setDrawerOpen(false)}
+                />
+              </Box>
+            </Drawer>
+          </>
+        )}
+      </Toolbar>
     </AppBar>
   );
 };
