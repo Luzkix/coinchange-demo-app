@@ -10,7 +10,7 @@ import PublicLayout from './layouts/skeleton/publicLayout/PublicLayout.tsx';
 
 import HomePage from './pages/HomePage';
 import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
-import DashboardPage from './pages/DashboardPage.tsx';
+import PortfolioPage from './pages/PortfolioPage.tsx';
 import PrivateLayout from './layouts/skeleton/privateLayout/PrivateLayout.tsx';
 import { useAuth } from './contexts/AuthContext.tsx';
 import LoginPage from './pages/LoginPage.tsx';
@@ -43,7 +43,7 @@ const App: FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+          <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
         </Route>
 
         {/* Fallback route */}

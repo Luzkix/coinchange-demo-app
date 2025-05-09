@@ -26,9 +26,14 @@ const HeaderPrivate: React.FC = () => {
     <AppBar position="sticky" sx={headerStyles.appBar}>
       <ContentBox>
         <Toolbar sx={headerStyles.toolbar} disableGutters>
-          <LogoLink to={ROUTES.DASHBOARD} />
+          <LogoLink to={ROUTES.PORTFOLIO} />
 
           <Box sx={headerStyles.navContainer}>
+            <NavTab
+              label={t('header.dashboard')}
+              to={ROUTES.PORTFOLIO}
+              active={isActive(ROUTES.PORTFOLIO)}
+            />
             <NavTab
               label={t('header.cryptocurrencies')}
               to={ROUTES.CRYPTOCURRENCIES}

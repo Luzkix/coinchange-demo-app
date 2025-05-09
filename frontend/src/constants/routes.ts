@@ -4,7 +4,7 @@ export const ROUTES = {
   CRYPTOCURRENCIES: '/cryptocurrencies',
   LOGIN: '/login',
   SIGNUP: '/signup',
-  DASHBOARD: '/dashboard',
+  PORTFOLIO: '/portfolio',
 };
 
 export default ROUTES;

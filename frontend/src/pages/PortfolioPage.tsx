@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const DashboardPage: React.FC = () => {
+const PortfolioPage: React.FC = () => {
   return <Box />;
 };
 
-export default DashboardPage;
+export default PortfolioPage;
