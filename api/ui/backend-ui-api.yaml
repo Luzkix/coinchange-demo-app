@@ -16,6 +16,7 @@ components:
       description: JWT Authorization header using the Bearer scheme.
   schemas:
     ErrorDto:
+      type: object
       properties:
         errorStatusValue:
           type: integer
@@ -34,6 +35,10 @@ components:
         errorBusinessCode:
           type: string
           example: USER_ALREADY_EXISTS
+      required:
+        - errorStatusValue
+        - errorStatus
+        - errorTime
     UserRegistrationRequestDto:
       type: object
       properties:
@@ -46,6 +51,10 @@ components:
         password:
           type: string
           example: JohnDowPassw
+      required:
+        - username
+        - email
+        - password
     UserLoginRequestDto:
       type: object
       properties:
@@ -55,6 +64,9 @@ components:
         password:
           type: string
           example: JohnDowPassw
+      required:
+        - usernameOrEmail
+        - password
     RoleDto:
       type: object
       properties:
@@ -62,6 +74,8 @@ components:
           type: string
           description: Name of the role.
           example: ADMIN
+          required:
+            - type
         operations:
           type: array
           description: List of operations associated with the role.
@@ -69,6 +83,11 @@ components:
             type: string
             description: Name of the operation.
             example: ACCESS_ADMIN_SECTION
+            required:
+              - type
+      required:
+        - roleName
+        - operations
     UserLoginResponseDto:
       type: object
       properties:
@@ -102,17 +121,30 @@ components:
           description: List of roles and their associated operations.
           items:
             $ref: '#/components/schemas/RoleDto'
+      required:
+        - id
+        - username
+        - email
+        - createdAt
+        - updatedAt
+        - validTo
+        - jwtToken
+        - roles
     RefreshTokenResponseDto:
       type: object
       properties:
         jwtToken:
           type: string
           example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+      required:
+        - jwtToken
 
 
 paths:
   /user/login:
     post:
+      tags:
+        - ApiUser
       summary: Login user
       operationId: loginUser
       description: |
@@ -139,6 +171,8 @@ paths:
                 $ref: '#/components/schemas/ErrorDto'
   /user/register:
     post:
+      tags:
+        - ApiUser
       summary: Register a new user
       operationId: createUser
       description: |
@@ -165,6 +199,8 @@ paths:
                 $ref: '#/components/schemas/ErrorDto'
   /user/refresh-token:
     post:
+      tags:
+        - ApiUser
       summary: Refresh JWT token
       operationId: refreshToken
       description: |

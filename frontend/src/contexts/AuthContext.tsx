@@ -8,7 +8,7 @@ interface AuthContextType {
 }
 
 interface User {
-  id: string;
+  id: number;
   email: string;
   roles: string[];
 }

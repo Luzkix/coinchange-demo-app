@@ -2,6 +2,7 @@
 export const ROUTES = {
   HOME: '/',
   CRYPTOCURRENCIES: '/cryptocurrencies',
+  CRYPTOCURRENCIES_PRIVATE: '/cryptocurrencies-private',
   LOGIN: '/login',
   SIGNUP: '/signup',
   PORTFOLIO: '/portfolio',

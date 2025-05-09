@@ -45,6 +45,18 @@ app.use(
   }),
 );
 
+// Vytvoření proxy pro vlastní backend
+app.use(
+  '/api-backend',
+  createProxyMiddleware({
+    target: 'http://localhost:2000/ui-api',
+    changeOrigin: true,
+    pathRewrite: {
+      '^/api-backend': '',
+    },
+  }),
+);
+
 // Jednoduchý health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'Proxy server is running' });

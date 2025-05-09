@@ -1,0 +1,20 @@
+// src/layouts/SignUpForm/styles.ts
+import { SxProps, Theme } from '@mui/material/styles';
+
+export const signUpFormStyles: Record<string, SxProps<Theme>> = {
+  formBox: {
+    maxWidth: 400,
+    mx: 'auto',
+    mt: 4,
+    p: 3,
+    boxShadow: 2,
+    borderRadius: 2,
+    backgroundColor: 'background.paper',
+  },
+  input: {
+    mb: 2,
+  },
+  button: {
+    mt: 2,
+  },
+};

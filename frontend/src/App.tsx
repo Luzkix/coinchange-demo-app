@@ -19,7 +19,7 @@ import SignUpPage from './pages/SignUpPage.tsx';
 // Komponenta pro kontrolu přihlášení
 const ProtectedRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} />;
+  return isAuthenticated ? children : <Navigate to={ROUTES.HOME} />;
 };
 
 const App: FC = () => {
@@ -44,6 +44,7 @@ const App: FC = () => {
           }
         >
           <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
+          <Route path={ROUTES.CRYPTOCURRENCIES_PRIVATE} element={<CryptocurrenciesPage />} />
         </Route>
 
         {/* Fallback route */}
