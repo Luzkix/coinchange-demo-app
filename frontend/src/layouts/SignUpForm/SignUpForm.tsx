@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { signUpFormStyles } from './styles';
+import { useTranslation } from 'react-i18next';
+import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
+import TextFieldCustom from '../../components/common/TextFieldCustom/TextFieldCustom';
 
 export interface SignUpFormData {
   username: string;
@@ -14,9 +17,10 @@ interface SignUpFormProps {
 }
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
+  const { t } = useTranslation(['signInSignUpPage']);
   const [form, setForm] = useState<SignUpFormData>({ username: '', email: '', password: '' });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -28,39 +32,30 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={signUpFormStyles.formBox}>
       <Typography variant="h5" gutterBottom>
-        Registrace
+        {t('signUp.title')}
       </Typography>
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        label="Uživatelské jméno"
+      <Typography variant="body2" gutterBottom>
+        {t('signUp.titleDesc')}
+      </Typography>
+      <TextFieldCustom
+        label={t('signUp.username')}
         name="username"
         value={form.username}
         onChange={handleChange}
-        sx={signUpFormStyles.input}
       />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        label="Email"
+      <TextFieldCustom
+        label={t('signUp.email')}
         name="email"
-        type="email"
         value={form.email}
         onChange={handleChange}
-        sx={signUpFormStyles.input}
+        type="email"
       />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        label="Heslo"
+      <TextFieldCustom
+        label={t('signUp.password')}
         name="password"
-        type="password"
         value={form.password}
         onChange={handleChange}
-        sx={signUpFormStyles.input}
+        type="password"
       />
       <Button
         type="submit"
@@ -70,8 +65,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
         disabled={isLoading}
         sx={signUpFormStyles.button}
       >
-        {isLoading ? 'Registruji...' : 'Registrovat'}
+        {isLoading ? t('signUp.registering') : t('signUp.register')}
       </Button>
+      <ModalLoaderBlocking isOpen={isLoading} />
     </Box>
   );
 };

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const LoginPage: React.FC = () => {
+const SignInPage: React.FC = () => {
   return <Box />;
 };
 
-export default LoginPage;
+export default SignInPage;

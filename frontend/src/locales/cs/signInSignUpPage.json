@@ -1,0 +1,15 @@
+{
+  "signUp": {
+    "title": "Vytvořte si účet",
+    "titleDesc": "Ovládejte vše co CoinChange nabízí pomocí jediného účtu",
+    "username": "Uživatelské jméno",
+    "email": "Email",
+    "password": "Heslo",
+    "register": "Registrovat",
+    "registering": "Registrování..."
+  },
+
+  "signIn": {
+
+  }
+}

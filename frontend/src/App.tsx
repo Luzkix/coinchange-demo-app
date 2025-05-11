@@ -13,7 +13,7 @@ import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
 import PortfolioPage from './pages/PortfolioPage.tsx';
 import PrivateLayout from './layouts/skeleton/privateLayout/PrivateLayout.tsx';
 import { useAuth } from './contexts/AuthContext.tsx';
-import LoginPage from './pages/LoginPage.tsx';
+import SignInPage from './pages/SignInPage.tsx';
 import SignUpPage from './pages/SignUpPage.tsx';
 
 // Komponenta pro kontrolu přihlášení
@@ -31,7 +31,7 @@ const App: FC = () => {
         <Route element={<PublicLayout />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
           <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.LOGIN} element={<SignInPage />} />
           <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         </Route>
 

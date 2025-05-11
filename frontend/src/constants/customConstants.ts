@@ -19,3 +19,14 @@ export const Languages: Record<string, Language> = {
     currency: 'EUR',
   },
 };
+
+/**
+ * Own email regex to be used throughout application
+ */
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+/**
+ * Own password regex (which comply with backend validations) to be used throughout application. Conditions for psw:
+ * - at least 4 characters length
+ */
+export const PASSWORD_REGEX = /^.{4,}$/;

@@ -9,7 +9,6 @@ export const signUpFormStyles: Record<string, SxProps<Theme>> = {
     p: 3,
     boxShadow: 2,
     borderRadius: 2,
-    backgroundColor: 'background.paper',
   },
   input: {
     mb: 2,

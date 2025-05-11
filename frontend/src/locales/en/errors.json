@@ -4,6 +4,10 @@
   },
   "message": {
     "fetchCoinsDataError": "Unable to fetch data about cryptoassets.",
-    "fetchCoinStatsError": "Unable to refresh the price of cryptoasset "
+    "fetchCoinStatsError": "Unable to refresh the price of cryptoasset ",
+    "emailFormatError": "Enter email address in correct format 'example@email.com'",
+    "passwordFormatError": "Password must be at least 4 characters long",
+    "invalidValueError": "Invalid value",
+    "fieldIsObligatoryError": "The field is obligatory"
   }
 }

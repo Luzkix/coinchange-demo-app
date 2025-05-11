@@ -1,0 +1,15 @@
+{
+  "signUp": {
+    "title": "Create your account",
+    "titleDesc": "Access all that CoinChange has to offer with a single account",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "registering": "Registering..."
+  },
+
+  "signIn": {
+
+  }
+}

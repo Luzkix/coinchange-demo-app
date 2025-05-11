@@ -4,7 +4,10 @@
   },
   "message": {
     "fetchCoinsDataError": "Nepodařilo se načíst data o kryptoměnách",
-    "fetchCoinStatsError": "Nepodařilo se zaktualizovat cenu kryptoměny "
-
+    "fetchCoinStatsError": "Nepodařilo se zaktualizovat cenu kryptoměny ",
+    "emailFormatError": "Zadejte email ve správném formátu 'example@email.com'",
+    "passwordFormatError": "Heslo musí mít alespoň 4 znaky",
+    "invalidValueError": "Neplatná hodnota",
+    "fieldIsObligatoryError": "Toto pole je povinné"
   }
 }
