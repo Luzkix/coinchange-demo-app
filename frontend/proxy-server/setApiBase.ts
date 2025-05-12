@@ -14,11 +14,11 @@ export function setApiBaseToProxyUrl(useProxy: boolean = true): void {
     // Using proxy server
     CoinbaseOpenAPI.BASE = 'http://localhost:5000/api-coinbase';
     CoinbaseExchangeOpenAPI.BASE = 'http://localhost:5000/api-coinbase-exchange';
-    BackendOpenAPI.BASE = 'http://localhost:5000/api-backend';
+    BackendOpenAPI.BASE = 'http://localhost:5000';
   } else {
     // Direct calls (will be blocked by CORS, just for info)
     CoinbaseOpenAPI.BASE = 'https://api.coinbase.com';
     CoinbaseExchangeOpenAPI.BASE = 'https://api.exchange.coinbase.com';
-    BackendOpenAPI.BASE = 'http://localhost:5000/api-backend';
+    BackendOpenAPI.BASE = 'http://localhost:2000';
   }
 }

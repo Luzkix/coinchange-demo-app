@@ -9,7 +9,7 @@ import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Operation;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.uiapi.model.*;
+import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;

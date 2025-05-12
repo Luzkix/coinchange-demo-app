@@ -1,7 +1,7 @@
 package org.luzkix.coinchange.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
-import org.luzkix.coinchange.openapi.uiapi.model.ErrorDto;
+import org.luzkix.coinchange.openapi.backendapi.model.ErrorDto;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

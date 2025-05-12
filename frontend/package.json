@@ -10,8 +10,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate:api": "openapi --input ../api/ui/backend-ui-api.yaml --output ./src/api-generated/backend && openapi --input ../api/public/coinbase-public-api.yaml --output ./src/api-generated/coinbase && openapi --input ../api/public/coinbase-exchange-public-api.yaml --output ./src/api-generated/coinbase-exchange",
-    "generate:backend-api": "openapi --input ../api/ui/backend-ui-api.yaml --output ./src/api-generated/backend",
+    "generate:api": "openapi --input ../api/private/backend-api.yaml --output ./src/api-generated/backend && openapi --input ../api/public/coinbase-public-api.yaml --output ./src/api-generated/coinbase && openapi --input ../api/public/coinbase-exchange-public-api.yaml --output ./src/api-generated/coinbase-exchange",
+    "generate:backend-api": "openapi --input ../api/private/backend-api.yaml --output ./src/api-generated/backend",
     "generate:coinbase-api": "openapi --input ../api/public/coinbase-public-api.yaml --output ./src/api-generated/coinbase",
     "generate:coinbase-exchange-api": "openapi --input ../api/public/coinbase-exchange-public-api.yaml --output ./src/api-generated/coinbase-exchange"
   },

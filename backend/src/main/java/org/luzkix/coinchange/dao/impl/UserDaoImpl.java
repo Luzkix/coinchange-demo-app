@@ -1,10 +1,10 @@
 package org.luzkix.coinchange.dao.impl;
 
 import jakarta.transaction.Transactional;
+import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
-import org.luzkix.coinchange.dao.UserDao;
+import org.luzkix.coinchange.openapi.backendapi.model.UserRegistrationRequestDto;
 import org.luzkix.coinchange.repository.UserRepository;
 import org.luzkix.coinchange.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;

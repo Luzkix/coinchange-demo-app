@@ -6,9 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping(value = UIAPIController.BASE_UI_URI,produces = { "application/json" })
-public abstract class UIAPIController {
-    public static final String BASE_UI_URI = "/ui-api";
+@RequestMapping(produces = { "application/json" })
+public abstract class GenericController {
 
     //generic method to be used in all endpoints to get info about logged user
     protected User getUserFromAuthentication() {

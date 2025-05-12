@@ -47,13 +47,10 @@ app.use(
 
 // Vytvoření proxy pro vlastní backend
 app.use(
-  '/api-backend',
+  '/',
   createProxyMiddleware({
-    target: 'http://localhost:2000/ui-api',
+    target: 'http://localhost:2000',
     changeOrigin: true,
-    pathRewrite: {
-      '^/api-backend': '',
-    },
   }),
 );
 

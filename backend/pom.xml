@@ -176,15 +176,15 @@
 						</goals>
 						<configuration>
 							<!-- YAML file path -->
-							<inputSpec>${project.basedir}/../api/ui/backend-ui-api.yaml</inputSpec>
+							<inputSpec>${project.basedir}/../api/private/backend-api.yaml</inputSpec>
 							<!-- Generator for Java Spring Boot -->
 							<generatorName>spring</generatorName>
 							<!-- Output folder -->
 							<output>${project.build.directory}/generated-sources/openapi</output>
 							<!-- Packages for generated classes -->
-							<apiPackage>org.luzkix.coinchange.openapi.uiapi.api</apiPackage>
-							<modelPackage>org.luzkix.coinchange.openapi.uiapi.model</modelPackage>
-							<invokerPackage>org.luzkix.coinchange.openapi.uiapi.invoker</invokerPackage>
+							<apiPackage>org.luzkix.coinchange.openapi.backendapi.api</apiPackage>
+							<modelPackage>org.luzkix.coinchange.openapi.backendapi.model</modelPackage>
+							<invokerPackage>org.luzkix.coinchange.openapi.backendapi.invoker</invokerPackage>
 							<configOptions>
 								<interfaceOnly>true</interfaceOnly>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->

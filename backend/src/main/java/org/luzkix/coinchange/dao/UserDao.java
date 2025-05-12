@@ -2,7 +2,7 @@ package org.luzkix.coinchange.dao;
 
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.uiapi.model.UserRegistrationRequestDto;
+import org.luzkix.coinchange.openapi.backendapi.model.UserRegistrationRequestDto;
 
 import java.util.Set;
 
