@@ -1,6 +1,10 @@
 {
-  "title": {
-    "genericErrorTitle": "Error occurred!"
+  "common": {
+    "genericErrorTitle": "Error occurred!",
+    "statusCode": "Status code",
+    "statusDesc": "Status description",
+    "unknownError": "Unknown Error",
+    "unknownErrorMessage": "Detail of error message is not available"
   },
   "message": {
     "fetchCoinsDataError": "Unable to fetch data about cryptoassets.",
@@ -9,5 +13,51 @@
     "passwordFormatError": "Password must be at least 4 characters long",
     "invalidValueError": "Invalid value",
     "fieldIsObligatoryError": "The field is obligatory"
+  },
+  "businessErrors": {
+    "NULL_OR_EMPTY": {
+      "title": "Empty Field",
+      "message": "Input field is null or empty."
+    },
+    "INVALID_USERNAME": {
+      "title": "Invalid Username",
+      "message": "Username is null or empty."
+    },
+    "INVALID_EMAIL_FORMAT": {
+      "title": "Invalid Email",
+      "message": "Invalid email format."
+    },
+    "INVALID_PASSWORD_FORMAT": {
+      "title": "Invalid Password",
+      "message": "Invalid password format."
+    },
+    "INCORRECT_PASSWORD": {
+      "title": "Wrong Password",
+      "message": "Provided password does not match user password."
+    },
+    "USER_ALREADY_EXISTS": {
+      "title": "User Already Exists",
+      "message": "User with same username / email and with active account already exists."
+    },
+    "USER_NOT_FOUND": {
+      "title": "User Not Found",
+      "message": "User with active account does not exist for provided username / email."
+    },
+    "INVALID_JWT_TOKEN": {
+      "title": "Invalid Token",
+      "message": "JWT token has invalid structure or was expired."
+    },
+    "INVALID_USER_ROLE": {
+      "title": "Invalid Role",
+      "message": "User role is invalid/unknown."
+    },
+    "ACCESS_DENIED": {
+      "title": "Access Denied",
+      "message": "User has insufficient access rights to perform the action."
+    },
+    "AUTHENTICATION_GENERAL_FAILURE": {
+      "title": "Authentication Failed",
+      "message": "Unable to authenticate the user (e.g. missing authentication token, etc.)."
+    }
   }
 }

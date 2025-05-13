@@ -22,7 +22,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({ open, onClose, errorMess
     >
       <Box sx={errorModalStyles.modalContainer}>
         <Typography id="error-modal-title" variant="h6" component="h2" sx={errorModalStyles.title}>
-          {title || t('errors:title.genericErrorTitle')}
+          {title || t('errors:common.genericErrorTitle')}
         </Typography>
         <Typography id="error-modal-description" sx={errorModalStyles.description}>
           {errorMessage}

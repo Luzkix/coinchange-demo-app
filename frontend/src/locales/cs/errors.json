@@ -1,6 +1,10 @@
 {
-  "title": {
-    "genericErrorTitle": "Nastala chyba!"
+  "common": {
+    "genericErrorTitle": "Nastala chyba!",
+    "statusCode": "Kód statusu",
+    "statusDesc": "Popisek statusu",
+    "unknownError": "Neznámá chyba",
+    "unknownErrorMessage": "Detail chybové zprávy není k dispozici"
   },
   "message": {
     "fetchCoinsDataError": "Nepodařilo se načíst data o kryptoměnách",
@@ -9,5 +13,51 @@
     "passwordFormatError": "Heslo musí mít alespoň 4 znaky",
     "invalidValueError": "Neplatná hodnota",
     "fieldIsObligatoryError": "Toto pole je povinné"
+  },
+  "businessErrors": {
+    "NULL_OR_EMPTY": {
+      "title": "Prázdné pole",
+      "message": "Pole nesmí být prázdné."
+    },
+    "INVALID_USERNAME": {
+      "title": "Neplatné uživatelské jméno",
+      "message": "Uživatelské jméno nesmí být prázdné."
+    },
+    "INVALID_EMAIL_FORMAT": {
+      "title": "Neplatný email",
+      "message": "Zadejte email ve správném formátu."
+    },
+    "INVALID_PASSWORD_FORMAT": {
+      "title": "Neplatné heslo",
+      "message": "Heslo není ve správném formátu."
+    },
+    "INCORRECT_PASSWORD": {
+      "title": "Chybné heslo",
+      "message": "Zadané heslo není správné."
+    },
+    "USER_ALREADY_EXISTS": {
+      "title": "Uživatel již existuje",
+      "message": "Uživatel se stejným jménem / emailem a aktivním účtem již existuje."
+    },
+    "USER_NOT_FOUND": {
+      "title": "Uživatel nenalezen",
+      "message": "Uživatel se zadaným jménem / emailem a aktivním účtem nebyl nalezen."
+    },
+    "INVALID_JWT_TOKEN": {
+      "title": "Neplatný token",
+      "message": "JWT token je neplatný nebo expirovaný."
+    },
+    "INVALID_USER_ROLE": {
+      "title": "Neplatná role",
+      "message": "Uživatelská role je neznámá nebo neplatná."
+    },
+    "ACCESS_DENIED": {
+      "title": "Přístup odepřen",
+      "message": "Nemáte dostatečná oprávnění pro tuto akci."
+    },
+    "AUTHENTICATION_GENERAL_FAILURE": {
+      "title": "Chyba autentizace",
+      "message": "Nelze ověřit uživatele (např. chybějící autentizační token apod.)."
+    }
   }
 }

@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
-import { useGeneralContext } from '../contexts/GeneralContext';
-import { ApiError, ErrorDto } from '../api-generated/backend';
+import { ApiError } from '../api-generated/backend';
 import { UserService } from '../services/UserService.ts';
+import { useProcessApiError } from './useProcessApiError.ts';
 
 export const useRegisterUser = () => {
   const { login } = useAuth();
-  const { addErrorModal, addErrorPopup } = useGeneralContext();
+  const processApiError = useProcessApiError();
 
   return useMutation({
     mutationFn: UserService.register,
@@ -17,14 +17,8 @@ export const useRegisterUser = () => {
         roles: data.roles?.map((r) => r.roleName) ?? [],
       });
     },
-    onError: (error: ApiError) => {
-      const errorDto: ErrorDto = error?.body;
-
-      if (errorDto?.errorBusinessCode) {
-        addErrorModal(errorDto.errorMessage ?? '', errorDto.errorStatus ?? '');
-      } else {
-        addErrorPopup(errorDto?.errorMessage || 'Unexpected error during user registration.');
-      }
+    onError: (apiError: ApiError) => {
+      processApiError(apiError, 'useRegisterUser');
     },
   });
 };
