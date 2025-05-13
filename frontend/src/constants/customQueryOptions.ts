@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import { CoinsDataService } from '../services/dataServices/CoinsDataService.ts';
 import { FetchCoinsDataOptions } from './customTypes.ts';
 import {
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
   DEFAULT_ALL_COINS_REFRESH_INTERVAL,
 } from './configVariables.ts';
+import { CoinsDataService } from '../services/CoinsDataService.ts';
 
 export const creteFetchCoinsDataOptions = (fetchCoinsDataOptions?: FetchCoinsDataOptions) => {
   return queryOptions({

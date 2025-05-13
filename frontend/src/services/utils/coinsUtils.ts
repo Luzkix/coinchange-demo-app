@@ -1,11 +1,11 @@
 import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
-import { CoinsTableRowData } from '../../components/common/CoinsTable';
 import { QueryClient } from '@tanstack/react-query';
 import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
-import { FetchCoinStatsError } from '../dataServices/errors.ts';
+import { FetchCoinStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
+import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.

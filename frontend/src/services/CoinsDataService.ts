@@ -1,35 +1,25 @@
-import { ApiCoinPairService } from '../../api-generated/coinbase';
+import { ApiCoinPairService } from '../api-generated/coinbase';
 import {
   DEFAULT_COINS_SORTING,
   DEFAULT_COINS_TYPE,
   DEFAULT_LOADED_COINS_LIMIT,
   SUPPORTED_COINS,
   SUPPORTED_CURRENCIES,
-} from '../../constants/configVariables.ts';
-import { setApiBaseToProxyUrl } from '../../../proxy-server/setApiBase.ts';
-import { CoinsMap, FetchCoinsDataOptions, FetchedCoinPair } from '../../constants/customTypes.ts';
-import { ApiCoinStatsService, CoinStats } from '../../api-generated/coinbase-exchange';
-import { FetchCoinsDataError, FetchCoinStatsError } from './errors.ts';
+} from '../constants/configVariables.ts';
+import { CoinsMap, FetchCoinsDataOptions } from '../constants/customTypes.ts';
+import { ApiCoinStatsService, CoinStats } from '../api-generated/coinbase-exchange';
+import { FetchCoinsDataError, FetchCoinStatsError } from '../constants/customErrors.ts';
 
 /**
  * Service for fetching and processing coin data from Coinbase API
  */
-export class CoinsDataService {
-  /**
-   * Initializes the API base URLs to use proxy server
-   * Call this once before making any API calls
-   */
-  public static initializeApi(): void {
-    setApiBaseToProxyUrl(true);
-  }
-
+export const CoinsDataService = {
   /**
    * Fetches coin data from Coinbase API and transforms it into a structured map
    * organized by quote currency (USD/EUR) and fetched cryptocurrency (BTC, ETH...)
-   *
    * @returns Promise returning loaded coins data organized as a CoinsMap data type
    */
-  public static async fetchCoinsData(options?: FetchCoinsDataOptions): Promise<CoinsMap> {
+  async fetchCoinsData(options?: FetchCoinsDataOptions): Promise<CoinsMap> {
     try {
       // Step 1: Call the API with specified parameters or default ones if not specified
       const response = await ApiCoinPairService.getListOfCoinsWithTradingDetails(
@@ -42,10 +32,9 @@ export class CoinsDataService {
 
       // Step 2: Initialize the resulting map
       const resultMap: CoinsMap = new Map();
-
       // Initialize maps for each allowed currency
       SUPPORTED_CURRENCIES.forEach((supportedCurrency) => {
-        resultMap.set(supportedCurrency, new Map<string, FetchedCoinPair>());
+        resultMap.set(supportedCurrency, new Map());
       });
 
       // Step 3: Process the response and populate the map
@@ -55,7 +44,6 @@ export class CoinsDataService {
           if (SUPPORTED_CURRENCIES.includes(coinPair.quote_currency_id)) {
             // Get the appropriate USD/EUR... currency map
             const currencyMap = resultMap.get(coinPair.quote_currency_id);
-
             // set the coinPair to the appropriate currency map with proper isTradeable boolean value
             if (currencyMap) {
               if (SUPPORTED_COINS.includes(coinPair.base_currency_id)) {
@@ -81,9 +69,12 @@ export class CoinsDataService {
         error instanceof Error ? error : new Error(String(error)),
       );
     }
-  }
+  },
 
-  public static async fetchCoinPairStats(productId: string): Promise<CoinStats> {
+  /**
+   * Fetches statistics for a specific coin pair by productId
+   */
+  async fetchCoinPairStats(productId: string): Promise<CoinStats> {
     try {
       return await ApiCoinStatsService.getCoinStats(productId);
     } catch (error) {
@@ -93,5 +84,5 @@ export class CoinsDataService {
         error instanceof Error ? error : new Error(String(error)),
       );
     }
-  }
-}
+  },
+};
