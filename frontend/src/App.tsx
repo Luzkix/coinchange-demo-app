@@ -4,23 +4,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import theme from './styles/theme';
 import ROUTES from './constants/routes';
-
-// Výchozí 'skeleton' layout je použit na všech stránkách dané sekce (typicky obsahuje hlavičku a patičku případně cookies banner)
-import PublicLayout from './layouts/skeleton/publicLayout/PublicLayout.tsx';
-
+import PublicLayout from './layouts/skeleton/PublicLayout/PublicLayout.tsx';
 import HomePage from './pages/HomePage';
 import CryptocurrenciesPage from './pages/CryptocurrenciesPage.tsx';
 import PortfolioPage from './pages/PortfolioPage.tsx';
-import PrivateLayout from './layouts/skeleton/privateLayout/PrivateLayout.tsx';
-import { useAuth } from './contexts/AuthContext.tsx';
+import PrivateLayout from './layouts/skeleton/PrivateLayout/PrivateLayout.tsx';
 import SignInPage from './pages/SignInPage.tsx';
 import SignUpPage from './pages/SignUpPage.tsx';
-
-// Komponenta pro kontrolu přihlášení
-const ProtectedRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to={ROUTES.HOME} />;
-};
+import PublicRoute from './layouts/skeleton/PublicRoute/PublicRoute.tsx';
+import PrivateRoute from './layouts/skeleton/PrivateRoute/PrivateRoute.tsx';
 
 const App: FC = () => {
   return (
@@ -28,7 +20,13 @@ const App: FC = () => {
       <CssBaseline />
       <Routes>
         {/* Veřejné routy */}
-        <Route element={<PublicLayout />}>
+        <Route
+          element={
+            <PublicRoute>
+              <PublicLayout />
+            </PublicRoute>
+          }
+        >
           <Route path={ROUTES.HOME} element={<HomePage />} />
           <Route path={ROUTES.CRYPTOCURRENCIES} element={<CryptocurrenciesPage />} />
           <Route path={ROUTES.LOGIN} element={<SignInPage />} />
@@ -38,9 +36,9 @@ const App: FC = () => {
         {/* Privátní routy */}
         <Route
           element={
-            <ProtectedRoute>
+            <PrivateRoute>
               <PrivateLayout />
-            </ProtectedRoute>
+            </PrivateRoute>
           }
         >
           <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />

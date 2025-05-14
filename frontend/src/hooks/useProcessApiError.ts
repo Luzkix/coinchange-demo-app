@@ -12,7 +12,6 @@ export const useProcessApiError = () => {
   const { t } = useTranslation(['errors']);
 
   return (apiError: ApiError, process?: string) => {
-    debugger;
     const errorDto: ErrorDto = apiError?.body;
     if (errorDto) {
       if (errorDto.errorBusinessCode) {
@@ -37,22 +36,29 @@ export const useProcessApiError = () => {
         );
       }
     } else {
-      addErrorPopup(
-        t('common.genericErrorTitle') +
-          ' ' +
-          t('common.statusCode') +
-          ': ' +
-          apiError.status +
-          ' ' +
-          t('common.statusDesc') +
-          ': ' +
-          apiError.statusText,
-      );
-      console.error(
-        process
-          ? process + ' ApiError: ' + JSON.stringify(apiError)
-          : 'ApiError: ' + JSON.stringify(apiError),
-      );
+      if (apiError.status) {
+        addErrorPopup(
+          t('common.genericErrorTitle') +
+            ' ' +
+            t('common.statusCode') +
+            ': ' +
+            apiError.status +
+            ' ' +
+            t('common.statusDesc') +
+            ': ' +
+            apiError.statusText,
+        );
+        console.error(
+          process
+            ? process + ' ApiError: ' + JSON.stringify(apiError)
+            : 'ApiError: ' + JSON.stringify(apiError),
+        );
+      } else {
+        addErrorPopup(apiError.message);
+        console.error(
+          process ? process + ' ApiError: ' + apiError.stack : 'ApiError: ' + apiError.stack,
+        );
+      }
     }
   };
 };

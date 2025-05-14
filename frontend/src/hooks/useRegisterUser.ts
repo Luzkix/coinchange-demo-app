@@ -11,10 +11,15 @@ export const useRegisterUser = () => {
   return useMutation({
     mutationFn: UserService.register,
     onSuccess: (data) => {
-      login(data.jwtToken, {
+      login({
         id: data.id,
+        username: data.username,
         email: data.email,
-        roles: data.roles?.map((r) => r.roleName) ?? [],
+        userCreatedAt: new Date(data.createdAt),
+        userUpdatedAt: new Date(data.updatedAt),
+        userValidTo: new Date(data.validTo),
+        roles: data.roles?.map((role) => role.roleName) ?? [],
+        token: data.jwtToken,
       });
     },
     onError: (apiError: ApiError) => {

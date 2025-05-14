@@ -23,7 +23,7 @@ export const Languages: Record<string, Language> = {
 /**
  * Own email regex to be used throughout application
  */
-export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * Own password regex (which comply with backend validations) to be used throughout application. Conditions for psw:
