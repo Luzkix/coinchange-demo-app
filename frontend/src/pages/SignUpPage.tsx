@@ -8,10 +8,10 @@ import ROUTES from '../constants/routes';
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { mutate, isPending } = useRegisterUser();
+  const { mutate: registerUser, isPending } = useRegisterUser();
 
   const handleSignUp = (formData: SignUpFormData) => {
-    mutate(formData, {
+    registerUser(formData, {
       onSuccess: () => navigate(location.state?.from || ROUTES.PORTFOLIO, { replace: true }),
     });
   };

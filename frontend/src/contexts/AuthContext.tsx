@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { isTokenValid } from '../services/utils/jwtUtils.ts';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { calculateRefreshDelay, isTokenValid } from '../services/utils/jwtUtils.ts';
+import { OpenAPI } from '../api-generated/backend';
+import { useRefreshToken } from '../hooks/useRefreshToken.ts';
 
 interface UserData {
   id: number;
@@ -24,6 +26,7 @@ const AuthContext = createContext<AuthContextType>(null!);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { mutate: refreshToken } = useRefreshToken();
 
   //initial loading of authContext
   useEffect(() => {
@@ -79,6 +82,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // setting global states
       setUserData(userData);
+      //saving token into openApi (to be used in calls requiring bearerAuth)
+      OpenAPI.TOKEN = userData.token;
+
       console.log(`AuthContext: user ${userData.username} logged in.`);
     } catch (error) {
       console.error('AuthContext: Error in login function:', error);
@@ -91,6 +97,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('coinChangeUserData');
     setUserData(null);
   };
+
+  // refresh token funkcionality
+  const scheduleTokenRefresh = useCallback(
+    (token: string) => {
+      const refreshDelay = calculateRefreshDelay(token);
+
+      if (refreshDelay !== null) {
+        console.log('Token refresh scheduled in:', Math.round(refreshDelay / 1000), 'seconds');
+
+        return setTimeout(() => {
+          refreshToken(undefined, {
+            onSuccess: (newTokenData) => {
+              const newUserData = {
+                ...userData!,
+                token: newTokenData.jwtToken,
+              };
+              login(newUserData);
+            },
+          });
+        }, refreshDelay);
+      }
+      return null;
+    },
+    [userData, refreshToken, login, logout],
+  );
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null;
+
+    if (userData?.token && isTokenValid(userData.token)) {
+      timeoutId = scheduleTokenRefresh(userData.token);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [userData, scheduleTokenRefresh]);
 
   return (
     <AuthContext.Provider value={{ userData, isLoading, login, logout }}>
