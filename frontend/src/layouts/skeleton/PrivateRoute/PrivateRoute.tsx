@@ -18,7 +18,7 @@ const PrivateRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname }} replace />;
   }
   //if token is invalid -> redirect to login page
-  if (!isTokenValid(userData.token)) {
+  if (!isTokenValid(userData.accessToken)) {
     logout();
     return <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname }} replace />;
   }

@@ -18,7 +18,7 @@ const PublicRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
   // == logged-in user cannot display public pages until he logs out
 
   //if there is valid userData (e.g. loaded from localStorage) -> redirect to portfolio page
-  if (userData && isTokenValid(userData.token)) {
+  if (userData && isTokenValid(userData.accessToken)) {
     // Redirect to original url (if exists) or to default /portfolio
     const from = location.state?.from || ROUTES.PORTFOLIO;
     return <Navigate to={from} replace />;

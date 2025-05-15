@@ -19,7 +19,7 @@ export const useRegisterUser = () => {
         userUpdatedAt: new Date(data.updatedAt),
         userValidTo: new Date(data.validTo),
         roles: data.roles?.map((role) => role.roleName) ?? [],
-        token: data.jwtToken,
+        accessToken: data.jwtToken,
       });
     },
     onError: (apiError: ApiError) => {

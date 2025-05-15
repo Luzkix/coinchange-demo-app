@@ -26,9 +26,10 @@ export const calculateRefreshDelay = (token: string): number | null => {
     const decoded = jwtDecode<JwtPayload>(token);
     const expiresAt = decoded.exp * 1000;
     const now = Date.now();
-    const fiveMinutesBeforeExpiry = expiresAt - 5 * 60 * 1000;
+    const oneMinuteBeforeExpiry = expiresAt - 1 * 60 * 1000;
+    const fallbackTenSeconds = 10000;
 
-    return fiveMinutesBeforeExpiry > now ? fiveMinutesBeforeExpiry - now : null;
+    return oneMinuteBeforeExpiry > now ? oneMinuteBeforeExpiry - now : fallbackTenSeconds;
   } catch (error) {
     console.error('calculateRefreshDelay error:', error);
     return null;

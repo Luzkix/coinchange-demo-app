@@ -11,7 +11,7 @@ interface UserData {
   userUpdatedAt: Date;
   userValidTo: Date;
   roles: string[];
-  token: string;
+  accessToken: string;
 }
 
 interface AuthContextType {
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Loading AuthContext');
       const storedUserData = localStorage.getItem('coinChangeUserData');
       console.log(
-        `Checking localStorage: ${storedUserData ? 'user data detected' : 'user data not detected'}`,
+        `AuthContext: checking localStorage -> ${storedUserData ? 'user data detected' : 'user data not detected'}`,
       );
 
       if (storedUserData) {
@@ -46,9 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return value;
         });
 
-        if (isTokenValid(parsedUserData.token)) {
-          setUserData(parsedUserData);
+        if (isTokenValid(parsedUserData.accessToken)) {
           console.log('AuthContext: using valid userData from localStorage.');
+          login(parsedUserData);
         } else {
           console.log('AuthContext: userData in localStorage are no longer valid.');
           logout();
@@ -65,8 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = (userData: UserData) => {
     try {
-      if (!isTokenValid(userData.token)) {
-        console.log('AuthContext: invalid token detected during login.');
+      if (!isTokenValid(userData.accessToken)) {
+        console.log('AuthContext: invalid access token detected during login.');
         throw new Error('INVALID_JWT_TOKEN');
       }
 
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // setting global states
       setUserData(userData);
       //saving token into openApi (to be used in calls requiring bearerAuth)
-      OpenAPI.TOKEN = userData.token;
+      OpenAPI.TOKEN = userData.accessToken;
 
       console.log(`AuthContext: user ${userData.username} logged in.`);
     } catch (error) {
@@ -92,16 +92,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    console.log(`AuthContext: user ${userData?.username} logged out.`);
+    console.log(`AuthContext: user ${userData ? userData.username + ' ' : ''}logged out.`);
 
     localStorage.removeItem('coinChangeUserData');
     setUserData(null);
+    OpenAPI.TOKEN = undefined;
   };
 
   // refresh token funkcionality
   const scheduleTokenRefresh = useCallback(
-    (token: string) => {
-      const refreshDelay = calculateRefreshDelay(token);
+    (accessToken: string) => {
+      const refreshDelay = calculateRefreshDelay(accessToken);
+      console.log('refreshDelay: ' + refreshDelay);
 
       if (refreshDelay !== null) {
         console.log('Token refresh scheduled in:', Math.round(refreshDelay / 1000), 'seconds');
@@ -109,9 +111,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return setTimeout(() => {
           refreshToken(undefined, {
             onSuccess: (newTokenData) => {
-              const newUserData = {
+              const newUserData: UserData = {
                 ...userData!,
-                token: newTokenData.jwtToken,
+                accessToken: newTokenData.jwtToken,
               };
               login(newUserData);
             },
@@ -126,8 +128,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null;
 
-    if (userData?.token && isTokenValid(userData.token)) {
-      timeoutId = scheduleTokenRefresh(userData.token);
+    if (userData?.accessToken && isTokenValid(userData.accessToken)) {
+      timeoutId = scheduleTokenRefresh(userData.accessToken);
     }
 
     return () => {
