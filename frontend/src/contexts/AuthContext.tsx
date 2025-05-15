@@ -103,7 +103,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const scheduleTokenRefresh = useCallback(
     (accessToken: string) => {
       const refreshDelay = calculateRefreshDelay(accessToken);
-      console.log('refreshDelay: ' + refreshDelay);
 
       if (refreshDelay !== null) {
         console.log('Token refresh scheduled in:', Math.round(refreshDelay / 1000), 'seconds');

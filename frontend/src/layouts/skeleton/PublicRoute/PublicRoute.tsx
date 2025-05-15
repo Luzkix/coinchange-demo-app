@@ -1,4 +1,3 @@
-// Component is checking and redirecting routes for public layout.
 import { FC } from 'react';
 import { useAuth } from '../../../contexts/AuthContext.tsx';
 import { isTokenValid } from '../../../services/utils/jwtUtils.ts';
@@ -6,6 +5,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import ROUTES from '../../../constants/routes.ts';
 import ModalLoaderBlocking from '../../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
 
+// Component is checking and redirecting routes for public layout.
 const PublicRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userData, isLoading } = useAuth();
   const location = useLocation();

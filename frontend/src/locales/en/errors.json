@@ -12,7 +12,8 @@
     "emailFormatError": "Enter email address in correct format 'example@email.com'",
     "passwordFormatError": "Password must be at least 4 characters long",
     "invalidValueError": "Invalid value",
-    "fieldIsObligatoryError": "The field is obligatory"
+    "fieldIsObligatoryError": "The field is obligatory",
+    "userLoggedOutInvalidToken": "User was automatically signed-out -> token expired"
   },
   "businessErrors": {
     "NULL_OR_EMPTY": {

@@ -12,7 +12,8 @@
     "emailFormatError": "Zadejte email ve správném formátu 'example@email.com'",
     "passwordFormatError": "Heslo musí mít alespoň 4 znaky",
     "invalidValueError": "Neplatná hodnota",
-    "fieldIsObligatoryError": "Toto pole je povinné"
+    "fieldIsObligatoryError": "Toto pole je povinné",
+    "userLoggedOutInvalidToken": "Uživatel byl automaticky odhlášen -> skončila platnost tokenu"
   },
   "businessErrors": {
     "NULL_OR_EMPTY": {
