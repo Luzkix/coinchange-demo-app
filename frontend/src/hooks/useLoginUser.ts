@@ -4,13 +4,13 @@ import { ApiError } from '../api-generated/backend';
 import { UserService } from '../services/UserService.ts';
 import { useProcessApiError } from './useProcessApiError.ts';
 
-export const useRegisterUser = () => {
+export const useLoginUser = () => {
   const { login } = useAuth();
   const processApiError = useProcessApiError();
-  const processName = useRegisterUser.name;
+  const processName = useLoginUser.name;
 
   return useMutation({
-    mutationFn: UserService.register,
+    mutationFn: UserService.login,
     onSuccess: (data) => {
       login({
         id: data.id,

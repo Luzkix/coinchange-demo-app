@@ -5,11 +5,16 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "passwordsDoNotMatch": "Passwords do not match",
     "register": "Register",
     "registering": "Registering..."
   },
 
   "signIn": {
-
+    "title": "Sign in",
+    "usernameOrEmail": "Username or email",
+    "signIn": "Sign in",
+    "signingIn": "Signing in..."
   }
 }

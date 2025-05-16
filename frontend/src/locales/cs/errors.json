@@ -38,11 +38,11 @@
     },
     "USER_ALREADY_EXISTS": {
       "title": "Uživatel již existuje",
-      "message": "Uživatel se stejným jménem / emailem a aktivním účtem již existuje."
+      "message": "Uživatel se stejným jménem / emailem již existuje."
     },
     "USER_NOT_FOUND": {
       "title": "Uživatel nenalezen",
-      "message": "Uživatel se zadaným jménem / emailem a aktivním účtem nebyl nalezen."
+      "message": "Uživatel se zadaným jménem / emailem nebyl nalezen."
     },
     "INVALID_JWT_TOKEN": {
       "title": "Neplatný token",

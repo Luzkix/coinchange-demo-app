@@ -38,11 +38,11 @@
     },
     "USER_ALREADY_EXISTS": {
       "title": "User Already Exists",
-      "message": "User with same username / email and with active account already exists."
+      "message": "User with same username / email already exists."
     },
     "USER_NOT_FOUND": {
       "title": "User Not Found",
-      "message": "User with active account does not exist for provided username / email."
+      "message": "User does not exist for provided username / email."
     },
     "INVALID_JWT_TOKEN": {
       "title": "Invalid Token",

@@ -5,11 +5,16 @@
     "username": "Uživatelské jméno",
     "email": "Email",
     "password": "Heslo",
+    "passwordConfirm": "Potvrdit heslo",
+    "passwordsDoNotMatch": "Hesla se neshodují",
     "register": "Registrovat",
     "registering": "Registrování..."
   },
 
   "signIn": {
-
+    "title": "Přihlašte se",
+    "usernameOrEmail": "Uživatelské jméno nebo email",
+    "signIn": "Přihlásit se",
+    "signingIn": "Přihlašování..."
   }
 }
