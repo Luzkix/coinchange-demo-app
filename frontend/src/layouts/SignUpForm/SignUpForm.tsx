@@ -21,7 +21,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
   });
 
   const passwordConfirmationRegex = new RegExp(
-    '^' + form.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$',
+    '^' + form.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', //regex is used for checking whether password matches passwordConfirm
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -66,7 +66,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
         label={t('signUp.passwordConfirm')}
         value={form.passwordConfirm}
         onChange={handleChange}
-        required
         type="password"
         customRegex={passwordConfirmationRegex}
         validateErrorMessage={t('signUp.passwordsDoNotMatch')}
