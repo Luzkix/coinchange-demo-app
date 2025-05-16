@@ -4,21 +4,25 @@ import { signUpFormStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
 import TextFieldCustom from '../../components/common/TextFieldCustom/TextFieldCustom';
-
-export interface SignUpFormData {
-  username: string;
-  email: string;
-  password: string;
-}
+import { UserRegistrationRequestDto } from '../../api-generated/backend';
 
 interface SignUpFormProps {
-  onSubmit: (data: SignUpFormData) => void;
+  onSubmit: (data: UserRegistrationRequestDto) => void;
   isLoading: boolean;
 }
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
   const { t } = useTranslation(['signInSignUpPage']);
-  const [form, setForm] = useState<SignUpFormData>({ username: '', email: '', password: '' });
+  const [form, setForm] = useState({
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  });
+
+  const passwordConfirmationRegex = new RegExp(
+    '^' + form.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$',
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -56,6 +60,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
         value={form.password}
         onChange={handleChange}
         type="password"
+      />
+      <TextFieldCustom
+        name="passwordConfirm"
+        label={t('signUp.passwordConfirm')}
+        value={form.passwordConfirm}
+        onChange={handleChange}
+        required
+        type="password"
+        customRegex={passwordConfirmationRegex}
+        validateErrorMessage={t('signUp.passwordsDoNotMatch')}
       />
       <Button
         type="submit"

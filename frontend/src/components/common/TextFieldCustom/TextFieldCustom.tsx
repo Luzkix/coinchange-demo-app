@@ -59,9 +59,10 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
     // Validate when leaving text field
     if (!validateField(value)) {
       setIsError(true);
-
       if (type === 'email') {
         setErrorMessage(t('message.emailFormatError'));
+      } else if (type === 'password' && validateErrorMessage) {
+        setErrorMessage(validateErrorMessage); //if type 'password' has custom validateErrorMessage, use it
       } else if (type === 'password') {
         setErrorMessage(t('message.passwordFormatError'));
       } else {
@@ -84,6 +85,13 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
     // Use default messages pro email/password types or validateErrorMessages for other types
     else if (type === 'email' && e.currentTarget.validity.typeMismatch) {
       setErrorMessage(t('message.emailFormatError'));
+    } else if (
+      type === 'password' &&
+      validateErrorMessage &&
+      regexToValidate &&
+      !regexToValidate.test(e.currentTarget.value)
+    ) {
+      setErrorMessage(validateErrorMessage); //if type 'password' has custom validateErrorMessage, use it
     } else if (type === 'password' && e.currentTarget.validity.typeMismatch) {
       setErrorMessage(t('message.passwordFormatError'));
     } else if (regexToValidate && !regexToValidate.test(e.currentTarget.value)) {
