@@ -140,6 +140,67 @@ components:
         - jwtToken
 
 
+    PortfolioResponseDto:
+      type: object
+      properties:
+        fiatBalances:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFiatBalanceResponseDto'
+        cryptoBalances:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserCryptoBalanceResponseDto'
+      required:
+        - fiatBalances
+        - cryptoBalances
+    FiatCurrencyDto:
+      type: object
+      properties:
+        code:
+          type: string
+          example: USD
+        name:
+          type: string
+          example: Dollar
+      required:
+        - code
+        - name
+    CryptoCurrencyDto:
+      type: object
+      properties:
+        code:
+          type: string
+          example: BTC
+        name:
+          type: string
+          example: Bitcoin
+      required:
+        - code
+        - name
+    UserFiatBalanceResponseDto:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/FiatCurrencyDto'
+        balance:
+          type: number
+          example: 1000
+      required:
+        - currency
+        - balance
+    UserCryptoBalanceResponseDto:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/CryptoCurrencyDto'
+        balance:
+          type: number
+          example: 1000
+      required:
+        - currency
+        - balance
+
 paths:
   /user/login:
     post:
@@ -222,6 +283,82 @@ paths:
                 $ref: '#/components/schemas/ErrorDto'
         400:
           description: Bad Request - Invalid parameters or missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+
+
+  /portfolio:
+    get:
+      tags:
+        - ApiPortfolio
+      summary: Get user´s portfolio
+      operationId: getPortfolio
+      description: |
+        Returns portfolio of the client with information about his fiat and crypto currencies
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: Whole portfolio of the user (fiat + crypto)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /fiat-currencies:
+    get:
+      tags:
+        - ApiFiatCurrencies
+      summary: Get all currently supported fiat currencies
+      operationId: getSupportedFiatCurrencies
+      description: |
+        Returns all currently supported fiat currencies
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: List of all currently supported fiat currencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FiatCurrencyDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /crypto-currencies:
+    get:
+      tags:
+        - ApiCryptoCurrencies
+      summary: Get all currently supported crypto currencies
+      operationId: getSupportedCryptoCurrencies
+      description: |
+        Returns all currently supported crypto currencies
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: List of all currently supported crypto currencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CryptoCurrencyDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
             application/json:
               schema:

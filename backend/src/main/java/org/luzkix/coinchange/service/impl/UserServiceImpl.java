@@ -6,16 +6,20 @@ import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
+import org.luzkix.coinchange.model.FiatCurrency;
 import org.luzkix.coinchange.model.Operation;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
+import org.luzkix.coinchange.service.FiatCurrencyService;
+import org.luzkix.coinchange.service.UserFiatBalanceService;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.INVALID_USER_ROLE;
@@ -28,6 +32,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Autowired
+    private FiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    private UserFiatBalanceService userFiatBalanceService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -60,6 +70,16 @@ public class UserServiceImpl implements UserService {
 
         //create user
         user = userDao.createUser(registrationDto,roles);
+
+        //create initial zero balances for each fiat currency
+        List<FiatCurrency> fiatCurrencies = fiatCurrencyService.findAllActive();
+        userFiatBalanceService.createInitialZeroBalances(user,fiatCurrencies);
+
+        //give user a bonus of 100K USD for registration
+        FiatCurrency usdCurrency = fiatCurrencies.stream().filter(a -> a.getCode().equals("USD")).findFirst().orElse(null);
+        if(usdCurrency != null) {
+            userFiatBalanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
+        }
 
         // Prepare response DTO
         UserLoginResponseDto responseDto = prepareUserLoginResponseDto(user);

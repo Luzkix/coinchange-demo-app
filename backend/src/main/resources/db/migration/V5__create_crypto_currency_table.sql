@@ -1,0 +1,6 @@
+CREATE TABLE crypto_currency (
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(10) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);

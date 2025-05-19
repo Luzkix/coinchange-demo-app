@@ -1,0 +1,8 @@
+package org.luzkix.coinchange.service;
+
+import org.luzkix.coinchange.openapi.backendapi.model.PortfolioResponseDto;
+
+public interface PortfolioService {
+    PortfolioResponseDto getPortfolio(Long userId);
+
+}

@@ -42,6 +42,6 @@ INSERT INTO operations (name, description) VALUES
 
 -- Map roles to operations
 INSERT INTO role_operations (role_id, operation_id) VALUES
-    (1, 1), -- ADMIN can ACCESS_USER_SECTION
+    --(1, 1), -- ADMIN can ACCESS_USER_SECTION
     (1, 2), -- ADMIN can ACCESS_ADMIN_SECTION
     (2, 1); -- USER can ACCESS_USER_SECTION

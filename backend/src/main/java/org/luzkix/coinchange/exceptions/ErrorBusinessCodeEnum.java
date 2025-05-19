@@ -11,12 +11,12 @@ public enum ErrorBusinessCodeEnum {
     INVALID_JWT_TOKEN("INVALID_JWT_TOKEN", "JWT token has invalid structure or was expired"),
     INVALID_USER_ROLE("INVALID_USER_ROLE", "User role is invalid/unknown"),
     ACCESS_DENIED("ACCESS_DENIED", "User has insufficient access rights to perform the action"),
-    AUTHENTICATION_GENERAL_FAILURE("AUTHENTICATION_GENERAL_FAILURE", "Unable to authenticate the user (e.g. missing authentication token, etc.)");
+    AUTHENTICATION_GENERAL_FAILURE("AUTHENTICATION_GENERAL_FAILURE", "Unable to authenticate the user (e.g. missing authentication token, etc.)"),
+    ENTITY_NOT_FOUND("ENTITY_NOT_FOUND", "Required entity/object was not found in database");
 
 
-
-    private String code;
-    private String message;
+    private final String code;
+    private final String message;
 
     ErrorBusinessCodeEnum(String code, String message) {
         this.code = code;
