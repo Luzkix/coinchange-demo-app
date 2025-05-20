@@ -1,14 +1,12 @@
 package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
-import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.model.*;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.PortfolioResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.UserCurrencyBalanceResponseDto;
 import org.luzkix.coinchange.service.PortfolioService;
-import org.luzkix.coinchange.service.UserCryptoBalanceService;
-import org.luzkix.coinchange.service.UserFiatBalanceService;
-import org.luzkix.coinchange.service.UserService;
+import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,45 +16,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService {
 
-    private final UserService userService;
-    private final UserFiatBalanceService userFiatBalanceService;
-    private final UserCryptoBalanceService userCryptoBalanceService;
+    private final UserCurrencyBalanceService userCurrencyBalanceService;
 
     /**
-     * Returns portfolio (fiat and crypto balances) for given username.
+     * Returns portfolio (all fiat and crypto balances) for given username.
      */
-    public PortfolioResponseDto getPortfolio(Long userId) {
-        // Find user by userId
-        User user = userService.findUserById(userId);
-        if(user == null) throw new InvalidInputDataException("User with id " + userId + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND);
-
-        // Get all fiat balances for user and map to DTO
-        List<UserFiatBalanceResponseDto> fiatBalances = userFiatBalanceService.findByUser(user)
+    public PortfolioResponseDto getPortfolio(User user) {
+        // Get all currencyBalances for user and map to DTO
+        List<UserCurrencyBalanceResponseDto> currenciesBalances = userCurrencyBalanceService.findByUser(user)
                 .stream()
-                .map(fiatBalance -> {
-                    FiatCurrencyDto fiatCurrencyDto = new FiatCurrencyDto();
-                    fiatCurrencyDto.setCode(fiatBalance.getFiatCurrency().getCode());
-                    fiatCurrencyDto.setName(fiatBalance.getFiatCurrency().getName());
+                .map(currencyBalance -> {
+                    CurrencyResponseDto currency = new CurrencyResponseDto();
+                    currency.setCode(currencyBalance.getCurrency().getCode());
+                    currency.setName(currencyBalance.getCurrency().getName());
+                    currency.setIsActive(currencyBalance.getCurrency().isActive());
+                    currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
 
-                    UserFiatBalanceResponseDto responseDto = new UserFiatBalanceResponseDto();
-                    responseDto.setCurrency(fiatCurrencyDto);
-                    responseDto.setBalance(fiatBalance.getBalance());
-
-                    return responseDto;
-                })
-                .collect(Collectors.toList());
-
-        // Get all crypto balances for user and map to DTO
-        List<UserCryptoBalanceResponseDto> cryptoBalances = userCryptoBalanceService.findByUser(user)
-                .stream()
-                .map(cryptoBalance -> {
-                    CryptoCurrencyDto cryptoCurrencyDto = new CryptoCurrencyDto();
-                    cryptoCurrencyDto.setCode(cryptoBalance.getCryptoCurrency().getCode());
-                    cryptoCurrencyDto.setName(cryptoBalance.getCryptoCurrency().getName());
-
-                    UserCryptoBalanceResponseDto responseDto = new UserCryptoBalanceResponseDto();
-                    responseDto.setCurrency(cryptoCurrencyDto);
-                    responseDto.setBalance(cryptoBalance.getBalance());
+                    UserCurrencyBalanceResponseDto responseDto = new UserCurrencyBalanceResponseDto();
+                    responseDto.setCurrency(currency);
+                    responseDto.setBalance(currencyBalance.getBalance());
+                    responseDto.setUpdatedAt(currencyBalance.getUpdatedAt());
 
                     return responseDto;
                 })
@@ -64,8 +43,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         // Return as PortfolioDto
         PortfolioResponseDto responseDto = new PortfolioResponseDto();
-        responseDto.setFiatBalances(fiatBalances);
-        responseDto.setCryptoBalances(cryptoBalances);
+        responseDto.setCurrenciesBalances(currenciesBalances);
 
         return responseDto;
     }

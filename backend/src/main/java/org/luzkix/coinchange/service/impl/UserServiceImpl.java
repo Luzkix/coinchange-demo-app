@@ -6,13 +6,13 @@ import org.luzkix.coinchange.dao.UserDao;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
-import org.luzkix.coinchange.model.FiatCurrency;
+import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Operation;
 import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
-import org.luzkix.coinchange.service.FiatCurrencyService;
-import org.luzkix.coinchange.service.UserFiatBalanceService;
+import org.luzkix.coinchange.service.CurrencyService;
+import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
     private RoleDao roleDao;
 
     @Autowired
-    private FiatCurrencyService fiatCurrencyService;
+    private CurrencyService currencyService;
 
     @Autowired
-    private UserFiatBalanceService userFiatBalanceService;
+    private UserCurrencyBalanceService userCurrencyBalanceService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -72,13 +72,13 @@ public class UserServiceImpl implements UserService {
         user = userDao.createUser(registrationDto,roles);
 
         //create initial zero balances for each fiat currency
-        List<FiatCurrency> fiatCurrencies = fiatCurrencyService.findAllActive();
-        userFiatBalanceService.createInitialZeroBalances(user,fiatCurrencies);
+        List<Currency> allCurrencies = currencyService.findAllActive();
+        userCurrencyBalanceService.createInitialZeroFiatBalances(user,allCurrencies);
 
         //give user a bonus of 100K USD for registration
-        FiatCurrency usdCurrency = fiatCurrencies.stream().filter(a -> a.getCode().equals("USD")).findFirst().orElse(null);
+        Currency usdCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("USD")).findFirst().orElse(null);
         if(usdCurrency != null) {
-            userFiatBalanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
+            userCurrencyBalanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
         }
 
         // Prepare response DTO

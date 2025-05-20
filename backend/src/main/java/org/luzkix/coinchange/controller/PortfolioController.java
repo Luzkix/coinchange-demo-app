@@ -18,7 +18,7 @@ public class PortfolioController extends GenericController implements PortfolioA
     public ResponseEntity<PortfolioResponseDto> getPortfolio() {
         User user = getUserFromAuthentication();
 
-        PortfolioResponseDto portfolio = portfolioService.getPortfolio(user.getId());
+        PortfolioResponseDto portfolio = portfolioService.getPortfolio(user);
 
         return ResponseEntity.status(201).body(portfolio);
     }

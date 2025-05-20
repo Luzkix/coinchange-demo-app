@@ -143,18 +143,13 @@ components:
     PortfolioResponseDto:
       type: object
       properties:
-        fiatBalances:
+        currenciesBalances:
           type: array
           items:
-            $ref: '#/components/schemas/UserFiatBalanceResponseDto'
-        cryptoBalances:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserCryptoBalanceResponseDto'
+            $ref: '#/components/schemas/UserCurrencyBalanceResponseDto'
       required:
-        - fiatBalances
-        - cryptoBalances
-    FiatCurrencyDto:
+        - currenciesBalances
+    CurrencyResponseDto:
       type: object
       properties:
         code:
@@ -163,43 +158,33 @@ components:
         name:
           type: string
           example: Dollar
+        isActive:
+          type: boolean
+          example: true
+        type:
+          type: string
+          example: F - fiat, C - crypto
       required:
         - code
         - name
-    CryptoCurrencyDto:
-      type: object
-      properties:
-        code:
-          type: string
-          example: BTC
-        name:
-          type: string
-          example: Bitcoin
-      required:
-        - code
-        - name
-    UserFiatBalanceResponseDto:
+        - isActive
+        - type
+    UserCurrencyBalanceResponseDto:
       type: object
       properties:
         currency:
-          $ref: '#/components/schemas/FiatCurrencyDto'
+          $ref: '#/components/schemas/CurrencyResponseDto'
         balance:
           type: number
           example: 1000
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2018-08-29T23:20:50"
       required:
         - currency
         - balance
-    UserCryptoBalanceResponseDto:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/CryptoCurrencyDto'
-        balance:
-          type: number
-          example: 1000
-      required:
-        - currency
-        - balance
+        - updatedAt
 
 paths:
   /user/login:
@@ -302,7 +287,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         201:
-          description: Whole portfolio of the user (fiat + crypto)
+          description: Whole portfolio of the user (balances of all user's fiat and crypto currencies)
           content:
             application/json:
               schema:
@@ -313,50 +298,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /fiat-currencies:
+  /currencies:
     get:
       tags:
-        - ApiFiatCurrencies
-      summary: Get all currently supported fiat currencies
-      operationId: getSupportedFiatCurrencies
+        - ApiCurrencies
+      summary: Get all currently supported currencies
+      operationId: getSupportedCurrencies
       description: |
-        Returns all currently supported fiat currencies
+        Returns all currently supported currencies
       security:
         - bearerAuth: [ ]
       responses:
         201:
-          description: List of all currently supported fiat currencies
+          description: List of all currently supported currencies
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FiatCurrencyDto'
+                  $ref: '#/components/schemas/CurrencyResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /crypto-currencies:
+  /currencies/{type}:
     get:
       tags:
-        - ApiCryptoCurrencies
-      summary: Get all currently supported crypto currencies
-      operationId: getSupportedCryptoCurrencies
+        - ApiCurrencies
+      summary: Get all currently supported currencies for selected type
+      operationId: getSupportedCurrenciesForType
+      parameters:
+        - name: type
+          in: path
+          description: Currency type identifier, e.g. F - fiat, C - crypto
+          required: true
+          schema:
+            type: string
+          example: F - fiat, C - crypto
       description: |
-        Returns all currently supported crypto currencies
+        Returns all currently supported currencies for selected type
       security:
         - bearerAuth: [ ]
       responses:
         201:
-          description: List of all currently supported crypto currencies
+          description: List of all currently supported currencies for selected type
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CryptoCurrencyDto'
+                  $ref: '#/components/schemas/CurrencyResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
