@@ -27,12 +27,14 @@ public class PortfolioServiceImpl implements PortfolioService {
                 .stream()
                 .map(currencyBalance -> {
                     CurrencyResponseDto currency = new CurrencyResponseDto();
+                    currency.setId(currencyBalance.getCurrency().getId());
                     currency.setCode(currencyBalance.getCurrency().getCode());
                     currency.setName(currencyBalance.getCurrency().getName());
                     currency.setIsActive(currencyBalance.getCurrency().isActive());
                     currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
 
                     UserCurrencyBalanceResponseDto responseDto = new UserCurrencyBalanceResponseDto();
+                    responseDto.setId(currencyBalance.getId());
                     responseDto.setCurrency(currency);
                     responseDto.setBalance(currencyBalance.getBalance());
                     responseDto.setUpdatedAt(currencyBalance.getUpdatedAt());

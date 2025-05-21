@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CurrencyDao {
-    Currency saveCurrency(Currency currency);
-    Currency activateCurrency(Long id);
-    Currency deactivateCurrency(Long id);
+    Currency save(Currency currency);
     Optional<Currency> findByCode(String code);
+    Optional<Currency> findById(Long id);
     List<Currency> findAll();
     List<Currency> findAllActive();
     List<Currency> findAllActiveByType(Currency.CurrencyTypeEnum type);

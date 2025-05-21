@@ -22,6 +22,7 @@ public class CurrenciesController extends GenericController implements Currencie
         List<CurrencyResponseDto> response = currencies.stream()
                 .map(currency -> {
                     CurrencyResponseDto dto = new CurrencyResponseDto();
+                    dto.setId(currency.getId());
                     dto.setName(currency.getName());
                     dto.setCode(currency.getCode());
                     dto.setIsActive(currency.isActive());
@@ -39,6 +40,7 @@ public class CurrenciesController extends GenericController implements Currencie
         List<CurrencyResponseDto> response = currencies.stream()
                 .map(currency -> {
                     CurrencyResponseDto dto = new CurrencyResponseDto();
+                    dto.setId(currency.getId());
                     dto.setName(currency.getName());
                     dto.setCode(currency.getCode());
                     dto.setIsActive(currency.isActive());

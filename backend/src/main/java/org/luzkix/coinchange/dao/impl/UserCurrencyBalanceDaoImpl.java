@@ -16,6 +16,11 @@ public class UserCurrencyBalanceDaoImpl implements UserCurrencyBalanceDao {
     private final UserCurrencyBalanceRepository userCurrencyBalanceRepository;
 
     @Override
+    public Optional<UserCurrencyBalance> findById(Long id) {
+        return userCurrencyBalanceRepository.findById(id);
+    }
+
+    @Override
     public List<UserCurrencyBalance> findByUser(User user) {
         return userCurrencyBalanceRepository.findByUser(user);
     }

@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.INVALID_USER_ROLE;
@@ -62,14 +63,14 @@ public class UserServiceImpl implements UserService {
 
         // Assign role 'USER' to the new user
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleDao.findByName(Role.RoleEnum.USER.getName());
+        Role userRole = roleDao.findByName(Role.RoleEnum.USER.getName()).orElse(null);
         if (userRole == null) {
             throw new CustomInternalErrorException("Default role " + Role.RoleEnum.USER.getName() +" not found in database.", INVALID_USER_ROLE);
         }
         roles.add(userRole);
 
         //create user
-        user = userDao.createUser(registrationDto,roles);
+        user = createAndSaveUser(registrationDto,roles);
 
         //create initial zero balances for each fiat currency
         List<Currency> allCurrencies = currencyService.findAllActive();
@@ -116,6 +117,20 @@ public class UserServiceImpl implements UserService {
     }
 
     //PRIVATE METHODS
+    private User createAndSaveUser (UserRegistrationRequestDto registrationDto, Set<Role> roles) {
+        User user = new User();
+
+        user.setUsername(registrationDto.getUsername());
+        user.setEmail(registrationDto.getEmail());
+        user.setPassword(registrationDto.getPassword());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setValidTo(LocalDateTime.of(2100, 1, 1, 0, 0));
+        user.setRoles(roles);
+
+        return userDao.save(user);
+    }
+
     private UserLoginResponseDto prepareUserLoginResponseDto(User user) {
         return new UserLoginResponseDto()
                 .id(user.getId())

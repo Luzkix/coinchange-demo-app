@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserCurrencyBalanceDao {
+    Optional<UserCurrencyBalance> findById(Long id);
     List<UserCurrencyBalance> findByUser(User user);
     Optional<UserCurrencyBalance> findByUserAndCurrency(User user, Currency currency);
     UserCurrencyBalance save(UserCurrencyBalance balance);

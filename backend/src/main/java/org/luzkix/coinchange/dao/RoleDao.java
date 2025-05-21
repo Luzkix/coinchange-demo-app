@@ -2,6 +2,10 @@ package org.luzkix.coinchange.dao;
 
 import org.luzkix.coinchange.model.Role;
 
+import java.util.Optional;
+
 public interface RoleDao {
-    Role findByName(String name);
+    Optional<Role> findByName(String name);
+    Optional<Role> findById(Long name);
+    Role save(Role role);
 }

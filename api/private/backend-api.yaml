@@ -152,6 +152,10 @@ components:
     CurrencyResponseDto:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
         code:
           type: string
           example: USD
@@ -165,6 +169,7 @@ components:
           type: string
           example: F - fiat, C - crypto
       required:
+        - id
         - code
         - name
         - isActive
@@ -172,6 +177,10 @@ components:
     UserCurrencyBalanceResponseDto:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
         currency:
           $ref: '#/components/schemas/CurrencyResponseDto'
         balance:
@@ -182,6 +191,7 @@ components:
           format: date-time
           example: "2018-08-29T23:20:50"
       required:
+        - id
         - currency
         - balance
         - updatedAt

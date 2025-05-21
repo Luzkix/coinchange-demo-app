@@ -2,6 +2,8 @@ package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.dao.CurrencyDao;
+import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
+import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.springframework.stereotype.Service;
@@ -13,29 +15,21 @@ import java.util.List;
 public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyDao currencyDao;
 
-    @Override
-    public Currency saveCurrency(Currency currency) {
-        return currencyDao.saveCurrency(currency);
-    }
 
     @Override
     public Currency activateCurrency(Long id) {
-        return currencyDao.activateCurrency(id);
+        Currency currency = currencyDao.findById(id)
+                .orElseThrow(() -> new InvalidInputDataException("Currency with id " + id + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+        currency.setActive(true);
+        return currencyDao.save(currency);
     }
 
     @Override
     public Currency deactivateCurrency(Long id) {
-        return currencyDao.deactivateCurrency(id);
-    }
-
-    @Override
-    public Currency findByCode(String code) {
-        return currencyDao.findByCode(code).orElse(null);
-    }
-
-    @Override
-    public List<Currency> findAll() {
-        return currencyDao.findAll();
+        Currency currency = currencyDao.findById(id)
+                .orElseThrow(() -> new InvalidInputDataException("Currency with id " + id + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+        currency.setActive(false);
+        return currencyDao.save(currency);
     }
 
     @Override
