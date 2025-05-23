@@ -71,8 +71,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         errorDto.setErrorStatus(status.name());
         errorDto.setErrorTime(DateUtils.convertToSystemOffsetDateTime(LocalDateTime.now()));
         errorDto.setErrorMessage(e.getMessage());
-        if (e instanceof ErrorBusinessCodeProvider) {
-            errorDto.setErrorBusinessCode(((ErrorBusinessCodeProvider) e).getErrorBusinessCode().getCode());
+        if ((e instanceof ErrorBusinessCodeProvider)) {
+            try {
+                errorDto.setErrorBusinessCode(((ErrorBusinessCodeProvider) e).getErrorBusinessCode().getCode());
+            } catch (NullPointerException ex) {
+                errorDto.setErrorBusinessCode(null);
+            }
         } else errorDto.setErrorBusinessCode(null);
 
         log.error("An exception was thrown from a REST controller. Creating an ErrorDto (errorStatusValue: {}, errorMessage: {}, errorBusinessCode: {})",

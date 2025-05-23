@@ -133,6 +133,23 @@
 			<scope>runtime</scope>
 		</dependency>
 
+	<!-- webflux includes WebClient which is used by generated api for communication with CoinbaseApi -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+	<!-- Caffeine + spring boot starter cache -> for caching API requests -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -168,8 +185,9 @@
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<version>7.12.0</version> <!-- select latest version -->
 				<executions>
+					<!-- Own server API generated from backend-api.yaml -->
 					<execution>
-						<id>generate-openapi-sources</id>
+						<id>generate-openapi-backendapi-sources</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate</goal>
@@ -185,10 +203,42 @@
 							<apiPackage>org.luzkix.coinchange.openapi.backendapi.api</apiPackage>
 							<modelPackage>org.luzkix.coinchange.openapi.backendapi.model</modelPackage>
 							<invokerPackage>org.luzkix.coinchange.openapi.backendapi.invoker</invokerPackage>
+							<!-- additional config options -->
 							<configOptions>
 								<interfaceOnly>true</interfaceOnly>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
 								<useSpringBoot3>true</useSpringBoot3> <!-- Aktivace Spring Boot 3 kompatibility, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
+							</configOptions>
+							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
+						</configuration>
+					</execution>
+					<!-- External client API generated from coinbase-exchange-public-api.yaml -->
+					<execution>
+						<id>generate-coinbaseexchange-client</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<!-- YAML file path -->
+							<inputSpec>${project.basedir}/../api/public/coinbase-exchange-public-api.yaml</inputSpec>
+							<!-- Generator for Java Spring Boot -->
+							<generatorName>java</generatorName>
+							<library>webclient</library>
+							<!-- Output folder -->
+							<output>${project.build.directory}/generated-sources/openapi-client/coinbaseexchange</output>
+							<!-- Packages for generated classes -->
+							<apiPackage>org.luzkix.coinchange.openapi.coinbaseexchangeclient.client</apiPackage>
+							<modelPackage>org.luzkix.coinchange.openapi.coinbaseexchangeclient.model</modelPackage>
+							<invokerPackage>org.luzkix.coinchange.openapi.coinbaseexchangeclient.invoker</invokerPackage>
+							<!-- not generating test classes which are not needed and may cause issues -->
+							<generateApiTests>false</generateApiTests>
+							<generateModelTests>false</generateModelTests>
+							<!-- additional config options -->
+							<configOptions>
+								<interfaceOnly>false</interfaceOnly>
+								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
+								<useJakartaEe>true</useJakartaEe> <!-- Řeší problém s generováním neplatných javax anotací, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
 							</configOptions>
 							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
 						</configuration>
@@ -202,6 +252,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
 				<executions>
+					<!-- Own server API generated from backend-api.yaml -->
 					<execution>
 						<id>add-generated-sources</id>
 						<phase>generate-sources</phase>
@@ -213,6 +264,25 @@
 							<resources>
 								<resource>
 									<directory>${project.build.directory}/generated-sources/openapi</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<!-- External client API generated from coinbase-exchange-public-api.yaml -->
+					<execution>
+						<id>add-generated-sources-api-client</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-sources/openapi-client/coinbaseexchange</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/generated-sources/openapi-client/coinbaseexchange</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
