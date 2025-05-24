@@ -21,8 +21,11 @@ import CoinCard from '../../../components/common/CoinCard/CoinCard.tsx';
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const { t, i18n } = useTranslation(['cryptocurrenciesPage', 'errors']);
   const { addErrorPopup } = useGeneralContext();
+  const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
-  const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
+  const fetchedCoinsDataResult = useSuspenseQuery(
+    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+  );
   const coinsData = fetchedCoinsDataResult.data;
 
   const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used

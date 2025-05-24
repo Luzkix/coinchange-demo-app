@@ -3,7 +3,6 @@ import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
 import { Languages } from '../../../constants/customConstants';
-import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
 import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -12,15 +11,19 @@ import CoinsTable, {
   CoinsTableRowData,
 } from '../../../components/common/CoinsTable/CoinsTable.tsx';
 import CoinsTableFilter from '../../../components/common/CoinsTableFilter/CoinsTableFilter.tsx';
+import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 const CryptocurrenciesTableContent: React.FC = () => {
   const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
+  const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
-  const fetchedCoinsDataResult = useSuspenseQuery(creteFetchCoinsDataOptions());
+  const fetchedCoinsDataResult = useSuspenseQuery(
+    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+  );
   const coinsData = fetchedCoinsDataResult.data;
 
   const [selectedCurrency, setSelectedCurrency] = useState(
-    Languages[i18n.language]?.currency || SUPPORTED_CURRENCIES[0],
+    Languages[i18n.language]?.currency || supportedFiatCurrencies[0],
   );
 
   useEffect(() => {

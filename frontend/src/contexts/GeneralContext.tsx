@@ -1,6 +1,10 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { ErrorPopup } from '../components/common/ErrorPopup/ErrorPopup.tsx';
 import { ErrorModal } from '../components/common/ErrorModal/ErrorModal.tsx';
+import { getCryptoCurrencies, getFiatCurrencies } from '../services/utils/coinsUtils.ts';
+import { useQuery } from '@tanstack/react-query';
+import { createFetchSupportedCurrenciesOptions } from '../constants/customQueryOptions.ts';
+import { DEFAULT_CRYPTO_CURRENCIES, DEFAULT_FIAT_CURRENCIES } from '../constants/configVariables';
 
 interface ErrorPopupMessage {
   id: number;
@@ -18,6 +22,8 @@ interface GeneralContextType {
   setCookiesAccepted: (accepted: boolean) => void;
   addErrorPopup: (message: string) => void;
   addErrorModal: (message: string, title?: string) => void;
+  supportedFiatCurrencies: string[];
+  supportedCryptoCurrencies: string[];
 }
 
 // Vytvoření kontextu s výchozími hodnotami
@@ -58,6 +64,21 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     setModalError(null);
   };
 
+  // Načtení a refresh povolených fiat/ktrypto měn
+  const fetchedCurrenciesResult = useQuery(createFetchSupportedCurrenciesOptions());
+  const [supportedFiatCurrencies, setSupportedFiatCurrencies] =
+    useState<string[]>(DEFAULT_FIAT_CURRENCIES);
+  const [supportedCryptoCurrencies, setSupportedCryptoCurrencies] =
+    useState<string[]>(DEFAULT_CRYPTO_CURRENCIES);
+
+  // using useEffect to monitor changes in fetchedCurrenciesResult (changes coming from initial fetching or refreshing of coinsData)
+  useEffect(() => {
+    if (fetchedCurrenciesResult.data && fetchedCurrenciesResult.data.length > 0) {
+      setSupportedFiatCurrencies(getFiatCurrencies(fetchedCurrenciesResult.data));
+      setSupportedCryptoCurrencies(getCryptoCurrencies(fetchedCurrenciesResult.data));
+    }
+  }, [fetchedCurrenciesResult.data]);
+
   // Uložení preference cookies do localStorage
   useEffect(() => {
     localStorage.setItem('cookiesAccepted', cookiesAccepted.toString());
@@ -70,6 +91,8 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         setCookiesAccepted,
         addErrorPopup,
         addErrorModal,
+        supportedFiatCurrencies: supportedFiatCurrencies,
+        supportedCryptoCurrencies: supportedCryptoCurrencies,
       }}
     >
       {children}

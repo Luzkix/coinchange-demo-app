@@ -1,4 +1,4 @@
-import { CoinsDefaultColorEnum } from '../../constants/customEnums.ts';
+import { CoinsDefaultColorEnum, CurrencyTypeEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
 import { QueryClient } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOpti
 import { FetchCoinStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
 import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
+import { CurrencyResponseDto } from '../../api-generated/backend';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
@@ -176,4 +177,20 @@ export const convertCoinsDataIntoCoinsTableRowData = (
     fiatCurrency: selectedCurrency,
     fullCoinPairData: coinPair,
   }));
+};
+
+/**
+ * Function filters and returns only FIAT currencies out of all currencies.
+ */
+export const getFiatCurrencies = (data: CurrencyResponseDto[]) => {
+  return data.filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf()).map((cur) => cur.code);
+};
+
+/**
+ * Function filters and returns only CRYPTO currencies out of all currencies.
+ */
+export const getCryptoCurrencies = (data: CurrencyResponseDto[]) => {
+  return data
+    .filter((cur) => cur.type === CurrencyTypeEnum.CRYPTO.valueOf())
+    .map((cur) => cur.code);
 };

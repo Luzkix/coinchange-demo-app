@@ -4,8 +4,8 @@ import { CoinsFilterType } from '../../../constants/customEnums.ts';
 import { Box, Button, Menu, MenuItem } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { SUPPORTED_CURRENCIES } from '../../../constants/configVariables.ts';
 import { coinsTableFilterStyles } from './styles.ts';
+import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 interface CoinsTableFilterProps {
   coinsFilterType: CoinsFilterType;
@@ -21,6 +21,7 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
   setSelectedCurrency,
 }) => {
   const { t } = useTranslation(['cryptocurrenciesPage']);
+  const { supportedFiatCurrencies } = useGeneralContext();
 
   // Constants + state for managing 'coins filter type' menu
   const [coinFilterTypeAnchorEl, setCoinFilterTypeAnchorEl] = useState<null | HTMLElement>(null);
@@ -95,7 +96,7 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         transformOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        {SUPPORTED_CURRENCIES.map((supportedCurrency) => (
+        {supportedFiatCurrencies.map((supportedCurrency) => (
           <MenuItem
             key={supportedCurrency}
             onClick={() => handleCurrencySelect(supportedCurrency)}

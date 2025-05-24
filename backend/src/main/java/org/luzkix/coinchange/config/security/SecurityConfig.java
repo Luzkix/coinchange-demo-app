@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
                         // Allow public access to login and register endpoints
-                        .requestMatchers("/user/login", "/user/register").permitAll()
+                        .requestMatchers("/user/login", "/user/register", "/currencies").permitAll()
 
                         // Restrict access to /admin/** only for ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")

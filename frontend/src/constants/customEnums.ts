@@ -16,6 +16,14 @@ export enum CoinsTypeEnum {
 }
 
 /**
+ * Enum representing type of currency
+ */
+export enum CurrencyTypeEnum {
+  FIAT = 'F',
+  CRYPTO = 'C',
+}
+
+/**
  * Enum defining color of tradeable coins
  */
 export enum CoinsDefaultColorEnum {

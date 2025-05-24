@@ -24,13 +24,13 @@ export const DEFAULT_COINS_SORTING = CoinsSortOrderTypeEnum.VOLUME_24_DESC;
  * Array of supported fiat currencies (USD, EUR, ...)
  * Values match quote_currency_id field from CoinPair model
  */
-export const SUPPORTED_CURRENCIES = ['USD', 'EUR'];
+export const DEFAULT_FIAT_CURRENCIES = ['USD', 'EUR'];
 
 /**
  * Array of supported cryptocurrencies (BTC, ETH, ...)
  * Values match base_currency_id field from CoinPair model
  */
-export const SUPPORTED_COINS = [
+export const DEFAULT_CRYPTO_CURRENCIES = [
   'BTC',
   'ETH',
   'XRP',

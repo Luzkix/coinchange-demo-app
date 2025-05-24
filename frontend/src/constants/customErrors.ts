@@ -26,3 +26,17 @@ export class FetchCoinStatsError extends Error {
     }
   }
 }
+
+export class FetchSupportedCurrenciesError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'FetchSupportedCurrenciesError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, FetchSupportedCurrenciesError);
+    }
+  }
+}
