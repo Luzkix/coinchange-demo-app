@@ -1,8 +1,9 @@
 package org.luzkix.coinchange.controller;
 
 import org.luzkix.coinchange.model.Currency;
+import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.api.CurrenciesApi;
-import org.luzkix.coinchange.openapi.backendapi.model.CurencyConversionRateResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
 import org.luzkix.coinchange.service.CurrencyConversionRateService;
 import org.luzkix.coinchange.service.CurrencyService;
@@ -58,8 +59,9 @@ public class CurrenciesController extends GenericController implements Currencie
     }
 
     @Override
-    public ResponseEntity<CurencyConversionRateResponseDto> getConversionRate(String soldCurrencyCode, String boughtCurrencyCode) {
-        CurencyConversionRateResponseDto response = currencyConversionRateService.getConversionRate(soldCurrencyCode, boughtCurrencyCode);
+    public ResponseEntity<CurrencyConversionRateResponseDto> getConversionRate(String soldCurrencyCode, String boughtCurrencyCode) {
+        User user = getUserFromAuthentication();
+        CurrencyConversionRateResponseDto response = currencyConversionRateService.getConversionRate(user, soldCurrencyCode, boughtCurrencyCode);
         return ResponseEntity.status(201).body(response);
     }
 }

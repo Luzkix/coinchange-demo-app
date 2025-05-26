@@ -1,31 +1,32 @@
 package org.luzkix.coinchange.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
-import org.luzkix.coinchange.openapi.backendapi.model.CurencyConversionRateResponseDto;
+import org.luzkix.coinchange.model.User;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinStatsService;
 import org.luzkix.coinchange.service.CurrencyConversionRateService;
 import org.luzkix.coinchange.service.CurrencyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Service
+@RequiredArgsConstructor
 public class CurrencyConversionRateServiceImpl implements CurrencyConversionRateService {
-    @Autowired
-    CoinStatsService coinStatsService;
 
-    @Autowired
-    CurrencyService currencyService;
+    private final CoinStatsService coinStatsService;
+
+    private final CurrencyService currencyService;
 
     @Override
-    public CurencyConversionRateResponseDto getConversionRate(String soldCurrency, String boughtCurrency) {
+    public CurrencyConversionRateResponseDto getConversionRate(User user, String soldCurrency, String boughtCurrency) {
         Currency sold = currencyService.findByCode(soldCurrency).orElse(null);
         Currency bought = currencyService.findByCode(boughtCurrency).orElse(null);
 
@@ -35,18 +36,19 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
 
         //if both sold and bought currencies are FIAT type, use logic for FIAT conversions
         if (sold.getType() == Currency.CurrencyTypeEnum.FIAT && bought.getType() == Currency.CurrencyTypeEnum.FIAT) {
-            return getFiatConversionRate(sold, bought);
+            return getFiatConversionRate(user, sold, bought);
         }
         //else use logic for crypto-fiat conversions
-        else return getCryptoFiatConversionRate(sold, bought);
+        else return getCryptoFiatConversionRate(user, sold, bought);
     }
 
-    private CurencyConversionRateResponseDto getFiatConversionRate(Currency soldCurrency, Currency boughtCurrency) {
-        CurencyConversionRateResponseDto response = new CurencyConversionRateResponseDto();
+    private CurrencyConversionRateResponseDto getFiatConversionRate(User user, Currency soldCurrency, Currency boughtCurrency) {
+        CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
         response.setSoldCurrencyId(soldCurrency.getId());
         response.setSoldCurrencyCode(soldCurrency.getCode());
         response.setBoughtCurrencyId(boughtCurrency.getId());
         response.setBoughtCurrencyCode(boughtCurrency.getCode());
+        response.setFeePercentage(user.getFeeCategory().getFee());
 
         if (soldCurrency.getCode().equals(boughtCurrency.getCode())) {
             response.setConversionRate(BigDecimal.ONE);
@@ -58,12 +60,13 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
         return response;
     }
 
-    private CurencyConversionRateResponseDto getCryptoFiatConversionRate(Currency soldCurrency, Currency boughtCurrency) {
-        CurencyConversionRateResponseDto response = new CurencyConversionRateResponseDto();
+    private CurrencyConversionRateResponseDto getCryptoFiatConversionRate(User user, Currency soldCurrency, Currency boughtCurrency) {
+        CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
         response.setSoldCurrencyId(soldCurrency.getId());
         response.setSoldCurrencyCode(soldCurrency.getCode());
         response.setBoughtCurrencyId(boughtCurrency.getId());
         response.setBoughtCurrencyCode(boughtCurrency.getCode());
+        response.setFeePercentage(user.getFeeCategory().getFee());
 
         if (soldCurrency.getCode().equals(boughtCurrency.getCode())) {
             response.setConversionRate(BigDecimal.ONE);

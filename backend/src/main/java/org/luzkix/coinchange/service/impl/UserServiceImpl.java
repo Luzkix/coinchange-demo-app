@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.luzkix.coinchange.dao.RoleDao;
 import org.luzkix.coinchange.dao.UserDao;
@@ -7,15 +8,13 @@ import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
-import org.luzkix.coinchange.model.Operation;
-import org.luzkix.coinchange.model.Role;
-import org.luzkix.coinchange.model.User;
+import org.luzkix.coinchange.model.*;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.CurrencyService;
+import org.luzkix.coinchange.service.FeeCategoryService;
 import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,25 +25,22 @@ import java.util.*;
 import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.INVALID_USER_ROLE;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
 
-    @Autowired
-    private RoleDao roleDao;
+    private final RoleDao roleDao;
 
-    @Autowired
-    private CurrencyService currencyService;
+    private final CurrencyService currencyService;
 
-    @Autowired
-    private UserCurrencyBalanceService userCurrencyBalanceService;
+    private final FeeCategoryService feeCategoryService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserCurrencyBalanceService userCurrencyBalanceService;
 
-    @Autowired
-    private JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtProvider jwtProvider;
 
     @Override
     public User findUserById(Long userId) {
@@ -128,6 +124,13 @@ public class UserServiceImpl implements UserService {
         user.setValidTo(LocalDateTime.of(2100, 1, 1, 0, 0));
         user.setRoles(roles);
 
+        FeeCategory baseFeeCategory = feeCategoryService.findByCategory(FeeCategory.FeeCategoryEnum.F)
+                .orElseThrow(() -> new CustomInternalErrorException(
+                        String.format("Application could not assign fee category '%s' when creating new user - such category does not exist in database!", FeeCategory.FeeCategoryEnum.F),
+                        ErrorBusinessCodeEnum.EXTERNAL_API_ERROR
+                ));
+        user.setFeeCategory(baseFeeCategory);
+
         return userDao.save(user);
     }
 
@@ -139,7 +142,11 @@ public class UserServiceImpl implements UserService {
                 .createdAt(DateUtils.convertToSystemOffsetDateTime(user.getCreatedAt()))
                 .updatedAt(DateUtils.convertToSystemOffsetDateTime(user.getUpdatedAt()))
                 .validTo(DateUtils.convertToSystemOffsetDateTime(user.getValidTo()))
-                .roles(getRolesForResponseDto(user));
+                .roles(getRolesForResponseDto(user))
+                .feeCategory(new FeeCategoryResponseDto()
+                        .feeCategory(user.getFeeCategory().getCategory().name())
+                        .fee(user.getFeeCategory().getFee())
+                );
     }
 
     private boolean passwordsAreMatching(String plainTextPassword, String encodedPassword) {
@@ -147,10 +154,10 @@ public class UserServiceImpl implements UserService {
         return passwordEncoder.matches(plainTextPassword, encodedPassword);
     }
 
-    private List<RoleDto> getRolesForResponseDto(User user) {
-        List<RoleDto> roles = new ArrayList<>();
+    private List<RoleResponseDto> getRolesForResponseDto(User user) {
+        List<RoleResponseDto> roles = new ArrayList<>();
         for (Role role : user.getRoles()) {
-            RoleDto userRole = new RoleDto();
+            RoleResponseDto userRole = new RoleResponseDto();
             userRole.setRoleName(role.getName());
 
             List<String> userOperations = new ArrayList<>();

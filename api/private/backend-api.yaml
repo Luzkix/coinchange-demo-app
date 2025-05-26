@@ -67,7 +67,7 @@ components:
       required:
         - usernameOrEmail
         - password
-    RoleDto:
+    RoleResponseDto:
       type: object
       properties:
         roleName:
@@ -88,6 +88,18 @@ components:
       required:
         - roleName
         - operations
+    FeeCategoryResponseDto:
+      type: object
+      properties:
+        feeCategory:
+          type: string
+          example: F
+        fee:
+          type: number
+          example: 0.5
+      required:
+        - feeCategory
+        - fee
     UserLoginResponseDto:
       type: object
       properties:
@@ -120,7 +132,9 @@ components:
           type: array
           description: List of roles and their associated operations.
           items:
-            $ref: '#/components/schemas/RoleDto'
+            $ref: '#/components/schemas/RoleResponseDto'
+        feeCategory:
+          $ref: '#/components/schemas/FeeCategoryResponseDto'
       required:
         - id
         - username
@@ -130,6 +144,7 @@ components:
         - validTo
         - jwtToken
         - roles
+        - feeCategory
     RefreshTokenResponseDto:
       type: object
       properties:
@@ -138,8 +153,6 @@ components:
           example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
       required:
         - jwtToken
-
-
     PortfolioResponseDto:
       type: object
       properties:
@@ -195,7 +208,7 @@ components:
         - currency
         - balance
         - updatedAt
-    CurencyConversionRateResponseDto:
+    CurrencyConversionRateResponseDto:
       type: object
       properties:
         soldCurrencyId:
@@ -215,12 +228,18 @@ components:
         conversionRate:
           type: number
           example: 1000
+        feePercentage:
+          type: number
+          example: 0.5
       required:
         - soldCurrencyId
         - soldCurrencyCode
         - boughtCurrencyId
         - boughtCurrencyCode
         - conversionRate
+        - feePercentage
+
+
 
 paths:
   /user/login:
@@ -424,7 +443,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CurencyConversionRateResponseDto'
+                $ref: '#/components/schemas/CurrencyConversionRateResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

@@ -1,10 +1,10 @@
 package org.luzkix.coinchange.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.client.ApiCoinStatsApi;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinStatsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -14,14 +14,10 @@ import java.util.Optional;
 import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.EXTERNAL_API_ERROR;
 
 @Service
+@RequiredArgsConstructor
 public class CoinStatsServiceImpl implements CoinStatsService {
 
     private final ApiCoinStatsApi apiCoinStatsApi;
-
-    @Autowired
-    public CoinStatsServiceImpl(ApiCoinStatsApi apiCoinStatsApi) {
-        this.apiCoinStatsApi = apiCoinStatsApi;
-    }
 
     /**
      * Returns CoinStats for particular product (e.g. BTC-USD) with applied caching mechanism.

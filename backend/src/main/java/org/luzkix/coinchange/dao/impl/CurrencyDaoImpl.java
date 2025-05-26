@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.dao.CurrencyDao;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.repository.CurrencyRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class CurrencyDaoImpl implements CurrencyDao {
     private final CurrencyRepository currencyRepository;

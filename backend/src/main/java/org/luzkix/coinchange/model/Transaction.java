@@ -44,6 +44,10 @@ public class Transaction {
     @Column(nullable = false, precision = 20, scale = 8)
     private BigDecimal transactionFeeAmount;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "fee_category_id", nullable = false)
+    private FeeCategory feeCategory;
+
     @Column(nullable = false, precision = 20, scale = 8)
     private BigDecimal priceOfBoughtCurrency;
 

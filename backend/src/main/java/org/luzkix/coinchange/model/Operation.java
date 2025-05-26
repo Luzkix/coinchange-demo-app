@@ -1,10 +1,16 @@
 package org.luzkix.coinchange.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "operations")
 public class Operation {
 
@@ -20,38 +26,6 @@ public class Operation {
 
     @ManyToMany(mappedBy = "operations", fetch = FetchType.LAZY)
     private Set<Role> roles;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
     public enum OperationEnum {
         ADMIN("ACCESS_USER_SECTION", "Access to user trading and account section"),
@@ -73,13 +47,13 @@ public class Operation {
             return desc;
         }
 
-        public static Operation.OperationEnum getOperationEnumFromValue(String value) {
-            for (Operation.OperationEnum enumCode : Operation.OperationEnum.values()) {
-                if (String.valueOf(enumCode.getName()).equals(value)) {
+        public static OperationEnum fromValue(String value) {
+            for (OperationEnum enumCode : OperationEnum.values()) {
+                if (enumCode.getName().equals(value)) {
                     return enumCode;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Unknown OperationEnum value: " + value);
         }
     }
 }
