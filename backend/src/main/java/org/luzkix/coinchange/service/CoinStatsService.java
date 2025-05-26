@@ -8,7 +8,7 @@ public interface CoinStatsService {
     /**
      * Return actual CoinStats for the productId (e.g. BTC-USD).
      * @param productId "BTC-USD"
-     * @return CoinStats or null, if not successful with loading data
+     * @return Optional<CoinStats>
      */
     Optional<CoinStats> getCoinStats(String productId);
 }

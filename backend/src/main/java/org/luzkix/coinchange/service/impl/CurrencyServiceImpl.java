@@ -9,6 +9,7 @@ import org.luzkix.coinchange.service.CurrencyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,5 +41,10 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public List<Currency> findAllActiveByType(Currency.CurrencyTypeEnum type) {
         return currencyDao.findAllActiveByType(type);
+    }
+
+    @Override
+    public Optional<Currency> findByCode(String code) {
+        return currencyDao.findByCode(code);
     }
 }

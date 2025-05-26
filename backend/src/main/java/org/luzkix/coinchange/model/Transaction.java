@@ -45,11 +45,7 @@ public class Transaction {
     private BigDecimal transactionFeeAmount;
 
     @Column(nullable = false, precision = 20, scale = 8)
-    private BigDecimal price;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "price_currency_id")
-    private Currency priceCurrency;
+    private BigDecimal priceOfBoughtCurrency;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false, length = 20)

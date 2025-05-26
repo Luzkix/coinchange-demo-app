@@ -195,6 +195,32 @@ components:
         - currency
         - balance
         - updatedAt
+    CurencyConversionRateResponseDto:
+      type: object
+      properties:
+        soldCurrencyId:
+          type: integer
+          format: int64
+          example: 1
+        soldCurrencyCode:
+          type: string
+          example: EUR
+        boughtCurrencyId:
+          type: integer
+          format: int64
+          example: 1
+        boughtCurrencyCode:
+          type: string
+          example: USD
+        conversionRate:
+          type: number
+          example: 1000
+      required:
+        - soldCurrencyId
+        - soldCurrencyCode
+        - boughtCurrencyId
+        - boughtCurrencyCode
+        - conversionRate
 
 paths:
   /user/login:
@@ -360,6 +386,45 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CurrencyResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /currencies/conversion-rate/{soldCurrencyCode}-{boughtCurrencyCode}:
+    get:
+      tags:
+        - ApiCurrencyConversionRate
+      summary: Get conversion rate for pair of currencies
+      operationId: getConversionRate
+      parameters:
+        - name: soldCurrencyCode
+          in: path
+          description: Currency code of sold currency
+          required: true
+          schema:
+            type: string
+          example: EUR
+        - name: boughtCurrencyCode
+          in: path
+          description: Currency code of bought currency
+          required: true
+          schema:
+            type: string
+          example: USD
+      description: |
+        Returns conversion rate for provided pair of currencies
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: Conversion rate for provided pair of currencies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurencyConversionRateResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

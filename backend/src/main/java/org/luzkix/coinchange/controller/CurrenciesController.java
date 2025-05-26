@@ -2,7 +2,9 @@ package org.luzkix.coinchange.controller;
 
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.openapi.backendapi.api.CurrenciesApi;
+import org.luzkix.coinchange.openapi.backendapi.model.CurencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
+import org.luzkix.coinchange.service.CurrencyConversionRateService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class CurrenciesController extends GenericController implements Currencie
 
     @Autowired
     private CurrencyService currencyService;
+
+    @Autowired
+    private CurrencyConversionRateService currencyConversionRateService;
 
     @Override
     public ResponseEntity<List<CurrencyResponseDto>> getSupportedCurrencies() {
@@ -49,6 +54,12 @@ public class CurrenciesController extends GenericController implements Currencie
                 })
                 .toList();
 
+        return ResponseEntity.status(201).body(response);
+    }
+
+    @Override
+    public ResponseEntity<CurencyConversionRateResponseDto> getConversionRate(String soldCurrencyCode, String boughtCurrencyCode) {
+        CurencyConversionRateResponseDto response = currencyConversionRateService.getConversionRate(soldCurrencyCode, boughtCurrencyCode);
         return ResponseEntity.status(201).body(response);
     }
 }
