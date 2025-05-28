@@ -1,12 +1,13 @@
 package org.luzkix.coinchange.service;
 
-import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
+import org.luzkix.coinchange.model.Currency;
+
+import java.math.BigDecimal;
 
 public interface CurrencyConversionRateService {
     /**
      * Provides most recent conversion rate for provided pair of currencies.
-     * @return CurencyRateResponseDto
+     * @return BigDecimal
      */
-    CurrencyConversionRateResponseDto getConversionRate(User user, String soldCurrency, String boughtCurrency);
+    BigDecimal getConversionRate(Currency soldCurrency, Currency boughtCurrency);
 }

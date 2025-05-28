@@ -4,14 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
-import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
-import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinStatsService;
 import org.luzkix.coinchange.service.CurrencyConversionRateService;
-import org.luzkix.coinchange.service.CurrencyService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,62 +19,36 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
 
     private final CoinStatsService coinStatsService;
 
-    private final CurrencyService currencyService;
-
     @Override
-    public CurrencyConversionRateResponseDto getConversionRate(User user, String soldCurrency, String boughtCurrency) {
-        Currency sold = currencyService.findByCode(soldCurrency).orElse(null);
-        Currency bought = currencyService.findByCode(boughtCurrency).orElse(null);
-
-        if (sold == null || bought == null) throw new InvalidInputDataException(
-                String.format("Sold or bought currency codes not found in database: %s, %s", soldCurrency, boughtCurrency),
-                ErrorBusinessCodeEnum.ENTITY_NOT_FOUND);
-
+    public BigDecimal getConversionRate(Currency soldCurrency, Currency boughtCurrency) {
         //if both sold and bought currencies are FIAT type, use logic for FIAT conversions
-        if (sold.getType() == Currency.CurrencyTypeEnum.FIAT && bought.getType() == Currency.CurrencyTypeEnum.FIAT) {
-            return getFiatConversionRate(user, sold, bought);
+        if (soldCurrency.getType() == Currency.CurrencyTypeEnum.FIAT && boughtCurrency.getType() == Currency.CurrencyTypeEnum.FIAT) {
+            return getFiatConversionRate(soldCurrency, boughtCurrency);
         }
         //else use logic for crypto-fiat conversions
-        else return getCryptoFiatConversionRate(user, sold, bought);
+        else return getCryptoFiatConversionRate(soldCurrency, boughtCurrency);
     }
 
-    private CurrencyConversionRateResponseDto getFiatConversionRate(User user, Currency soldCurrency, Currency boughtCurrency) {
-        CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
-        response.setSoldCurrencyId(soldCurrency.getId());
-        response.setSoldCurrencyCode(soldCurrency.getCode());
-        response.setBoughtCurrencyId(boughtCurrency.getId());
-        response.setBoughtCurrencyCode(boughtCurrency.getCode());
-        response.setFeePercentage(user.getFeeCategory().getFee());
-
+    private BigDecimal getFiatConversionRate(Currency soldCurrency, Currency boughtCurrency) {
         if (soldCurrency.getCode().equals(boughtCurrency.getCode())) {
-            response.setConversionRate(BigDecimal.ONE);
+            return BigDecimal.ONE;
         } else if (soldCurrency.getCode().equals("EUR") && boughtCurrency.getCode().equals("USD")) {
-            response.setConversionRate(getFiatConversionRateEurToUsd());
+            return getFiatConversionRateEurToUsd();
         } else if (soldCurrency.getCode().equals("USD") && boughtCurrency.getCode().equals("EUR")) {
-            response.setConversionRate(getFiatConversionRateUsdToEur());
-        }
-        return response;
+            return getFiatConversionRateUsdToEur();
+        } else return null;
     }
 
-    private CurrencyConversionRateResponseDto getCryptoFiatConversionRate(User user, Currency soldCurrency, Currency boughtCurrency) {
-        CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
-        response.setSoldCurrencyId(soldCurrency.getId());
-        response.setSoldCurrencyCode(soldCurrency.getCode());
-        response.setBoughtCurrencyId(boughtCurrency.getId());
-        response.setBoughtCurrencyCode(boughtCurrency.getCode());
-        response.setFeePercentage(user.getFeeCategory().getFee());
-
+    private BigDecimal getCryptoFiatConversionRate(Currency soldCurrency, Currency boughtCurrency) {
         if (soldCurrency.getCode().equals(boughtCurrency.getCode())) {
-            response.setConversionRate(BigDecimal.ONE);
+            return BigDecimal.ONE;
         } else if (soldCurrency.getType() == Currency.CurrencyTypeEnum.FIAT && boughtCurrency.getType() == Currency.CurrencyTypeEnum.CRYPTO) {
             //Case1: soldCurrency == FIAT and boughtCurrency == CRYPTO: reverse adjustments necessary
-            response.setConversionRate(getCryptoFiatConversionRateReversed(soldCurrency, boughtCurrency));
+            return getCryptoFiatConversionRateReversed(soldCurrency, boughtCurrency);
         } else {
             //Case2: both currencies are crypto OR soldCurrency == CRYPTO and boughtCurrency == FIAT: simplest case, return value from coinbaseApi as is without adjustments
-            response.setConversionRate(getCryptoFiatConversionRateDirect(soldCurrency, boughtCurrency));
+            return getCryptoFiatConversionRateDirect(soldCurrency, boughtCurrency);
         }
-
-        return response;
     }
 
     /**
