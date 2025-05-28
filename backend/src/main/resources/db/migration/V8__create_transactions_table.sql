@@ -7,6 +7,8 @@ CREATE TABLE transactions (
     amount_bought DECIMAL(20,8) NOT NULL,
     transaction_fee_currency_id BIGINT NOT NULL REFERENCES currencies(id),
     transaction_fee_amount DECIMAL(20,8) NOT NULL,
+    converted_fee_currency_id BIGINT NOT NULL REFERENCES currencies(id),
+    converted_fee_amount DECIMAL(20,8),
     price_of_bought_currency DECIMAL(20,8) NOT NULL,
     transaction_type VARCHAR(20) NOT NULL, -- 'DEPOSIT', 'WITHDRAWAL', 'CONVERSION'
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,

@@ -45,6 +45,13 @@ public class Transaction {
     private BigDecimal transactionFeeAmount;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "converted_fee_currency_id", nullable = false)
+    private Currency convertedFeeCurrency;
+
+    @Column(name = "converted_fee_amount", precision = 20, scale = 8)
+    private BigDecimal convertedFeeAmount;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "fee_category_id", nullable = false)
     private FeeCategory feeCategory;
 
