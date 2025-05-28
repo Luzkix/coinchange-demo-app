@@ -6,13 +6,18 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.luzkix.coinchange.dto.ConversionRateTokenPayloadDto;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidJwtTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class JwtProvider {
@@ -42,9 +47,10 @@ public class JwtProvider {
         JwtBuilder jwtBuilder = Jwts.builder()
                 .id(userId.toString())
                 .issuedAt(now)
-                .expiration(validity);
+                .expiration(validity)
+                .signWith(secretKey); // Sign created token with secret key
 
-        return jwtBuilder.signWith(secretKey).compact(); // Sign and compact the token
+        return jwtBuilder.compact();
     }
 
     /**
@@ -76,5 +82,52 @@ public class JwtProvider {
         Jws<Claims> claims = validateToken(token);
 
         return Long.parseLong(claims.getPayload().getId()); // Extract user Id
+    }
+
+
+
+    // Methods for generation and validation of conversionRateToken
+
+    /**
+     * Generates a JWT token with information about conversion rate of particular currency pair.
+     *
+     * @param soldCurrencyCode code of sold currency.
+     * @param boughtCurrencyCode code of bought currency.
+     * @param conversionRate calculated conversion rate.
+     * @param validTo validity of conversion rate.
+     * @return A signed JWT token.
+     */
+    public String generateConversionRateToken(
+            String soldCurrencyCode,
+            String boughtCurrencyCode,
+            BigDecimal conversionRate,
+            OffsetDateTime validTo
+    ) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("soldCurrencyCode", soldCurrencyCode);
+        claims.put("boughtCurrencyCode", boughtCurrencyCode);
+        claims.put("conversionRate", conversionRate);
+        claims.put("validTo", validTo.toString());
+
+        Date now = new Date();
+
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .issuedAt(now)
+                .claims(claims)
+                .signWith(secretKey);
+
+        return jwtBuilder.compact();
+    }
+
+    public ConversionRateTokenPayloadDto parseConversionRateToken(String token) {
+        Jws<Claims> claimsJws = validateToken(token);
+        Claims claims = claimsJws.getPayload();
+
+        String soldCurrencyCode = claims.get("soldCurrencyCode", String.class);
+        String boughtCurrencyCode = claims.get("boughtCurrencyCode", String.class);
+        BigDecimal conversionRate = new BigDecimal(claims.get("conversionRate", String.class));
+        OffsetDateTime validTo = OffsetDateTime.parse(claims.get("validTo", String.class));
+
+        return new ConversionRateTokenPayloadDto(soldCurrencyCode, boughtCurrencyCode, conversionRate, validTo);
     }
 }

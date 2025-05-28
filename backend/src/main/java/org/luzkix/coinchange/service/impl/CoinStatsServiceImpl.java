@@ -5,7 +5,6 @@ import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.client.ApiCoinStatsApi;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinStatsService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -20,10 +19,10 @@ public class CoinStatsServiceImpl implements CoinStatsService {
     private final ApiCoinStatsApi apiCoinStatsApi;
 
     /**
-     * Returns CoinStats for particular product (e.g. BTC-USD) with applied caching mechanism.
+     * Returns CoinStats for particular product (e.g. BTC-USD)
      */
     @Override
-    @Cacheable(value = "coinStats", key = "#productId")
+    //@Cacheable(value = "coinStats", key = "#productId") //applied caching mechanism.
     public Optional<CoinStats> getCoinStats(String productId) {
         try {
             Mono<CoinStats> coinStatsMono = apiCoinStatsApi.getCoinStats(productId);

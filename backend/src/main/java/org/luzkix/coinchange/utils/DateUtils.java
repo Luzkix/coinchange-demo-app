@@ -48,5 +48,18 @@ public class DateUtils {
         return futureDateTime.isAfter(actualDateTime);
     }
 
+    /**
+     * Adds seconds to localDateTime and returns new localDateTime.
+     * @param localDateTime inputted date and time
+     * @param seconds number of seconds to be added (can be also with minus sign)
+     * @return new LocalDateTime with added seconds
+     */
+    public static LocalDateTime addSecondsToLocalDateTime(LocalDateTime localDateTime, Long seconds) {
+        if (localDateTime == null || seconds == null) {
+            throw new IllegalArgumentException("Error in function 'addSecondsToLocalDateTime'. Parameter 'localDateTime' or 'second' was null!");
+        }
+        return localDateTime.plusSeconds(seconds);
+    }
+
 
 }

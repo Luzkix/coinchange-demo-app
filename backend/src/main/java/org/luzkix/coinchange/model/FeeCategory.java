@@ -18,7 +18,7 @@ public class FeeCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = FeeCategoryEnumConverter.class)
     @Column(nullable = false, unique = true, length = 1)
     private FeeCategoryEnum category;
 
@@ -28,4 +28,18 @@ public class FeeCategory {
     public enum FeeCategoryEnum {
         A, B, C, D, E, F
     }
+
+    @Converter(autoApply = true)
+    public static class FeeCategoryEnumConverter implements AttributeConverter<FeeCategoryEnum, String> {
+        @Override
+        public String convertToDatabaseColumn(FeeCategoryEnum attribute) {
+            return attribute != null ? attribute.name() : null;
+        }
+
+        @Override
+        public FeeCategoryEnum convertToEntityAttribute(String dbData) {
+            return dbData != null ? FeeCategoryEnum.valueOf(dbData) : null;
+        }
+    }
+
 }

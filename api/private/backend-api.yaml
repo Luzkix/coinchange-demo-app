@@ -231,6 +231,13 @@ components:
         feePercentage:
           type: number
           example: 0.5
+        validTo:
+          type: string
+          format: date-time
+          example: "2025-05-28T23:20:50"
+        verificationToken:
+          type: string
+          example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
       required:
         - soldCurrencyId
         - soldCurrencyCode
@@ -238,6 +245,8 @@ components:
         - boughtCurrencyCode
         - conversionRate
         - feePercentage
+        - validTo
+        - verificationToken
 
 
 
