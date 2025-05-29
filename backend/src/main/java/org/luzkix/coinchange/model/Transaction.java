@@ -56,11 +56,11 @@ public class Transaction {
     private FeeCategory feeCategory;
 
     @Column(nullable = false, precision = 20, scale = 8)
-    private BigDecimal priceOfBoughtCurrency;
+    private BigDecimal conversionRate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false, length = 20)
-    private TransactionType transactionType;
+    private TransactionTypeEnum transactionTypeEnum;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -75,7 +75,7 @@ public class Transaction {
     @Column(length = 255)
     private String note;
 
-    public enum TransactionType {
+    public enum TransactionTypeEnum {
         DEPOSIT,
         WITHDRAWAL,
         CONVERSION
