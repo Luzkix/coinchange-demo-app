@@ -4,7 +4,7 @@ import org.luzkix.coinchange.model.Currency;
 
 import java.math.BigDecimal;
 
-public interface CurrencyConversionRateService {
+public interface CurrencyConversionService {
     /**
      * Provides most recent conversion rate for provided pair of currencies.
      * @return BigDecimal

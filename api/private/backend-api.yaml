@@ -365,10 +365,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currencies:
+  /currency:
     get:
       tags:
-        - ApiCurrencies
+        - ApiCurrency
       summary: Get all currently supported currencies
       operationId: getSupportedCurrencies
       description: |
@@ -390,10 +390,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currencies/{type}:
+  /currency/{type}:
     get:
       tags:
-        - ApiCurrencies
+        - ApiCurrency
       summary: Get all currently supported currencies for selected type
       operationId: getSupportedCurrenciesForType
       parameters:
@@ -424,10 +424,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
 
-  /currencies/conversion-rate/{soldCurrencyCode}-{boughtCurrencyCode}:
+  /currency/conversion-rate/{soldCurrencyCode}-{boughtCurrencyCode}:
     get:
       tags:
-        - ApiCurrencyConversionRate
+        - ApiCurrency
       summary: Get conversion rate for pair of currencies
       operationId: getConversionRate
       parameters:

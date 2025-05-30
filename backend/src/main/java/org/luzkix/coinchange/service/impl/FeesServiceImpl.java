@@ -3,7 +3,7 @@ package org.luzkix.coinchange.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
-import org.luzkix.coinchange.service.CurrencyConversionRateService;
+import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.luzkix.coinchange.service.FeesService;
 import org.luzkix.coinchange.service.TransactionService;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import java.util.List;
 public class FeesServiceImpl implements FeesService {
 
     private final TransactionService transactionService;
-    private final CurrencyConversionRateService currencyConversionRateService;
+    private final CurrencyConversionService currencyConversionService;
 
     @Value("${fee.default-conversion-currency}")
     private String defaultCurrencyCodeForFeeConversion;
@@ -26,7 +26,7 @@ public class FeesServiceImpl implements FeesService {
     public BigDecimal getTotalFeesConvertedToTargetCurrency(Currency targetCurrency, List<TotalFeesForCurrencyDto> allCurrenciesFees) {
         BigDecimal totalFeesInTargetCurrency = BigDecimal.ZERO;
         for(TotalFeesForCurrencyDto fee : allCurrenciesFees) {
-            BigDecimal targetCurrencyConversionRate = currencyConversionRateService.getConversionRate(fee.getCurrency(),targetCurrency);
+            BigDecimal targetCurrencyConversionRate = currencyConversionService.getConversionRate(fee.getCurrency(),targetCurrency);
             BigDecimal targetCurrencyFee = fee.getTotalFees().multiply(targetCurrencyConversionRate);
             totalFeesInTargetCurrency = totalFeesInTargetCurrency.add(targetCurrencyFee);
         }

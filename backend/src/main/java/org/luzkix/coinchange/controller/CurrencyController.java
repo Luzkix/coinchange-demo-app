@@ -6,10 +6,10 @@ import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.api.CurrenciesApi;
+import org.luzkix.coinchange.openapi.backendapi.api.CurrencyApi;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
-import org.luzkix.coinchange.service.CurrencyConversionRateService;
+import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,11 +23,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CurrenciesController extends GenericController implements CurrenciesApi {
+public class CurrencyController extends GenericController implements CurrencyApi {
 
     private final CurrencyService currencyService;
 
-    private final CurrencyConversionRateService currencyConversionRateService;
+    private final CurrencyConversionService currencyConversionService;
 
     private final JwtProvider jwtProvider;
 
@@ -82,7 +82,7 @@ public class CurrenciesController extends GenericController implements Currencie
                 String.format("Sold or bought currency codes not found in database: %s, %s", soldCurrency, boughtCurrency),
                 ErrorBusinessCodeEnum.ENTITY_NOT_FOUND);
 
-        BigDecimal conversionRate = currencyConversionRateService.getConversionRate(soldCurrency, boughtCurrency);
+        BigDecimal conversionRate = currencyConversionService.getConversionRate(soldCurrency, boughtCurrency);
 
         CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
         response.setSoldCurrencyId(soldCurrency.getId());

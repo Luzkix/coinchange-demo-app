@@ -7,7 +7,7 @@ import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinbaseExchangeService;
-import org.luzkix.coinchange.service.CurrencyConversionRateService;
+import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
-public class CurrencyConversionRateServiceImpl implements CurrencyConversionRateService {
+public class CurrencyConversionServiceImpl implements CurrencyConversionService {
 
     private final CoinbaseExchangeService coinbaseExchangeService;
 
