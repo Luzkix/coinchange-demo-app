@@ -1,31 +1,34 @@
 package org.luzkix.coinchange.dao.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.dao.TransactionDao;
+import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.Transaction.TransactionTypeEnum;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class TransactionDaoImpl implements TransactionDao {
 
     private final TransactionRepository transactionRepository;
 
-    @Autowired
-    public TransactionDaoImpl(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
-
     @Override
     public Transaction save(Transaction transaction) {
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public List<Transaction> findAll() {
+        return transactionRepository.findAll();
     }
 
     @Override
@@ -106,5 +109,25 @@ public class TransactionDaoImpl implements TransactionDao {
     @Override
     public List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(User user) {
         return transactionRepository.getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(user);
+    }
+
+    @Override
+    public List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user) {
+        return transactionRepository.findUniqueCurrenciesUsedByUser(user);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency) {
+        return transactionRepository.sumSoldAmountForCurrencyNotCancelled(user, currency);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency) {
+        return transactionRepository.sumBoughtAmountForCurrencyProcessed(user, currency);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumSoldAmountForCurrencyCancelledPending(User user, Currency currency) {
+        return transactionRepository.sumSoldAmountForCurrencyCancelledPending(user, currency);
     }
 }

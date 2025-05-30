@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.luzkix.coinchange.dao.RoleDao;
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserLoginResponseDto createUser(UserRegistrationRequestDto registrationDto) {
         // Check if the user already exists
         User user = userDao.findActiveUserByUsernameOrEmail(registrationDto.getUsername(), registrationDto.getEmail());
@@ -68,12 +70,9 @@ public class UserServiceImpl implements UserService {
         //create user
         user = createAndSaveUser(registrationDto,roles);
 
-        //create initial zero balances for each fiat currency
-        List<Currency> allCurrencies = currencyService.findAllActive();
-        userCurrencyBalanceService.createInitialZeroFiatBalances(user,allCurrencies);
-
         //give user a bonus of 100K USD for registration
-        Currency usdCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("USD")).findFirst().orElse(null);
+        List<Currency> allCurrencies = currencyService.findAllActive();
+        Currency usdCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("EUR")).findFirst().orElse(null);
         if(usdCurrency != null) {
             userCurrencyBalanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
         }

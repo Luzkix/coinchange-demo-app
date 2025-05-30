@@ -20,7 +20,7 @@ public class FeesServiceImpl implements FeesService {
     private final CurrencyConversionRateService currencyConversionRateService;
 
     @Value("${fee.default-conversion-currency}")
-    private String defaultConversionCurrency;
+    private String defaultCurrencyCodeForFeeConversion;
 
     @Override
     public BigDecimal getTotalFeesConvertedToTargetCurrency(Currency targetCurrency, List<TotalFeesForCurrencyDto> allCurrenciesFees) {

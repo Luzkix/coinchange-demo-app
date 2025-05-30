@@ -190,21 +190,16 @@ components:
     UserCurrencyBalanceResponseDto:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
         currency:
           $ref: '#/components/schemas/CurrencyResponseDto'
         balance:
           type: number
           example: 1000
-        updatedAt:
+        calculatedAt:
           type: string
           format: date-time
           example: "2018-08-29T23:20:50"
       required:
-        - id
         - currency
         - balance
         - updatedAt
@@ -351,7 +346,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         201:
-          description: Whole portfolio of the user (balances of all user's fiat and crypto currencies)
+          description: Whole portfolio of the user (available balances of all user's fiat and crypto currencies)
           content:
             application/json:
               schema:

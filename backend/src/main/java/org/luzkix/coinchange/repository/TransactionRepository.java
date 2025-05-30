@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.repository;
 
+import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
@@ -9,7 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
@@ -86,4 +89,40 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         GROUP BY t.transactionFeeCurrency
     """)
     List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(@Param("user") User user);
+
+    @Query("""
+        SELECT t.soldCurrency as soldCurrency, t.boughtCurrency as boughtCurrency
+        FROM Transaction t
+        WHERE t.user = :user
+        GROUP BY t.soldCurrency, t.boughtCurrency
+    """)
+    List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(@Param("user") User user);
+
+    @Query("""
+        SELECT COALESCE(SUM(t.amountSold), 0)
+        FROM Transaction t
+        WHERE t.user = :user
+          AND t.soldCurrency = :currency
+          AND (t.processedAt IS NOT NULL OR (t.processedAt IS NULL AND t.cancelledAt IS NULL))
+    """)
+    Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(@Param("user") User user, @Param("currency") Currency currency);
+
+    @Query("""
+        SELECT COALESCE(SUM(t.amountBought), 0)
+        FROM Transaction t
+        WHERE t.user = :user
+          AND t.boughtCurrency = :currency
+          AND t.processedAt IS NOT NULL
+    """)
+    Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(@Param("user") User user, @Param("currency") Currency currency);
+
+    @Query("""
+        SELECT COALESCE(SUM(t.amountSold), 0)
+        FROM Transaction t
+        WHERE t.user = :user
+          AND t.soldCurrency = :currency
+          AND t.processedAt IS NULL
+          AND t.cancelledAt IS NOT NULL
+    """)
+    Optional<BigDecimal> sumSoldAmountForCurrencyCancelledPending(@Param("user") User user, @Param("currency") Currency currency);
 }

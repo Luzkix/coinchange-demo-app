@@ -1,8 +1,0 @@
-CREATE TABLE user_currency_balances (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
-    currency_id BIGINT NOT NULL REFERENCES currencies(id),
-    balance DECIMAL(20,8) NOT NULL DEFAULT 0,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, currency_id)
-);

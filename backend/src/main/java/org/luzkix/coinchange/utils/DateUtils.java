@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 public class DateUtils {
 
     public static OffsetDateTime convertToSystemOffsetDateTime(LocalDateTime localDateTime) {
-        return localDateTime != null ? localDateTime.atOffset(OffsetDateTime.now().getOffset()) : null;
+        return localDateTime == null ? null :localDateTime.atOffset(OffsetDateTime.now().getOffset());
     }
 
     public static LocalDateTime convertFromOffsetDateTime(OffsetDateTime dateTime){

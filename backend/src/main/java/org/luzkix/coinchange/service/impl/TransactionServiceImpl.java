@@ -2,6 +2,7 @@ package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.dao.TransactionDao;
+import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
@@ -10,6 +11,7 @@ import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.service.TransactionService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction save(Transaction transaction) {
         return transactionDao.save(transaction);
+    }
+
+    @Override
+    public List<Transaction> findAll() {
+        return transactionDao.findAll();
     }
 
     @Override
@@ -102,5 +109,25 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(User user) {
         return transactionDao.getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(user);
+    }
+
+    @Override
+    public List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user) {
+        return transactionDao.findUniqueCurrenciesUsedByUser(user);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency) {
+        return transactionDao.sumSoldAmountForCurrencyNotCancelled(user, currency);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency) {
+        return transactionDao.sumBoughtAmountForCurrencyProcessed(user, currency);
+    }
+
+    @Override
+    public Optional<BigDecimal> sumSoldAmountForCurrencyCancelledPending(User user, Currency currency) {
+        return transactionDao.sumSoldAmountForCurrencyCancelledPending(user, currency);
     }
 }

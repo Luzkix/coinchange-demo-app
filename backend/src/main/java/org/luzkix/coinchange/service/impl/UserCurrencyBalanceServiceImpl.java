@@ -1,52 +1,98 @@
 package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.luzkix.coinchange.dao.UserCurrencyBalanceDao;
+import org.luzkix.coinchange.config.CustomConstants;
+import org.luzkix.coinchange.dto.UserAvailableCurrencyBalance;
+import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
+import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
+import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.model.Currency;
+import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.model.UserCurrencyBalance;
+import org.luzkix.coinchange.service.CurrencyService;
+import org.luzkix.coinchange.service.TransactionService;
 import org.luzkix.coinchange.service.UserCurrencyBalanceService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserCurrencyBalanceServiceImpl implements UserCurrencyBalanceService {
-    private final UserCurrencyBalanceDao userCurrencyBalanceDao;
+    private final TransactionService transactionService;
+    private final CurrencyService currencyService;
+
+    @Value("${fee.default-conversion-currency}")
+    private String defaultCurrencyCodeForFeeConversion;
 
     @Override
-    public List<UserCurrencyBalance> findByUser(User user) {
-        return userCurrencyBalanceDao.findByUser(user);
-    }
+    public List<UserAvailableCurrencyBalance> getUserAvailableCurrencyBalances(User user) {
+        // Collecting of all sold/bought currencies registered in Transaction table for the user.
+        List<CurrencyUsageDto> currencyUsages = transactionService.findUniqueCurrenciesUsedByUser(user);
+        Set<Currency> allCurrencies = new HashSet<>();
+        for (CurrencyUsageDto usage : currencyUsages) {
+            allCurrencies.add(usage.getSoldCurrency());
+            allCurrencies.add(usage.getBoughtCurrency());
+        }
 
-    @Override
-    public UserCurrencyBalance findByUserAndCurrency(User user, Currency currency) {
-        return userCurrencyBalanceDao.findByUserAndCurrency(user, currency).orElse(null);
+        // Calculate available balance for each currency
+        List<UserAvailableCurrencyBalance> result = new ArrayList<>();
+        for (Currency currency : allCurrencies) {
+            BigDecimal availableBalance = calculateAvailableBalanceForCurrency(user, currency);
+            result.add(new UserAvailableCurrencyBalance(user, currency, availableBalance));
+        }
+
+        return result;
     }
 
     @Override
     public void creditRegistrationBonus(User user, Currency currency, BigDecimal bonus) {
-        UserCurrencyBalance currencyBalance = userCurrencyBalanceDao.findByUserAndCurrency(user, currency).orElse(new UserCurrencyBalance());
-        currencyBalance.setCurrency(currency);
-        currencyBalance.setUser(user);
-        currencyBalance.setBalance((currencyBalance.getBalance() == null ? BigDecimal.ZERO : currencyBalance.getBalance()).add(bonus));
-        userCurrencyBalanceDao.save(currencyBalance);
+        List<Transaction> allTransactions = transactionService.findAll();
+
+        //creating registration bonus transaction only for new users
+        if (allTransactions.isEmpty()) {
+            Currency defaultCurrencyForFeeConversion = currencyService.findByCode(defaultCurrencyCodeForFeeConversion)
+                    .orElseThrow(() -> new CustomInternalErrorException("Default currency for fee conversion with code " + defaultCurrencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+            LocalDateTime now = LocalDateTime.now();
+
+            Transaction bonusTransaction = new Transaction();
+            bonusTransaction.setUser(user);
+            bonusTransaction.setSoldCurrency(currency);
+            bonusTransaction.setBoughtCurrency(currency);
+            bonusTransaction.setAmountSold(BigDecimal.ZERO);
+            bonusTransaction.setAmountBought(bonus);
+            bonusTransaction.setTransactionFeeCurrency(currency);
+            bonusTransaction.setTransactionFeeAmount(BigDecimal.ZERO);
+            bonusTransaction.setConvertedFeeCurrency(defaultCurrencyForFeeConversion);
+            bonusTransaction.setConvertedFeeAmount(BigDecimal.ZERO);
+            bonusTransaction.setFeeCategory(user.getFeeCategory());
+            bonusTransaction.setConversionRate(BigDecimal.ONE);
+            bonusTransaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.DEPOSIT);
+            bonusTransaction.setCreatedAt(now);
+            bonusTransaction.setProcessedAt(now);
+            bonusTransaction.setNote(CustomConstants.REGISTRATION_BONUS);
+
+            transactionService.save(bonusTransaction);
+        }
     }
 
-    @Override
-    public void createInitialZeroFiatBalances(User user, List<Currency> currencies) {
-        currencies.stream()
-                .filter(currency -> currency.getType() == Currency.CurrencyTypeEnum.FIAT)
-                .forEach(currency -> {
-                    Optional<UserCurrencyBalance> existing = userCurrencyBalanceDao.findByUserAndCurrency(user, currency);
-                    UserCurrencyBalance fiatCurrencyBalance = existing.orElseGet(UserCurrencyBalance::new);
-                    fiatCurrencyBalance.setCurrency(currency);
-                    fiatCurrencyBalance.setUser(user);
-                    fiatCurrencyBalance.setBalance(BigDecimal.ZERO);
-                    userCurrencyBalanceDao.save(fiatCurrencyBalance);
-                });
+    //PRIVATE METHODS
+    private BigDecimal calculateAvailableBalanceForCurrency(User user, Currency currency) {
+        // note: each transaction in Transaction table leads to increase/decrease of available balance based on whether the currency is bought/sold
+        // and also based on the state of transaction (whether it is already processed or not yet processed, or cancelled)
+        BigDecimal decrease = transactionService.sumSoldAmountForCurrencyNotCancelled(user, currency)
+                .orElse(BigDecimal.ZERO);
+        BigDecimal increase = transactionService.sumBoughtAmountForCurrencyProcessed(user, currency)
+                .orElse(BigDecimal.ZERO);
+        BigDecimal cancelledIncrease = transactionService.sumSoldAmountForCurrencyCancelledPending(user, currency)
+                .orElse(BigDecimal.ZERO);
+
+        return increase.add(cancelledIncrease).subtract(decrease);
     }
 }

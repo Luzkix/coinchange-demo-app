@@ -9,8 +9,11 @@ import org.luzkix.coinchange.service.PortfolioService;
 import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.luzkix.coinchange.utils.DateUtils.convertToSystemOffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -19,11 +22,11 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final UserCurrencyBalanceService userCurrencyBalanceService;
 
     /**
-     * Returns portfolio (all fiat and crypto balances) for given username.
+     * Returns portfolio (all available fiat and crypto balances) for given username.
      */
     public PortfolioResponseDto getPortfolio(User user) {
         // Get all currencyBalances for user and map to DTO
-        List<UserCurrencyBalanceResponseDto> currenciesBalances = userCurrencyBalanceService.findByUser(user)
+        List<UserCurrencyBalanceResponseDto> currenciesBalances = userCurrencyBalanceService.getUserAvailableCurrencyBalances(user)
                 .stream()
                 .map(currencyBalance -> {
                     CurrencyResponseDto currency = new CurrencyResponseDto();
@@ -34,10 +37,9 @@ public class PortfolioServiceImpl implements PortfolioService {
                     currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
 
                     UserCurrencyBalanceResponseDto responseDto = new UserCurrencyBalanceResponseDto();
-                    responseDto.setId(currencyBalance.getId());
                     responseDto.setCurrency(currency);
-                    responseDto.setBalance(currencyBalance.getBalance());
-                    responseDto.setUpdatedAt(currencyBalance.getUpdatedAt());
+                    responseDto.setBalance(currencyBalance.getAvailableBalance());
+                    responseDto.setCalculatedAt(convertToSystemOffsetDateTime(LocalDateTime.now()));
 
                     return responseDto;
                 })
