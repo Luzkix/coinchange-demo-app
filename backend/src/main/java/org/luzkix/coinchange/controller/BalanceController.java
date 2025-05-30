@@ -1,13 +1,15 @@
-package org.luzkix.coinchange.service.impl;
+package org.luzkix.coinchange.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.model.User;
+import org.luzkix.coinchange.openapi.backendapi.api.BalanceApi;
+import org.luzkix.coinchange.openapi.backendapi.model.BalancesResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyBalanceResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.PortfolioResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.UserCurrencyBalanceResponseDto;
-import org.luzkix.coinchange.service.PortfolioService;
-import org.luzkix.coinchange.service.UserCurrencyBalanceService;
-import org.springframework.stereotype.Service;
+import org.luzkix.coinchange.service.BalanceService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,18 +17,18 @@ import java.util.stream.Collectors;
 
 import static org.luzkix.coinchange.utils.DateUtils.convertToSystemOffsetDateTime;
 
-@Service
+@RestController
 @RequiredArgsConstructor
-public class PortfolioServiceImpl implements PortfolioService {
+public class BalanceController extends GenericController implements BalanceApi {
 
-    private final UserCurrencyBalanceService userCurrencyBalanceService;
+    private final BalanceService balanceService;
 
-    /**
-     * Returns portfolio (all available fiat and crypto balances) for given username.
-     */
-    public PortfolioResponseDto getPortfolio(User user) {
+    @Override
+    public ResponseEntity<BalancesResponseDto> getBalances(String type) {
+        User user = getUserFromAuthentication();
+
         // Get all currencyBalances for user and map to DTO
-        List<UserCurrencyBalanceResponseDto> currenciesBalances = userCurrencyBalanceService.getUserAvailableCurrencyBalances(user)
+        List<CurrencyBalanceResponseDto> currenciesBalances = balanceService.getCurrencyBalances(user, CustomConstants.BalanceTypeEnum.valueOf(type))
                 .stream()
                 .map(currencyBalance -> {
                     CurrencyResponseDto currency = new CurrencyResponseDto();
@@ -36,7 +38,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                     currency.setIsActive(currencyBalance.getCurrency().isActive());
                     currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
 
-                    UserCurrencyBalanceResponseDto responseDto = new UserCurrencyBalanceResponseDto();
+                    CurrencyBalanceResponseDto responseDto = new CurrencyBalanceResponseDto();
                     responseDto.setCurrency(currency);
                     responseDto.setBalance(currencyBalance.getAvailableBalance());
                     responseDto.setCalculatedAt(convertToSystemOffsetDateTime(LocalDateTime.now()));
@@ -45,11 +47,10 @@ public class PortfolioServiceImpl implements PortfolioService {
                 })
                 .collect(Collectors.toList());
 
-        // Return as PortfolioDto
-        PortfolioResponseDto responseDto = new PortfolioResponseDto();
+        // Return as BalancesResponseDto
+        BalancesResponseDto responseDto = new BalancesResponseDto();
         responseDto.setCurrenciesBalances(currenciesBalances);
 
-        return responseDto;
+        return ResponseEntity.status(201).body(responseDto);
     }
 }
-

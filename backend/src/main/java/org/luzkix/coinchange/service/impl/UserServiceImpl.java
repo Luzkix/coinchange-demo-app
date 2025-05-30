@@ -11,9 +11,9 @@ import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.*;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
+import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.luzkix.coinchange.service.FeeCategoryService;
-import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     private final FeeCategoryService feeCategoryService;
 
-    private final UserCurrencyBalanceService userCurrencyBalanceService;
+    private final BalanceService balanceService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
         List<Currency> allCurrencies = currencyService.findAllActive();
         Currency usdCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("EUR")).findFirst().orElse(null);
         if(usdCurrency != null) {
-            userCurrencyBalanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
+            balanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
         }
 
         // Prepare response DTO

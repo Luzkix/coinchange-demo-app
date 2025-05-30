@@ -122,12 +122,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency) {
+        return transactionDao.sumSoldAmountForCurrencyPending(user, currency);
+    }
+
+    @Override
     public Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency) {
         return transactionDao.sumBoughtAmountForCurrencyProcessed(user, currency);
     }
 
     @Override
-    public Optional<BigDecimal> sumSoldAmountForCurrencyCancelledPending(User user, Currency currency) {
-        return transactionDao.sumSoldAmountForCurrencyCancelledPending(user, currency);
+    public Optional<BigDecimal> sumSoldAmountForCurrencyCancelled(User user, Currency currency) {
+        return transactionDao.sumSoldAmountForCurrencyCancelled(user, currency);
     }
 }

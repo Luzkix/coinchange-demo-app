@@ -51,6 +51,7 @@ public interface TransactionService {
 
     List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user);
     Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency);
+    Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency);
     Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency);
-    Optional<BigDecimal> sumSoldAmountForCurrencyCancelledPending(User user, Currency currency);
+    Optional<BigDecimal> sumSoldAmountForCurrencyCancelled(User user, Currency currency);
 }

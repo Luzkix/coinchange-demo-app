@@ -2,16 +2,16 @@ package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.CustomConstants;
-import org.luzkix.coinchange.dto.UserAvailableCurrencyBalance;
+import org.luzkix.coinchange.dto.CurrencyBalanceDto;
 import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
+import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.luzkix.coinchange.service.TransactionService;
-import org.luzkix.coinchange.service.UserCurrencyBalanceService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class UserCurrencyBalanceServiceImpl implements UserCurrencyBalanceService {
+public class BalanceServiceImpl implements BalanceService {
     private final TransactionService transactionService;
     private final CurrencyService currencyService;
 
@@ -32,7 +32,7 @@ public class UserCurrencyBalanceServiceImpl implements UserCurrencyBalanceServic
     private String defaultCurrencyCodeForFeeConversion;
 
     @Override
-    public List<UserAvailableCurrencyBalance> getUserAvailableCurrencyBalances(User user) {
+    public List<CurrencyBalanceDto> getCurrencyBalances(User user, CustomConstants.BalanceTypeEnum balanceType) {
         // Collecting of all sold/bought currencies registered in Transaction table for the user.
         List<CurrencyUsageDto> currencyUsages = transactionService.findUniqueCurrenciesUsedByUser(user);
         Set<Currency> allCurrencies = new HashSet<>();
@@ -42,10 +42,12 @@ public class UserCurrencyBalanceServiceImpl implements UserCurrencyBalanceServic
         }
 
         // Calculate available balance for each currency
-        List<UserAvailableCurrencyBalance> result = new ArrayList<>();
+        List<CurrencyBalanceDto> result = new ArrayList<>();
         for (Currency currency : allCurrencies) {
-            BigDecimal availableBalance = calculateAvailableBalanceForCurrency(user, currency);
-            result.add(new UserAvailableCurrencyBalance(user, currency, availableBalance));
+            BigDecimal balance = balanceType.name().equals(CustomConstants.BalanceTypeEnum.AVAILABLE.name()) ?
+                    calculateAvailableBalanceForCurrency(user, currency) :
+                    calculateTotalBalanceForCurrency(user, currency);
+            result.add(new CurrencyBalanceDto(currency, balance));
         }
 
         return result;
@@ -90,9 +92,17 @@ public class UserCurrencyBalanceServiceImpl implements UserCurrencyBalanceServic
                 .orElse(BigDecimal.ZERO);
         BigDecimal increase = transactionService.sumBoughtAmountForCurrencyProcessed(user, currency)
                 .orElse(BigDecimal.ZERO);
-        BigDecimal cancelledIncrease = transactionService.sumSoldAmountForCurrencyCancelledPending(user, currency)
+        BigDecimal cancelledIncrease = transactionService.sumSoldAmountForCurrencyCancelled(user, currency)
                 .orElse(BigDecimal.ZERO);
 
         return increase.add(cancelledIncrease).subtract(decrease);
+    }
+
+    private BigDecimal calculateTotalBalanceForCurrency(User user, Currency currency) {
+        // note: total balance should also include amount of sold currencies in pending state (i.e. not yet processed)
+        BigDecimal availableBalance = calculateAvailableBalanceForCurrency(user, currency);
+        BigDecimal increaseForPendingSoldTransactions = transactionService.sumSoldAmountForCurrencyPending(user, currency)
+                .orElse(BigDecimal.ZERO);
+        return availableBalance.add(increaseForPendingSoldTransactions);
     }
 }

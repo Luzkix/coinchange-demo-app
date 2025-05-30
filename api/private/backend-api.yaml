@@ -153,13 +153,13 @@ components:
           example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
       required:
         - jwtToken
-    PortfolioResponseDto:
+    BalancesResponseDto:
       type: object
       properties:
         currenciesBalances:
           type: array
           items:
-            $ref: '#/components/schemas/UserCurrencyBalanceResponseDto'
+            $ref: '#/components/schemas/CurrencyBalanceResponseDto'
       required:
         - currenciesBalances
     CurrencyResponseDto:
@@ -187,7 +187,7 @@ components:
         - name
         - isActive
         - type
-    UserCurrencyBalanceResponseDto:
+    CurrencyBalanceResponseDto:
       type: object
       properties:
         currency:
@@ -202,7 +202,7 @@ components:
       required:
         - currency
         - balance
-        - updatedAt
+        - calculatedAt
     CurrencyConversionRateResponseDto:
       type: object
       properties:
@@ -334,23 +334,31 @@ paths:
 
 
 
-  /portfolio:
+  /balance/{type}:
     get:
       tags:
-        - ApiPortfolio
-      summary: Get user´s portfolio
-      operationId: getPortfolio
+        - ApiBalance
+      summary: Get user´s currencies balances
+      operationId: getBalances
+      parameters:
+        - name: type
+          in: path
+          description: Type of requested balance, AVAILABLE / TOTAL
+          required: true
+          schema:
+            type: string
+          example: F - fiat, C - crypto
       description: |
-        Returns portfolio of the client with information about his fiat and crypto currencies
+        Returns information about fiat and crypto currencies balances (available or total) which are owned by user.
       security:
         - bearerAuth: [ ]
       responses:
         201:
-          description: Whole portfolio of the user (available balances of all user's fiat and crypto currencies)
+          description: (available/total) balances of all user's fiat and crypto currencies
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PortfolioResponseDto'
+                $ref: '#/components/schemas/BalancesResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
