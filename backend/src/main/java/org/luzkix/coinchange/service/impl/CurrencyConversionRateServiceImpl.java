@@ -6,7 +6,7 @@ import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
-import org.luzkix.coinchange.service.CoinStatsService;
+import org.luzkix.coinchange.service.CoinbaseExchangeService;
 import org.luzkix.coinchange.service.CurrencyConversionRateService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 public class CurrencyConversionRateServiceImpl implements CurrencyConversionRateService {
 
-    private final CoinStatsService coinStatsService;
+    private final CoinbaseExchangeService coinbaseExchangeService;
 
     @Override
     public BigDecimal getConversionRate(Currency soldCurrency, Currency boughtCurrency) {
@@ -56,7 +56,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
      * @return BigDecimal or error if conversion rate could not be loaded
      */
     private BigDecimal getFiatConversionRateEurToUsd() {
-        CoinStats eurUsdStats = coinStatsService.getCoinStats(CustomConstants.EUR_USD_ID).orElse(null);
+        CoinStats eurUsdStats = coinbaseExchangeService.getCoinStats(CustomConstants.EUR_USD_ID).orElse(null);
 
         if (eurUsdStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for fiat currencies pair: %s ", CustomConstants.EUR_USD_ID),
@@ -70,7 +70,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
      * @return BigDecimal or error if conversion rate could not be loaded
      */
     private BigDecimal getFiatConversionRateUsdToEur() {
-        CoinStats eurUsdStats = coinStatsService.getCoinStats(CustomConstants.EUR_USD_ID).orElse(null);
+        CoinStats eurUsdStats = coinbaseExchangeService.getCoinStats(CustomConstants.EUR_USD_ID).orElse(null);
 
         if (eurUsdStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for fiat currencies pair: %s ", CustomConstants.EUR_USD_ID),
@@ -90,7 +90,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
     private BigDecimal getCryptoFiatConversionRateReversed(Currency soldFiatCurrency, Currency boughtCryptoCurrency) {
         //1. get reversed currencyPairStats (coinbase only supports crypto-fiat pairs, not fiat-crypto)
         String procuctId = boughtCryptoCurrency.getCode() + "-" + soldFiatCurrency.getCode();
-        CoinStats reversedPairStats = coinStatsService.getCoinStats(procuctId).orElse(null);
+        CoinStats reversedPairStats = coinbaseExchangeService.getCoinStats(procuctId).orElse(null);
 
         if (reversedPairStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for currency pair: %s ", procuctId),
@@ -110,7 +110,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
      */
     private BigDecimal getCryptoFiatConversionRateDirect(Currency soldCurrency, Currency boughtCurrency) {
         String procuctId = soldCurrency.getCode() + "-" + boughtCurrency.getCode();
-        CoinStats currencyPairStats = coinStatsService.getCoinStats(procuctId).orElse(null);
+        CoinStats currencyPairStats = coinbaseExchangeService.getCoinStats(procuctId).orElse(null);
 
         if (currencyPairStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for currency pair: %s ", procuctId),

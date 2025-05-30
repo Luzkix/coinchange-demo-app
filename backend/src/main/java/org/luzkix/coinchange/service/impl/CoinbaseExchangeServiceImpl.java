@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.client.ApiCoinStatsApi;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
-import org.luzkix.coinchange.service.CoinStatsService;
+import org.luzkix.coinchange.service.CoinbaseExchangeService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +14,7 @@ import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.EXTERNAL_AP
 
 @Service
 @RequiredArgsConstructor
-public class CoinStatsServiceImpl implements CoinStatsService {
+public class CoinbaseExchangeServiceImpl implements CoinbaseExchangeService {
 
     private final ApiCoinStatsApi apiCoinStatsApi;
 
