@@ -10,7 +10,7 @@ CREATE TABLE transactions (
     converted_fee_currency_id BIGINT NOT NULL REFERENCES currencies(id),
     converted_fee_amount DECIMAL(20,8),
     fee_category_id BIGINT NOT NULL DEFAULT 1 REFERENCES fee_categories(id),
-    conversion_rate DECIMAL(20,8) NOT NULL,
+    conversion_rate_after_fees DECIMAL(20,10) NOT NULL,
     transaction_type VARCHAR(20) NOT NULL, -- 'DEPOSIT', 'WITHDRAWAL', 'CONVERSION'
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     processed_at TIMESTAMP WITHOUT TIME ZONE,

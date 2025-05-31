@@ -93,20 +93,20 @@ public class JwtProvider {
      *
      * @param soldCurrencyCode code of sold currency.
      * @param boughtCurrencyCode code of bought currency.
-     * @param conversionRate calculated conversion rate.
+     * @param marketConversionRate conversion rate calculated based on current market data.
      * @param validTo validity of conversion rate.
      * @return A signed JWT token.
      */
     public String generateConversionRateToken(
             String soldCurrencyCode,
             String boughtCurrencyCode,
-            BigDecimal conversionRate,
+            BigDecimal marketConversionRate,
             OffsetDateTime validTo
     ) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("soldCurrencyCode", soldCurrencyCode);
         claims.put("boughtCurrencyCode", boughtCurrencyCode);
-        claims.put("conversionRate", conversionRate);
+        claims.put("marketConversionRate", marketConversionRate.toString());
         claims.put("validTo", validTo.toString());
 
         Date now = new Date();
@@ -125,9 +125,9 @@ public class JwtProvider {
 
         String soldCurrencyCode = claims.get("soldCurrencyCode", String.class);
         String boughtCurrencyCode = claims.get("boughtCurrencyCode", String.class);
-        BigDecimal conversionRate = new BigDecimal(claims.get("conversionRate", String.class));
+        BigDecimal marketConversionRate = new BigDecimal(claims.get("marketConversionRate", String.class));
         OffsetDateTime validTo = OffsetDateTime.parse(claims.get("validTo", String.class));
 
-        return new ConversionRateTokenPayloadDto(soldCurrencyCode, boughtCurrencyCode, conversionRate, validTo);
+        return new ConversionRateTokenPayloadDto(soldCurrencyCode, boughtCurrencyCode, marketConversionRate, validTo);
     }
 }

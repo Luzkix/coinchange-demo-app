@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
                 .roles(getRolesForResponseDto(user))
                 .feeCategory(new FeeCategoryResponseDto()
                         .feeCategory(user.getFeeCategory().getCategory().name())
-                        .fee(user.getFeeCategory().getFee())
+                        .feeRate(user.getFeeCategory().getFeeRate())
                 );
     }
 

@@ -11,6 +11,6 @@ import java.time.OffsetDateTime;
 public class ConversionRateTokenPayloadDto {
     private String soldCurrencyCode;
     private String boughtCurrencyCode;
-    private BigDecimal conversionRate;
+    private BigDecimal marketConversionRate;
     private OffsetDateTime validTo;
 }

@@ -22,8 +22,8 @@ public class FeeCategory {
     @Column(nullable = false, unique = true, length = 1)
     private FeeCategoryEnum category;
 
-    @Column(nullable = false, precision = 5, scale = 2)
-    private BigDecimal fee;
+    @Column(nullable = false, precision = 5, scale = 4)
+    private BigDecimal feeRate;
 
     public enum FeeCategoryEnum {
         A, B, C, D, E, F

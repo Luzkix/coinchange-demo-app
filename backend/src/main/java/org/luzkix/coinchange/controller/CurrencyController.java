@@ -1,14 +1,19 @@
 package org.luzkix.coinchange.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
+import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.api.CurrencyApi;
+import org.luzkix.coinchange.openapi.backendapi.model.BalancesResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.ConversionRequestDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
+import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.luzkix.coinchange.utils.DateUtils;
@@ -25,12 +30,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CurrencyController extends GenericController implements CurrencyApi {
 
-    private final CurrencyService currencyService;
-
-    private final CurrencyConversionService currencyConversionService;
-
     private final JwtProvider jwtProvider;
-
+    private final CurrencyService currencyService;
+    private final CurrencyConversionService currencyConversionService;
+    private final BalanceService balanceService;
 
     @Value("${conversion.validity}")
     private Long conversionRateValidity;
@@ -72,7 +75,7 @@ public class CurrencyController extends GenericController implements CurrencyApi
     }
 
     @Override
-    public ResponseEntity<CurrencyConversionRateResponseDto> getConversionRate(String soldCurrencyCode, String boughtCurrencyCode) {
+    public ResponseEntity<CurrencyConversionRateResponseDto> getMarketConversionRate(String soldCurrencyCode, String boughtCurrencyCode) {
         User user = getUserFromAuthentication();
 
         Currency soldCurrency = currencyService.findByCode(soldCurrencyCode).orElse(null);
@@ -82,15 +85,15 @@ public class CurrencyController extends GenericController implements CurrencyApi
                 String.format("Sold or bought currency codes not found in database: %s, %s", soldCurrency, boughtCurrency),
                 ErrorBusinessCodeEnum.ENTITY_NOT_FOUND);
 
-        BigDecimal conversionRate = currencyConversionService.getConversionRate(soldCurrency, boughtCurrency);
+        BigDecimal marketConversionRate = currencyConversionService.getMarketConversionRate(soldCurrency, boughtCurrency);
 
         CurrencyConversionRateResponseDto response = new CurrencyConversionRateResponseDto();
         response.setSoldCurrencyId(soldCurrency.getId());
         response.setSoldCurrencyCode(soldCurrency.getCode());
         response.setBoughtCurrencyId(boughtCurrency.getId());
         response.setBoughtCurrencyCode(boughtCurrency.getCode());
-        response.setFeePercentage(user.getFeeCategory().getFee());
-        response.setConversionRate(conversionRate);
+        response.setFeeRate(user.getFeeCategory().getFeeRate());
+        response.setMarketConversionRate(marketConversionRate);
 
         // Returns time which is x seconds later than actual time
         OffsetDateTime validTo =DateUtils.convertToSystemOffsetDateTime(
@@ -104,12 +107,26 @@ public class CurrencyController extends GenericController implements CurrencyApi
         String verificationToken = jwtProvider.generateConversionRateToken(
                 soldCurrency.getCode(),
                 boughtCurrency.getCode(),
-                conversionRate,
+                marketConversionRate,
                 validTo
         );
 
         response.setVerificationToken(verificationToken);
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @Override
+    public ResponseEntity<BalancesResponseDto> convertCurrencies(ConversionRequestDto conversionRequestDto) {
+        User user = getUserFromAuthentication();
+
+        Transaction transaction = currencyConversionService.convertCurrenciesUsingToken(
+                conversionRequestDto.getVerificationToken(),
+                conversionRequestDto.getSoldCurrencyAmount(),
+                user);
+
+        BalancesResponseDto responseDto = balanceService.getBalancesMappedToResponseDto(user, CustomConstants.BalanceTypeEnum.AVAILABLE);
+
+        return ResponseEntity.status(201).body(responseDto);
     }
 }

@@ -94,12 +94,12 @@ components:
         feeCategory:
           type: string
           example: F
-        fee:
+        feeRate:
           type: number
-          example: 0.5
+          example: 0.005
       required:
         - feeCategory
-        - fee
+        - feeRate
     UserLoginResponseDto:
       type: object
       properties:
@@ -220,10 +220,10 @@ components:
         boughtCurrencyCode:
           type: string
           example: USD
-        conversionRate:
+        marketConversionRate:
           type: number
           example: 1000
-        feePercentage:
+        feeRate:
           type: number
           example: 0.5
         validTo:
@@ -238,11 +238,22 @@ components:
         - soldCurrencyCode
         - boughtCurrencyId
         - boughtCurrencyCode
-        - conversionRate
-        - feePercentage
+        - marketConversionRate
+        - feeRate
         - validTo
         - verificationToken
-
+    ConversionRequestDto:
+      type: object
+      properties:
+        verificationToken:
+          type: string
+          example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+        soldCurrencyAmount:
+          type: number
+          example: 0.5
+      required:
+        - verificationToken
+        - soldCurrencyAmount
 
 
 paths:
@@ -334,7 +345,7 @@ paths:
 
 
 
-  /balance/{type}:
+  /balance:
     get:
       tags:
         - ApiBalance
@@ -342,12 +353,14 @@ paths:
       operationId: getBalances
       parameters:
         - name: type
-          in: path
+          in: query
           description: Type of requested balance, AVAILABLE / TOTAL
-          required: true
+          required: false
           schema:
             type: string
-          example: F - fiat, C - crypto
+            enum: [AVAILABLE, TOTAL]
+            default: AVAILABLE
+          example: AVAILABLE
       description: |
         Returns information about fiat and crypto currencies balances (available or total) which are owned by user.
       security:
@@ -428,8 +441,8 @@ paths:
     get:
       tags:
         - ApiCurrency
-      summary: Get conversion rate for pair of currencies
-      operationId: getConversionRate
+      summary: Get market conversion rate for pair of currencies
+      operationId: getMarketConversionRate
       parameters:
         - name: soldCurrencyCode
           in: path
@@ -446,16 +459,44 @@ paths:
             type: string
           example: USD
       description: |
-        Returns conversion rate for provided pair of currencies
+        Returns market conversion rate for provided pair of currencies
       security:
         - bearerAuth: [ ]
       responses:
         201:
-          description: Conversion rate for provided pair of currencies
+          description: Market conversion rate for provided pair of currencies
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CurrencyConversionRateResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /currency/convert:
+    post:
+      tags:
+        - ApiCurrency
+      summary: Converts defined amount of sold currency into bought currency
+      operationId: convertCurrencies
+      description: |
+         Endpoint is responsible for currencies conversion (selling of defined amount of sold currency and buying bought currency instead).
+      requestBody:
+        description: Information about sold currency, bought currency, approved conversion rate and its validity is stored within secured verification token created by backend. Information about sold currency amount is provided by user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionRequestDto'
+        required: true
+      responses:
+        201:
+          description: Conversion performed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalancesResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

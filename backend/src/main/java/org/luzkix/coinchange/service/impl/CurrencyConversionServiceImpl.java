@@ -2,25 +2,43 @@ package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.CustomConstants;
+import org.luzkix.coinchange.config.security.jwt.JwtProvider;
+import org.luzkix.coinchange.dto.ConversionRateTokenPayloadDto;
+import org.luzkix.coinchange.dto.CurrencyBalanceDto;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
+import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
+import org.luzkix.coinchange.model.Transaction;
+import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
-import org.luzkix.coinchange.service.CoinbaseExchangeService;
-import org.luzkix.coinchange.service.CurrencyConversionService;
+import org.luzkix.coinchange.service.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CurrencyConversionServiceImpl implements CurrencyConversionService {
 
     private final CoinbaseExchangeService coinbaseExchangeService;
+    private final JwtProvider jwtProvider;
+    private final CurrencyService currencyService;
+    private final FeesService feesService;
+    private final TransactionService transactionService;
+    private final BalanceService balanceService;
+
+    @Value("${fee.default-conversion-currency}")
+    private String currencyCodeForFeeConversion;
 
     @Override
-    public BigDecimal getConversionRate(Currency soldCurrency, Currency boughtCurrency) {
+    public BigDecimal getMarketConversionRate(Currency soldCurrency, Currency boughtCurrency) {
         //if both sold and bought currencies are FIAT type, use logic for FIAT conversions
         if (soldCurrency.getType() == Currency.CurrencyTypeEnum.FIAT && boughtCurrency.getType() == Currency.CurrencyTypeEnum.FIAT) {
             return getFiatConversionRate(soldCurrency, boughtCurrency);
@@ -29,6 +47,21 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         else return getCryptoFiatConversionRate(soldCurrency, boughtCurrency);
     }
 
+    @Override
+    @Transactional
+    public Transaction convertCurrenciesUsingToken(String verificationToken, BigDecimal soldCurrencyAmount, User user) {
+        //1. parse and validate verificationToken
+        ConversionRateTokenPayloadDto conversionDetails = jwtProvider.parseConversionRateToken(verificationToken);
+        if (OffsetDateTime.now().isAfter(conversionDetails.getValidTo())) throw new InvalidInputDataException(
+                String.format("Validity of conversion rate already expired. ValidTo: %s / CurrentTime: %s", conversionDetails.getValidTo(), OffsetDateTime.now()),
+                ErrorBusinessCodeEnum.CONVERSION_RATE_EXPIRED);
+
+        Transaction conversionTransaction = prepareConversionTransactionUsingToken(conversionDetails, soldCurrencyAmount, user);
+
+        return transactionService.save(conversionTransaction);
+    }
+
+    //PRIVATE METHODS
     private BigDecimal getFiatConversionRate(Currency soldCurrency, Currency boughtCurrency) {
         if (soldCurrency.getCode().equals(boughtCurrency.getCode())) {
             return BigDecimal.ONE;
@@ -117,5 +150,59 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
                 ErrorBusinessCodeEnum.EXTERNAL_API_ERROR);
 
         return new BigDecimal(currencyPairStats.getLast());
+    }
+
+
+    private Transaction prepareConversionTransactionUsingToken(ConversionRateTokenPayloadDto conversionDetails, BigDecimal soldCurrencyAmount, User user) {
+        Currency soldCurrency = currencyService.findByCode(conversionDetails.getSoldCurrencyCode())
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getSoldCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        if (!isSufficientAvailableBalance(user, soldCurrency, soldCurrencyAmount)) throw new InvalidInputDataException("Amount of " + soldCurrency.getCode() + " to be sold exceeds available balance!", ErrorBusinessCodeEnum.INSUFFICIENT_BALANCE);
+
+        Currency boughtCurrency = currencyService.findByCode(conversionDetails.getBoughtCurrencyCode())
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getBoughtCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
+                .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        BigDecimal conversionRateForFees = feesService.calculateConversionRateForFees(conversionDetails.getMarketConversionRate(), user);
+        BigDecimal conversionRateAfterFees = feesService.calculateConversionRateAfterFees(conversionDetails.getMarketConversionRate(), user);
+
+        BigDecimal amountBought = soldCurrencyAmount.multiply(conversionRateAfterFees);
+        BigDecimal transactionFeeAmountInBoughtCurrency = soldCurrencyAmount.multiply(conversionRateForFees);
+        BigDecimal conversionRateForFeesConversion = getMarketConversionRate(boughtCurrency,convertedFeeCurrency); //conversion rate for converting fees (which are collected in boughtCurrency) into default FIAT currency
+        BigDecimal convertedFeeAmount = transactionFeeAmountInBoughtCurrency.multiply(conversionRateForFeesConversion);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Transaction transaction = new Transaction();
+        transaction.setUser(user);
+        transaction.setSoldCurrency(soldCurrency);
+        transaction.setBoughtCurrency(boughtCurrency);
+        transaction.setAmountSold(soldCurrencyAmount);
+        transaction.setAmountBought(amountBought);
+        transaction.setTransactionFeeCurrency(boughtCurrency);
+        transaction.setTransactionFeeAmount(transactionFeeAmountInBoughtCurrency);
+        transaction.setConvertedFeeCurrency(convertedFeeCurrency);
+        transaction.setConvertedFeeAmount(convertedFeeAmount);
+        transaction.setFeeCategory(user.getFeeCategory());
+        transaction.setConversionRateAfterFees(conversionRateAfterFees);
+        transaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.CONVERSION);
+        transaction.setCreatedAt(now);
+        transaction.setProcessedAt(now);
+
+        return transaction;
+    }
+
+    private boolean isSufficientAvailableBalance(User user, Currency soldCurrency, BigDecimal soldCurrencyAmount) {
+        List<CurrencyBalanceDto> balances = balanceService.getCurrencyBalances(user, CustomConstants.BalanceTypeEnum.AVAILABLE);
+        for (CurrencyBalanceDto balance : balances) {
+            if (balance.getCurrency().getId().equals(soldCurrency.getId())) {
+                if (balance.getAvailableBalance().compareTo(soldCurrencyAmount) >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

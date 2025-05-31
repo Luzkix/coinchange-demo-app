@@ -13,7 +13,10 @@ public enum ErrorBusinessCodeEnum {
     ACCESS_DENIED("ACCESS_DENIED", "User has insufficient access rights to perform the action"),
     AUTHENTICATION_GENERAL_FAILURE("AUTHENTICATION_GENERAL_FAILURE", "Unable to authenticate the user (e.g. missing authentication token, etc.)"),
     ENTITY_NOT_FOUND("ENTITY_NOT_FOUND", "Required entity/object was not found in database"),
-    EXTERNAL_API_ERROR("EXTERNAL_API_ERROR", "Unknown error while querying external API");
+    EXTERNAL_API_ERROR("EXTERNAL_API_ERROR", "Unknown error while querying external API"),
+    CONVERSION_RATE_EXPIRED("CONVERSION_RATE_EXPIRED", "Validity of conversion rate already expired. New conversion rate needs to be requested."),
+    INSUFFICIENT_BALANCE("INSUFFICIENT_BALANCE", "Balance in sold currency is insufficient for processing of currency conversion.");
+
 
 
     private final String code;

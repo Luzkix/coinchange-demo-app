@@ -55,8 +55,8 @@ public class Transaction {
     @JoinColumn(name = "fee_category_id", nullable = false)
     private FeeCategory feeCategory;
 
-    @Column(nullable = false, precision = 20, scale = 8)
-    private BigDecimal conversionRate;
+    @Column(nullable = false, precision = 20, scale = 10)
+    private BigDecimal conversionRateAfterFees;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false, length = 20)

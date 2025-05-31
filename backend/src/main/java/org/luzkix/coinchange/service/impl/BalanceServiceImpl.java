@@ -9,6 +9,9 @@ import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
+import org.luzkix.coinchange.openapi.backendapi.model.BalancesResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyBalanceResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
 import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyService;
 import org.luzkix.coinchange.service.TransactionService;
@@ -21,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.luzkix.coinchange.utils.DateUtils.convertToSystemOffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +36,35 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Value("${fee.default-conversion-currency}")
     private String defaultCurrencyCodeForFeeConversion;
+
+    @Override
+    public BalancesResponseDto getBalancesMappedToResponseDto(User user, CustomConstants.BalanceTypeEnum type) {
+        // Get all currencyBalances for user and map to DTO
+        List<CurrencyBalanceResponseDto> currenciesBalances = getCurrencyBalances(user, type)
+                .stream()
+                .map(currencyBalance -> {
+                    CurrencyResponseDto currency = new CurrencyResponseDto();
+                    currency.setId(currencyBalance.getCurrency().getId());
+                    currency.setCode(currencyBalance.getCurrency().getCode());
+                    currency.setName(currencyBalance.getCurrency().getName());
+                    currency.setIsActive(currencyBalance.getCurrency().isActive());
+                    currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
+
+                    CurrencyBalanceResponseDto responseDto = new CurrencyBalanceResponseDto();
+                    responseDto.setCurrency(currency);
+                    responseDto.setBalance(currencyBalance.getAvailableBalance());
+                    responseDto.setCalculatedAt(convertToSystemOffsetDateTime(LocalDateTime.now()));
+
+                    return responseDto;
+                })
+                .collect(Collectors.toList());
+
+        // Return as BalancesResponseDto
+        BalancesResponseDto responseDto = new BalancesResponseDto();
+        responseDto.setCurrenciesBalances(currenciesBalances);
+
+        return responseDto;
+    }
 
     @Override
     public List<CurrencyBalanceDto> getCurrencyBalances(User user, CustomConstants.BalanceTypeEnum balanceType) {
@@ -74,7 +109,7 @@ public class BalanceServiceImpl implements BalanceService {
             bonusTransaction.setConvertedFeeCurrency(defaultCurrencyForFeeConversion);
             bonusTransaction.setConvertedFeeAmount(BigDecimal.ZERO);
             bonusTransaction.setFeeCategory(user.getFeeCategory());
-            bonusTransaction.setConversionRate(BigDecimal.ONE);
+            bonusTransaction.setConversionRateAfterFees(BigDecimal.ONE);
             bonusTransaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.DEPOSIT);
             bonusTransaction.setCreatedAt(now);
             bonusTransaction.setProcessedAt(now);
