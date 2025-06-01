@@ -123,14 +123,12 @@ public class BalanceServiceImpl implements BalanceService {
     private BigDecimal calculateAvailableBalanceForCurrency(User user, Currency currency) {
         // note: each transaction in Transaction table leads to increase/decrease of available balance based on whether the currency is bought/sold
         // and also based on the state of transaction (whether it is already processed or not yet processed, or cancelled)
-        BigDecimal decrease = transactionService.sumSoldAmountForCurrencyNotCancelled(user, currency)
-                .orElse(BigDecimal.ZERO);
         BigDecimal increase = transactionService.sumBoughtAmountForCurrencyProcessed(user, currency)
                 .orElse(BigDecimal.ZERO);
-        BigDecimal cancelledIncrease = transactionService.sumSoldAmountForCurrencyCancelled(user, currency)
+        BigDecimal decrease = transactionService.sumSoldAmountForCurrencyNotCancelled(user, currency)
                 .orElse(BigDecimal.ZERO);
 
-        return increase.add(cancelledIncrease).subtract(decrease);
+        return increase.subtract(decrease);
     }
 
     private BigDecimal calculateTotalBalanceForCurrency(User user, Currency currency) {

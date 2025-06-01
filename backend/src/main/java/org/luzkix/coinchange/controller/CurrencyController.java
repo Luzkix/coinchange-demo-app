@@ -9,10 +9,7 @@ import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.api.CurrencyApi;
-import org.luzkix.coinchange.openapi.backendapi.model.BalancesResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.ConversionRequestDto;
-import org.luzkix.coinchange.openapi.backendapi.model.CurrencyConversionRateResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.CurrencyResponseDto;
+import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.luzkix.coinchange.service.CurrencyService;
@@ -117,12 +114,28 @@ public class CurrencyController extends GenericController implements CurrencyApi
     }
 
     @Override
-    public ResponseEntity<BalancesResponseDto> convertCurrencies(ConversionRequestDto conversionRequestDto) {
+    public ResponseEntity<BalancesResponseDto> convertCurrenciesUsingSimppleTrading(SimpleTradingConversionRequestDto requestDto) {
         User user = getUserFromAuthentication();
 
-        Transaction transaction = currencyConversionService.convertCurrenciesUsingToken(
-                conversionRequestDto.getVerificationToken(),
-                conversionRequestDto.getSoldCurrencyAmount(),
+        Transaction transaction = currencyConversionService.convertCurrenciesUsingSimpleTrading(
+                requestDto.getVerificationToken(),
+                requestDto.getSoldCurrencyAmount(),
+                user);
+
+        BalancesResponseDto responseDto = balanceService.getBalancesMappedToResponseDto(user, CustomConstants.BalanceTypeEnum.AVAILABLE);
+
+        return ResponseEntity.status(201).body(responseDto);
+    }
+
+    @Override
+    public ResponseEntity<BalancesResponseDto> convertCurrenciesUsingAdvancedTrading(AdvancedTradingConversionRequestDto requestDto) {
+        User user = getUserFromAuthentication();
+
+        Transaction transaction = currencyConversionService.convertCurrenciesUsingAdvancedTrading(
+                requestDto.getSoldCurrencyCode(),
+                requestDto.getBoughtCurrencyCode(),
+                requestDto.getUserSelectedConversionRate(),
+                requestDto.getSoldCurrencyAmount(),
                 user);
 
         BalancesResponseDto responseDto = balanceService.getBalancesMappedToResponseDto(user, CustomConstants.BalanceTypeEnum.AVAILABLE);

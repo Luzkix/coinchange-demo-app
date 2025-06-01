@@ -125,14 +125,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
           AND t.processedAt IS NOT NULL
     """)
     Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(@Param("user") User user, @Param("currency") Currency currency);
-
-    @Query("""
-        SELECT COALESCE(SUM(t.amountSold), 0)
-        FROM Transaction t
-        WHERE t.user = :user
-          AND t.soldCurrency = :currency
-          AND t.processedAt IS NULL
-          AND t.cancelledAt IS NOT NULL
-    """)
-    Optional<BigDecimal> sumSoldAmountForCurrencyCancelled(@Param("user") User user, @Param("currency") Currency currency);
 }

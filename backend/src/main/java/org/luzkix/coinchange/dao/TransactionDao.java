@@ -51,5 +51,4 @@ public interface TransactionDao {
     Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency);
     Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency);
     Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency);
-    Optional<BigDecimal> sumSoldAmountForCurrencyCancelled(User user, Currency currency);
 }

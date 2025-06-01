@@ -49,14 +49,74 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
 
     @Override
     @Transactional
-    public Transaction convertCurrenciesUsingToken(String verificationToken, BigDecimal soldCurrencyAmount, User user) {
+    public Transaction convertCurrenciesUsingSimpleTrading(String verificationToken, BigDecimal soldCurrencyAmount, User user) {
         //1. parse and validate verificationToken
         ConversionRateTokenPayloadDto conversionDetails = jwtProvider.parseConversionRateToken(verificationToken);
         if (OffsetDateTime.now().isAfter(conversionDetails.getValidTo())) throw new InvalidInputDataException(
                 String.format("Validity of conversion rate already expired. ValidTo: %s / CurrentTime: %s", conversionDetails.getValidTo(), OffsetDateTime.now()),
                 ErrorBusinessCodeEnum.CONVERSION_RATE_EXPIRED);
 
-        Transaction conversionTransaction = prepareConversionTransactionUsingToken(conversionDetails, soldCurrencyAmount, user);
+        Currency soldCurrency = currencyService.findByCode(conversionDetails.getSoldCurrencyCode())
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getSoldCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        //2. check available balance
+        if (!isAvailableBalanceSufficient(user, soldCurrency, soldCurrencyAmount)) throw new InvalidInputDataException("Amount of " + soldCurrency.getCode() + " to be sold exceeds available balance!", ErrorBusinessCodeEnum.INSUFFICIENT_BALANCE);
+
+        Currency boughtCurrency = currencyService.findByCode(conversionDetails.getBoughtCurrencyCode())
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getBoughtCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
+                .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        BigDecimal conversionRate = conversionDetails.getMarketConversionRate();
+        boolean isAdvancedTrading = false;
+
+        //3. prepare conversion transaction
+        Transaction conversionTransaction = prepareConversionTransactionUsingToken(
+                user,
+                soldCurrency,
+                boughtCurrency,
+                convertedFeeCurrency,
+                soldCurrencyAmount,
+                conversionRate,
+                isAdvancedTrading
+                );
+
+        return transactionService.save(conversionTransaction);
+    }
+
+    @Override
+    @Transactional
+    public Transaction convertCurrenciesUsingAdvancedTrading(String soldCurrencyCode,
+                                                             String boughtCurrencyCode,
+                                                             BigDecimal userSelectedConversionRate,
+                                                             BigDecimal soldCurrencyAmount,
+                                                             User user) {
+        Currency soldCurrency = currencyService.findByCode(soldCurrencyCode)
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + soldCurrencyCode + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        //1. check available balance
+        if (!isAvailableBalanceSufficient(user, soldCurrency, soldCurrencyAmount)) throw new InvalidInputDataException("Amount of " + soldCurrency.getCode() + " to be sold exceeds available balance!", ErrorBusinessCodeEnum.INSUFFICIENT_BALANCE);
+
+        Currency boughtCurrency = currencyService.findByCode(boughtCurrencyCode)
+                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + boughtCurrencyCode + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
+                .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+
+        BigDecimal conversionRate = userSelectedConversionRate;
+        boolean isAdvancedTrading = true;
+
+        //3. prepare conversion transaction
+        Transaction conversionTransaction = prepareConversionTransactionUsingToken(
+                user,
+                soldCurrency,
+                boughtCurrency,
+                convertedFeeCurrency,
+                soldCurrencyAmount,
+                conversionRate,
+                isAdvancedTrading
+        );
 
         return transactionService.save(conversionTransaction);
     }
@@ -153,29 +213,45 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
     }
 
 
-    private Transaction prepareConversionTransactionUsingToken(ConversionRateTokenPayloadDto conversionDetails, BigDecimal soldCurrencyAmount, User user) {
-        Currency soldCurrency = currencyService.findByCode(conversionDetails.getSoldCurrencyCode())
-                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getSoldCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
+    private Transaction prepareConversionTransactionUsingToken(User user,
+                                                               Currency soldCurrency,
+                                                               Currency boughtCurrency,
+                                                               Currency convertedFeeCurrency,
+                                                               BigDecimal soldCurrencyAmount,
+                                                               BigDecimal conversionRate,
+                                                               boolean isAdvancedTrading
+    ) {
+        Transaction transaction = new Transaction();
+        LocalDateTime now = LocalDateTime.now();
 
-        if (!isSufficientAvailableBalance(user, soldCurrency, soldCurrencyAmount)) throw new InvalidInputDataException("Amount of " + soldCurrency.getCode() + " to be sold exceeds available balance!", ErrorBusinessCodeEnum.INSUFFICIENT_BALANCE);
+        if (isAdvancedTrading) {
+            BigDecimal currentMarketConversionRate = getMarketConversionRate(soldCurrency,boughtCurrency);
+            if (currentMarketConversionRate.compareTo(conversionRate) >= 0) {
+                // if currentMarketConversionRate >= requested conversionRate, replace conversionRate for currentMarketConversionRate and process transaction
+                conversionRate = currentMarketConversionRate;
+                transaction.setProcessedAt(now);
+            } else {
+                // if currentMarketConversionRate is lower then requested conversionRate, mark transaction as pending (== processedAt is null)
+                transaction.setProcessedAt(null);
+            }
+        } else {
+            // if not advanced trading, the transaction is processed immediately based on conversionRate
+            transaction.setProcessedAt(now);
+        }
 
-        Currency boughtCurrency = currencyService.findByCode(conversionDetails.getBoughtCurrencyCode())
-                .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getBoughtCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
-
-        Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
-                .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
-
-        BigDecimal conversionRateForFees = feesService.calculateConversionRateForFees(conversionDetails.getMarketConversionRate(), user);
-        BigDecimal conversionRateAfterFees = feesService.calculateConversionRateAfterFees(conversionDetails.getMarketConversionRate(), user);
+        BigDecimal conversionRateForFees = feesService.calculateConversionRateForFees(conversionRate, user);
+        BigDecimal conversionRateAfterFees = feesService.calculateConversionRateAfterFees(conversionRate, user);
 
         BigDecimal amountBought = soldCurrencyAmount.multiply(conversionRateAfterFees);
         BigDecimal transactionFeeAmountInBoughtCurrency = soldCurrencyAmount.multiply(conversionRateForFees);
-        BigDecimal conversionRateForFeesConversion = getMarketConversionRate(boughtCurrency,convertedFeeCurrency); //conversion rate for converting fees (which are collected in boughtCurrency) into default FIAT currency
-        BigDecimal convertedFeeAmount = transactionFeeAmountInBoughtCurrency.multiply(conversionRateForFeesConversion);
 
-        LocalDateTime now = LocalDateTime.now();
+        BigDecimal convertedFeeAmount = null;
+        if (transaction.getProcessedAt() != null) {
+            // collected fees in bought currency are converted into default FIAT currency for fees (e.g. EUR) only when transaction is being processed (i.e. has processedAt filled), not for pending transactions with null processedAt
+            BigDecimal conversionRateForFeesConversion = getMarketConversionRate(boughtCurrency,convertedFeeCurrency);
+            convertedFeeAmount = transactionFeeAmountInBoughtCurrency.multiply(conversionRateForFeesConversion);
+        }
 
-        Transaction transaction = new Transaction();
         transaction.setUser(user);
         transaction.setSoldCurrency(soldCurrency);
         transaction.setBoughtCurrency(boughtCurrency);
@@ -189,12 +265,11 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         transaction.setConversionRateAfterFees(conversionRateAfterFees);
         transaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.CONVERSION);
         transaction.setCreatedAt(now);
-        transaction.setProcessedAt(now);
 
         return transaction;
     }
 
-    private boolean isSufficientAvailableBalance(User user, Currency soldCurrency, BigDecimal soldCurrencyAmount) {
+    private boolean isAvailableBalanceSufficient(User user, Currency soldCurrency, BigDecimal soldCurrencyAmount) {
         List<CurrencyBalanceDto> balances = balanceService.getCurrencyBalances(user, CustomConstants.BalanceTypeEnum.AVAILABLE);
         for (CurrencyBalanceDto balance : balances) {
             if (balance.getCurrency().getId().equals(soldCurrency.getId())) {

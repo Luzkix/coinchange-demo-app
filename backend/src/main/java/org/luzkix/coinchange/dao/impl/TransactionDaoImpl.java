@@ -130,9 +130,4 @@ public class TransactionDaoImpl implements TransactionDao {
     public Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency) {
         return transactionRepository.sumBoughtAmountForCurrencyProcessed(user, currency);
     }
-
-    @Override
-    public Optional<BigDecimal> sumSoldAmountForCurrencyCancelled(User user, Currency currency) {
-        return transactionRepository.sumSoldAmountForCurrencyCancelled(user, currency);
-    }
 }

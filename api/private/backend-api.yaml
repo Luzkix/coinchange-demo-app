@@ -222,10 +222,10 @@ components:
           example: USD
         marketConversionRate:
           type: number
-          example: 1000
+          example: 1.236
         feeRate:
           type: number
-          example: 0.5
+          example: 0.005
         validTo:
           type: string
           format: date-time
@@ -242,7 +242,7 @@ components:
         - feeRate
         - validTo
         - verificationToken
-    ConversionRequestDto:
+    SimpleTradingConversionRequestDto:
       type: object
       properties:
         verificationToken:
@@ -254,7 +254,26 @@ components:
       required:
         - verificationToken
         - soldCurrencyAmount
-
+    AdvancedTradingConversionRequestDto:
+      type: object
+      properties:
+        soldCurrencyCode:
+          type: string
+          example: EUR
+        boughtCurrencyCode:
+          type: string
+          example: BTC
+        userSelectedConversionRate:
+          type: number
+          example: 0.00023586
+        soldCurrencyAmount:
+          type: number
+          example: 200
+      required:
+        - soldCurrencyCode
+        - boughtCurrencyCode
+        - userSelectedConversionRate
+        - soldCurrencyAmount
 
 paths:
   /user/login:
@@ -342,9 +361,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-
-
-
   /balance:
     get:
       tags:
@@ -475,24 +491,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currency/convert:
+  /currency/convert-simple:
     post:
       tags:
         - ApiCurrency
-      summary: Converts defined amount of sold currency into bought currency
-      operationId: convertCurrencies
+      summary: Converts defined amount of sold currency into bought currency using simple trading
+      operationId: convertCurrenciesUsingSimppleTrading
       description: |
-         Endpoint is responsible for currencies conversion (selling of defined amount of sold currency and buying bought currency instead).
+         Endpoint is responsible for currencies conversion (selling of defined amount of sold currency and buying bought currency instead) using simple trading.
       requestBody:
         description: Information about sold currency, bought currency, approved conversion rate and its validity is stored within secured verification token created by backend. Information about sold currency amount is provided by user.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConversionRequestDto'
+              $ref: '#/components/schemas/SimpleTradingConversionRequestDto'
         required: true
       responses:
         201:
-          description: Conversion performed successfully
+          description: Conversion transaction successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalancesResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /currency/convert-advanced:
+    post:
+      tags:
+        - ApiCurrency
+      summary: Converts defined amount of sold currency into bought currency using advanced trading
+      operationId: convertCurrenciesUsingAdvancedTrading
+      description: |
+        Endpoint is responsible for currencies conversion (selling of defined amount of sold currency and buying bought currency instead) using advanced trading.
+      requestBody:
+        description: All information such as sold currency, bought currency, conversion rate and sold amount is provided by user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvancedTradingConversionRequestDto'
+        required: true
+      responses:
+        201:
+          description: Conversion transaction successfully registered
           content:
             application/json:
               schema:

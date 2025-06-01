@@ -13,6 +13,12 @@ public interface CurrencyConversionService {
      */
     BigDecimal getMarketConversionRate(Currency soldCurrency, Currency boughtCurrency);
 
-    Transaction convertCurrenciesUsingToken(String verificationToken, BigDecimal soldCurrencyAmount, User user);
+    Transaction convertCurrenciesUsingSimpleTrading(String verificationToken, BigDecimal soldCurrencyAmount, User user);
+
+    Transaction convertCurrenciesUsingAdvancedTrading(String soldCurrencyCode,
+                                                      String boughtCurrencyCode,
+                                                      BigDecimal userSelectedConversionRate,
+                                                      BigDecimal soldCurrencyAmount,
+                                                      User user);
 
 }
