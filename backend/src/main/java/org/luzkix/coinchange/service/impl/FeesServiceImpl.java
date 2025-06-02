@@ -2,6 +2,7 @@ package org.luzkix.coinchange.service.impl;
 
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
+import org.luzkix.coinchange.model.FeeCategory;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.service.CurrencyConversionService;
 import org.luzkix.coinchange.service.FeesService;
@@ -40,7 +41,17 @@ public class FeesServiceImpl implements FeesService {
     }
 
     @Override
+    public BigDecimal calculateConversionRateForFees(BigDecimal conversionRate, FeeCategory feeCategory) {
+        return conversionRate.multiply(feeCategory.getFeeRate());
+    }
+
+    @Override
     public BigDecimal calculateConversionRateAfterFees(BigDecimal conversionRate, User user) {
         return conversionRate.subtract(calculateConversionRateForFees(conversionRate, user));
+    }
+
+    @Override
+    public BigDecimal calculateConversionRateAfterFees(BigDecimal conversionRate, FeeCategory feeCategory) {
+        return conversionRate.subtract(calculateConversionRateForFees(conversionRate, feeCategory));
     }
 }

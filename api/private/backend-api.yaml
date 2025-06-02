@@ -274,6 +274,77 @@ components:
         - boughtCurrencyCode
         - userSelectedConversionRate
         - soldCurrencyAmount
+    TransactionResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          example: 1
+        soldCurrencyCode:
+          type: string
+          example: EUR
+        boughtCurrencyCode:
+          type: string
+          example: BTC
+        amountSold:
+          type: number
+          example: 2000
+        amountBought:
+          type: number
+          example: 0.023
+        conversionRateAfterFeesDeduction:
+          type: number
+          example: 0.00023586
+        transactionFeeInBoughtCurrency:
+          type: number
+          example: 0.000025
+        feeCategory:
+          type: string
+          example: F
+        feeRate:
+          type: number
+          example: 0.005
+        transactionType:
+          type: string
+          example: CONVERSION
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-05-28T23:20:50"
+        processedAt:
+          type: string
+          format: date-time
+          example: "2025-05-28T23:20:50"
+        cancelledAt:
+          type: string
+          format: date-time
+          example: "2025-05-28T23:20:50"
+        externalReference:
+          type: string
+          example: OWSFEW1556QV3qECQW
+        note:
+          type: string
+          example: registration bonus
+      required:
+        - transactionId
+        - userId
+        - soldCurrencyCode
+        - boughtCurrencyCode
+        - amountSold
+        - amountBought
+        - conversionRateAfterFeesDeduction
+        - transactionFeeInBoughtCurrency
+        - feeCategory
+        - feeRate
+        - transactionType
+        - createdAt
+
+
 
 paths:
   /user/login:
@@ -541,6 +612,93 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BalancesResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+
+
+  /transaction:
+    get:
+      tags:
+        - ApiTransaction
+      summary: Get all transactions for the user
+      operationId: getAllTransactions
+      description: |
+        Returns all recorded transactions for the user
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: List of all recorded transactions for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /transaction/pending:
+    get:
+      tags:
+        - ApiTransaction
+      summary: Get all transactions for the user in pending state
+      operationId: getAllPendingTransactions
+      description: |
+        Returns all pending transactions for the user
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: List of all pending transactions for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /transaction/cancel/{id}:
+    post:
+      tags:
+        - ApiTransaction
+      summary: Cancels particular pending transaction
+      operationId: cancelPendingTransaction
+      parameters:
+        - name: id
+          in: path
+          description: Transaction identifier (id of the transaction)
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      description: |
+        Cancels particular pending transaction
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: List of all pending transactions for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

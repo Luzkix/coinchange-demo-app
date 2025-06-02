@@ -37,9 +37,9 @@ public interface TransactionService {
 
     List<Transaction> findByUserAndCancelled(User user);
 
-    List<Transaction> findProcessing();
+    List<Transaction> findPending();
 
-    List<Transaction> findByUserAndProcessing(User user);
+    List<Transaction> findByUserAndPending(User user);
 
     List<TotalFeesForCurrencyDto> getTotalConvertedFeesForProcessedTransactions();
 
@@ -48,9 +48,9 @@ public interface TransactionService {
     List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactions();
 
     List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(User user);
-
     List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user);
     Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency);
     Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency);
     Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency);
+    Transaction cancelPendingTransaction(Long id);
 }

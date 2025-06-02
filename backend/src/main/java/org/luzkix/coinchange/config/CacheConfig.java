@@ -17,7 +17,7 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("coinStats"); //creates cache region 'coinStats'
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.SECONDS));
+                .expireAfterWrite(1, TimeUnit.SECONDS));
         return cacheManager;
     }
 }

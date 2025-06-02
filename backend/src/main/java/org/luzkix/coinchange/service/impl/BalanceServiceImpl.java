@@ -136,6 +136,7 @@ public class BalanceServiceImpl implements BalanceService {
         BigDecimal availableBalance = calculateAvailableBalanceForCurrency(user, currency);
         BigDecimal increaseForPendingSoldTransactions = transactionService.sumSoldAmountForCurrencyPending(user, currency)
                 .orElse(BigDecimal.ZERO);
+
         return availableBalance.add(increaseForPendingSoldTransactions);
     }
 }

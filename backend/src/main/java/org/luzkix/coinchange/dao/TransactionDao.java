@@ -37,9 +37,9 @@ public interface TransactionDao {
 
     List<Transaction> findByUserAndCancelled(User user);
 
-    List<Transaction> findProcessing();
+    List<Transaction> findPending();
 
-    List<Transaction> findByUserAndProcessing(User user);
+    List<Transaction> findByUserAndPending(User user);
 
     List<TotalFeesForCurrencyDto> getTotalConvertedFeesForProcessedTransactions();
 

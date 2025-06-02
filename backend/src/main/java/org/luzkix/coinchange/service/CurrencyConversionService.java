@@ -21,4 +21,6 @@ public interface CurrencyConversionService {
                                                       BigDecimal soldCurrencyAmount,
                                                       User user);
 
+    Transaction checkAndConvertPendingTransaction(Transaction transaction);
+
 }

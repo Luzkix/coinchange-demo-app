@@ -82,12 +82,12 @@ public class TransactionDaoImpl implements TransactionDao {
     }
 
     @Override
-    public List<Transaction> findProcessing() {
+    public List<Transaction> findPending() {
         return transactionRepository.findByProcessedAtIsNullAndCancelledAtIsNull();
     }
 
     @Override
-    public List<Transaction> findByUserAndProcessing(User user) {
+    public List<Transaction> findByUserAndPending(User user) {
         return transactionRepository.findByUserAndProcessedAtIsNullAndCancelledAtIsNull(user);
     }
 

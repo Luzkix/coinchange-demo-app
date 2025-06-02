@@ -1,6 +1,7 @@
 package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.luzkix.coinchange.dto.ConversionRateTokenPayloadDto;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CurrencyConversionServiceImpl implements CurrencyConversionService {
 
     private final CoinbaseExchangeService coinbaseExchangeService;
@@ -68,21 +70,19 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
                 .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
 
-        BigDecimal conversionRate = conversionDetails.getMarketConversionRate();
+        BigDecimal requestedConversionRate = conversionDetails.getMarketConversionRate();
         boolean isAdvancedTrading = false;
 
         //3. prepare conversion transaction
-        Transaction conversionTransaction = prepareConversionTransactionUsingToken(
+        return prepareConversionTransaction(
                 user,
                 soldCurrency,
                 boughtCurrency,
                 convertedFeeCurrency,
                 soldCurrencyAmount,
-                conversionRate,
+                requestedConversionRate,
                 isAdvancedTrading
                 );
-
-        return transactionService.save(conversionTransaction);
     }
 
     @Override
@@ -104,21 +104,53 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         Currency convertedFeeCurrency = currencyService.findByCode(currencyCodeForFeeConversion)
                 .orElseThrow(() -> new InvalidInputDataException("Currency for fees conversion with code " + currencyCodeForFeeConversion + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
 
-        BigDecimal conversionRate = userSelectedConversionRate;
         boolean isAdvancedTrading = true;
 
         //3. prepare conversion transaction
-        Transaction conversionTransaction = prepareConversionTransactionUsingToken(
+        return prepareConversionTransaction(
                 user,
                 soldCurrency,
                 boughtCurrency,
                 convertedFeeCurrency,
                 soldCurrencyAmount,
-                conversionRate,
+                userSelectedConversionRate,
                 isAdvancedTrading
         );
+    }
 
-        return transactionService.save(conversionTransaction);
+    @Override
+    @Transactional
+    public Transaction checkAndConvertPendingTransaction(Transaction transaction) {
+        Currency soldCurrency = transaction.getSoldCurrency();
+        Currency boughtCurrency = transaction.getBoughtCurrency();
+        BigDecimal requestedConversionRateAfterFees = transaction.getConversionRateAfterFees();
+
+        try{
+            BigDecimal currentMarketConversionRate = getMarketConversionRate(soldCurrency,boughtCurrency);
+            BigDecimal currentConversionRateAfterFees = feesService.calculateConversionRateAfterFees(currentMarketConversionRate, transaction.getFeeCategory());
+
+            // if markerRate is lower than requested rate, skip the loop
+            if (currentConversionRateAfterFees.compareTo(requestedConversionRateAfterFees) < 0 ) return null; //cannot process the transaction
+
+            // else process the transaction
+            transaction.setProcessedAt(LocalDateTime.now());
+
+            // and convert collected fees into default FIAT currency for fees based on current market conversion rate
+            BigDecimal conversionRateForFeesConversion = getMarketConversionRate(transaction.getTransactionFeeCurrency(),transaction.getConvertedFeeCurrency());
+            BigDecimal  convertedFeeAmount = transaction.getTransactionFeeAmount().multiply(conversionRateForFeesConversion);
+            transaction.setConvertedFeeAmount(convertedFeeAmount);
+
+            transactionService.save(transaction);
+            log.info("Processed pending transaction with id {}. Sold {}, Bought {}, market conversion rate {}",
+                    transaction.getId(), soldCurrency.getCode(), boughtCurrency.getCode(), currentMarketConversionRate);
+        } catch (Error e) {
+            throw new CustomInternalErrorException(
+                    "Unknown error while processing pending transaction!",
+                    ErrorBusinessCodeEnum.CONVERSION_TRANSACTION_FAILURE
+            );
+        }
+
+        return transaction;
     }
 
     //PRIVATE METHODS
@@ -213,58 +245,72 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
     }
 
 
-    private Transaction prepareConversionTransactionUsingToken(User user,
-                                                               Currency soldCurrency,
-                                                               Currency boughtCurrency,
-                                                               Currency convertedFeeCurrency,
-                                                               BigDecimal soldCurrencyAmount,
-                                                               BigDecimal conversionRate,
-                                                               boolean isAdvancedTrading
-    ) {
+    private Transaction prepareConversionTransaction(User user,
+                                                     Currency soldCurrency,
+                                                     Currency boughtCurrency,
+                                                     Currency convertedFeeCurrency,
+                                                     BigDecimal soldCurrencyAmount,
+                                                     BigDecimal requestedConversionRate,
+                                                     boolean isAdvancedTrading) {
+
         Transaction transaction = new Transaction();
         LocalDateTime now = LocalDateTime.now();
 
-        if (isAdvancedTrading) {
-            BigDecimal currentMarketConversionRate = getMarketConversionRate(soldCurrency,boughtCurrency);
-            if (currentMarketConversionRate.compareTo(conversionRate) >= 0) {
-                // if currentMarketConversionRate >= requested conversionRate, replace conversionRate for currentMarketConversionRate and process transaction
-                conversionRate = currentMarketConversionRate;
-                transaction.setProcessedAt(now);
+        try {
+            if (isAdvancedTrading) {
+                BigDecimal currentMarketConversionRate = getMarketConversionRate(soldCurrency,boughtCurrency);
+                if (currentMarketConversionRate.compareTo(requestedConversionRate) >= 0) {
+                    // if currentMarketConversionRate >= requested conversionRate, replace conversionRate for currentMarketConversionRate and process transaction
+                    requestedConversionRate = currentMarketConversionRate;
+                    transaction.setProcessedAt(now);
+                } else {
+                    // if currentMarketConversionRate is lower then requested conversionRate, mark transaction as pending (== processedAt is null)
+                    transaction.setProcessedAt(null);
+                }
             } else {
-                // if currentMarketConversionRate is lower then requested conversionRate, mark transaction as pending (== processedAt is null)
-                transaction.setProcessedAt(null);
+                // if not advanced trading, the transaction is processed immediately based on conversionRate
+                transaction.setProcessedAt(now);
             }
-        } else {
-            // if not advanced trading, the transaction is processed immediately based on conversionRate
-            transaction.setProcessedAt(now);
+
+            BigDecimal conversionRateForFees = feesService.calculateConversionRateForFees(requestedConversionRate, user);
+            BigDecimal conversionRateAfterFees = feesService.calculateConversionRateAfterFees(requestedConversionRate, user);
+
+            BigDecimal boughtCurrencyAmount = soldCurrencyAmount.multiply(conversionRateAfterFees);
+            BigDecimal transactionFeeAmountInBoughtCurrency = soldCurrencyAmount.multiply(conversionRateForFees);
+
+            BigDecimal convertedFeeAmount = null;
+            if (transaction.getProcessedAt() != null) {
+                // collected fees in bought currency are converted into default FIAT currency for fees (e.g. EUR) only when transaction is being processed (i.e. has processedAt filled), not for pending transactions with null processedAt
+                BigDecimal conversionRateForFeesConversion = getMarketConversionRate(boughtCurrency,convertedFeeCurrency);
+                convertedFeeAmount = transactionFeeAmountInBoughtCurrency.multiply(conversionRateForFeesConversion);
+            }
+
+            transaction.setUser(user);
+            transaction.setSoldCurrency(soldCurrency);
+            transaction.setBoughtCurrency(boughtCurrency);
+            transaction.setAmountSold(soldCurrencyAmount);
+            transaction.setAmountBought(boughtCurrencyAmount);
+            transaction.setTransactionFeeCurrency(boughtCurrency);
+            transaction.setTransactionFeeAmount(transactionFeeAmountInBoughtCurrency);
+            transaction.setConvertedFeeCurrency(convertedFeeCurrency);
+            transaction.setConvertedFeeAmount(convertedFeeAmount);
+            transaction.setFeeCategory(user.getFeeCategory());
+            transaction.setConversionRateAfterFees(conversionRateAfterFees);
+            transaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.CONVERSION);
+            transaction.setCreatedAt(now);
+
+            transactionService.save(transaction);
+
+            log.info("Prepared conversion transaction with id {} and state {}. Sold {}, amount sold {}, bought {}, amount bought {}, applied conversion rate {}, ",
+                    transaction.getId(),
+                    transaction.getProcessedAt() != null? "PROCESSED" : transaction.getCancelledAt() != null? "CANCELLED" : "PENDING",
+                    soldCurrency.getCode(), soldCurrencyAmount, boughtCurrency.getCode(), boughtCurrencyAmount, requestedConversionRate);
+        } catch (Error e) {
+            throw new CustomInternalErrorException(
+                    "Unknown error while preparing currency conversion transaction!",
+                    ErrorBusinessCodeEnum.CONVERSION_TRANSACTION_FAILURE
+            );
         }
-
-        BigDecimal conversionRateForFees = feesService.calculateConversionRateForFees(conversionRate, user);
-        BigDecimal conversionRateAfterFees = feesService.calculateConversionRateAfterFees(conversionRate, user);
-
-        BigDecimal amountBought = soldCurrencyAmount.multiply(conversionRateAfterFees);
-        BigDecimal transactionFeeAmountInBoughtCurrency = soldCurrencyAmount.multiply(conversionRateForFees);
-
-        BigDecimal convertedFeeAmount = null;
-        if (transaction.getProcessedAt() != null) {
-            // collected fees in bought currency are converted into default FIAT currency for fees (e.g. EUR) only when transaction is being processed (i.e. has processedAt filled), not for pending transactions with null processedAt
-            BigDecimal conversionRateForFeesConversion = getMarketConversionRate(boughtCurrency,convertedFeeCurrency);
-            convertedFeeAmount = transactionFeeAmountInBoughtCurrency.multiply(conversionRateForFeesConversion);
-        }
-
-        transaction.setUser(user);
-        transaction.setSoldCurrency(soldCurrency);
-        transaction.setBoughtCurrency(boughtCurrency);
-        transaction.setAmountSold(soldCurrencyAmount);
-        transaction.setAmountBought(amountBought);
-        transaction.setTransactionFeeCurrency(boughtCurrency);
-        transaction.setTransactionFeeAmount(transactionFeeAmountInBoughtCurrency);
-        transaction.setConvertedFeeCurrency(convertedFeeCurrency);
-        transaction.setConvertedFeeAmount(convertedFeeAmount);
-        transaction.setFeeCategory(user.getFeeCategory());
-        transaction.setConversionRateAfterFees(conversionRateAfterFees);
-        transaction.setTransactionTypeEnum(Transaction.TransactionTypeEnum.CONVERSION);
-        transaction.setCreatedAt(now);
 
         return transaction;
     }
