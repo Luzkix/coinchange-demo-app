@@ -5,12 +5,15 @@
     "signUp": "Registrace",
     "language": "Jazyk",
     "logout": "Odhlásit se",
-    "portfolio": "Portfolio"
+    "portfolio": "Portfolio",
+    "profile": "Profil",
+    "languageSelection": "Výběr jazyka",
+    "userAccount": "Uživatelský účet"
   },
   "cookieBanner": {
-    "message": "Používáme cookies a podobné technologie na našich webových stránkách pro zlepšení a přizpůsobení vašeho zážitku, analýzu našeho provozu a pro bezpečnostní a marketingové účely. Vyberte \"Přijmout vše\" pro povolení CoinChange a jeho důvěryhodným partnerům používat cookies nebo klikněte na",
+    "message": "Používáme cookies a podobné technologie na našich webových stránkách pro zlepšení a přizpůsobení vašeho zážitku. Vyberte \"Přijmout vše\" pro povolení CoinChange používat cookies nebo klikněte na",
     "manageSettings": "Spravovat nastavení",
-    "additionalInfo": "pro individuální výběr cookies, které povolíte. Svůj souhlas můžete kdykoli odvolat. Pro více informací navštivte naše",
+    "additionalInfo": " Svůj souhlas můžete kdykoli odvolat. Pro více informací navštivte naše",
     "cookiePolicy": "Zásady cookies",
     "acceptAll": "Přijmout vše",
     "close": "Zavřít"

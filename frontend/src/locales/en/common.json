@@ -5,12 +5,15 @@
     "signUp": "Sign up",
     "language": "Language",
     "logout": "Logout",
-    "portfolio": "Portfolio"
+    "portfolio": "Portfolio",
+    "profile": "Profile",
+    "languageSelection": "Language selection",
+    "userAccount": "User Account"
   },
   "cookieBanner": {
-    "message": "We use cookies and similar technologies on our websites to enhance and tailor your experience, analyze our traffic, and for security and marketing. Select \"Accept All\" to allow CoinChange and its trusted affiliates and partners to use cookies or click",
+    "message": "We use cookies and similar technologies on our websites to enhance and tailor your experience. Select \"Accept All\" to allow CoinChange to use cookies or click",
     "manageSettings": "Manage Settings",
-    "additionalInfo": "to individually select which cookies you allow. You can withdraw your consent at any time. For more information see our",
+    "additionalInfo": " You can withdraw your consent at any time. For more information see our",
     "cookiePolicy": "Cookie Policy",
     "acceptAll": "Accept all",
     "close": "Close"

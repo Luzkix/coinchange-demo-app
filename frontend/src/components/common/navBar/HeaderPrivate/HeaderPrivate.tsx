@@ -11,12 +11,11 @@ import LogoLink from '../LogoLink/LogoLink.tsx';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { headerStyles } from '../HeaderPublic/styles.ts';
-import { useAuth } from '../../../../contexts/AuthContext.tsx';
+import UserMenu from '../UserMenu/UserMenu.tsx';
 
 const HeaderPublic: React.FC = () => {
   const { t, i18n } = useTranslation(['common']);
   const location = useLocation();
-  const { logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -49,13 +48,7 @@ const HeaderPublic: React.FC = () => {
               currentLanguage={i18n.language}
               handleLanguageChange={handleLanguageChange}
             />
-            <NavTab
-              label={t('header.logout')}
-              to={ROUTES.HOME}
-              active={false}
-              variant="primary"
-              onClick={logout}
-            />
+            <UserMenu />
           </Box>
         )}
 
@@ -88,13 +81,7 @@ const HeaderPublic: React.FC = () => {
                   currentLanguage={i18n.language}
                   handleLanguageChange={handleLanguageChange}
                 />
-                <NavTab
-                  label={t('header.logout')}
-                  to={ROUTES.HOME}
-                  active={false}
-                  variant="primary"
-                  onClick={logout}
-                />
+                <UserMenu />
               </Box>
             </Drawer>
           </>

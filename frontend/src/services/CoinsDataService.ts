@@ -11,7 +11,7 @@ import {
   FetchCoinStatsError,
   FetchSupportedCurrenciesError,
 } from '../constants/customErrors.ts';
-import { ApiCurrenciesService, CurrencyResponseDto } from '../api-generated/backend';
+import { ApiCurrencyService, CurrencyResponseDto } from '../api-generated/backend';
 import { useGeneralContext } from '../contexts/GeneralContext.tsx';
 
 /**
@@ -99,7 +99,7 @@ export const CoinsDataService = {
   async fetchSupportedCurrencies(): Promise<CurrencyResponseDto[]> {
     try {
       console.log('Fetching supported currencies from backend');
-      return await ApiCurrenciesService.getSupportedCurrencies();
+      return await ApiCurrencyService.getSupportedCurrencies();
     } catch (error) {
       throw new FetchSupportedCurrenciesError(
         `Failed to fetch supported currencies`,

@@ -20,6 +20,8 @@ export const useLoginUser = () => {
         userUpdatedAt: new Date(data.updatedAt),
         userValidTo: new Date(data.validTo),
         roles: data.roles?.map((role) => role.roleName) ?? [],
+        feeCategory: data.feeCategory.feeCategory,
+        feeRate: data.feeCategory.feeRate,
         accessToken: data.jwtToken,
       });
     },

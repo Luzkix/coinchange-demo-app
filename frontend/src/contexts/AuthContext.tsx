@@ -11,6 +11,8 @@ interface UserData {
   userUpdatedAt: Date;
   userValidTo: Date;
   roles: string[];
+  feeCategory: string;
+  feeRate: number;
   accessToken: string;
 }
 
