@@ -2,6 +2,7 @@ import {
   ApiUserService,
   UserLoginRequestDto,
   UserRegistrationRequestDto,
+  UserUpdateRequestDto,
 } from '../api-generated/backend';
 
 /**
@@ -28,5 +29,12 @@ export const UserService = {
    */
   refreshToken: async () => {
     return ApiUserService.refreshToken();
+  },
+  /**
+   * Updates a user using the backend API.
+   * Returns UserLoginResponseDto on success.
+   */
+  update: async (data: UserUpdateRequestDto) => {
+    return ApiUserService.updateUser(data);
   },
 };

@@ -111,6 +111,44 @@ public class UserServiceImpl implements UserService {
         return new RefreshTokenResponseDto().jwtToken(jwtProvider.generateToken(user.getId()));
     }
 
+    @Override
+    @Transactional
+    public UserLoginResponseDto updateUser(UserUpdateRequestDto updateRequest, User user) {
+        User existingUser = null;
+
+        // Checking if the values from updateRequest already belongs to any active user ->if so, throw an error
+            // checking username
+        if(Objects.nonNull(updateRequest.getUsername())) {
+            existingUser = userDao.findActiveUserByUsername(updateRequest.getUsername());
+            if (Objects.nonNull(existingUser)) throw new InvalidInputDataException(String.format("User already exists for requested username %s", updateRequest.getUsername()), ErrorBusinessCodeEnum.USER_ALREADY_EXISTS);
+            user.setUsername(updateRequest.getUsername());
+        }
+
+            // checking email
+        if(Objects.nonNull(updateRequest.getEmail())) {
+            existingUser = userDao.findActiveUserByEmail(updateRequest.getEmail());
+            if (Objects.nonNull(existingUser)) throw new InvalidInputDataException(String.format("User already exists for requested email %s", updateRequest.getEmail()), ErrorBusinessCodeEnum.USER_ALREADY_EXISTS);
+            user.setEmail(updateRequest.getEmail());
+        }
+
+            // checking password
+        if(Objects.nonNull(updateRequest.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(updateRequest.getPassword());
+            user.setPassword(encodedPassword);
+        }
+
+        // Save updated user
+        user = userDao.save(user);
+
+        // Prepare response DTO
+        UserLoginResponseDto responseDto = prepareUserLoginResponseDto(user);
+
+        // Prepare new JWT token
+        responseDto.setJwtToken(jwtProvider.generateToken(user.getId()));
+
+        return responseDto;
+    }
+
     //PRIVATE METHODS
     private User createAndSaveUser (UserRegistrationRequestDto registrationDto, Set<Role> roles) {
         User user = new User();

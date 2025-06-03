@@ -20,6 +20,7 @@ interface TextFieldCustomProps {
   sx?: SxProps<Theme>;
   customRegex?: RegExp;
   validateErrorMessage?: string;
+  helperText?: string;
 }
 
 const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
@@ -34,6 +35,7 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
   sx = textFieldCustomStyles.input,
   customRegex,
   validateErrorMessage,
+  helperText,
   ...rest
 }) => {
   const { t } = useTranslation(['errors']);
@@ -132,7 +134,7 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
       type={type}
       sx={sx}
       error={isError}
-      helperText={isError ? errorMessage : ''}
+      helperText={isError ? errorMessage : helperText ? helperText : ''}
       slotProps={{
         htmlInput: {
           pattern: regexToValidate?.source,

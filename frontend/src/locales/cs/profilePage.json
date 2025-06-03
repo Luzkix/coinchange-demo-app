@@ -1,0 +1,15 @@
+{
+  "profilePage": {
+    "title": "Profil uživatele",
+    "newPassword": "Nové heslo",
+    "usernameHelper": "Upravte pouze pokud chcete změnit uživatelské jméno",
+    "emailHelper": "Upravte pouze pokud chcete změnit emailovou adresu",
+    "passwordHelper": "Upravte pouze pokud chcete změnit heslo",
+    "feeCategory": "Poplatková kategorie",
+    "feeRate": "Poplatek za směnu",
+    "roles": "Aplikační role",
+    "saveChanges": "Uložit změny",
+    "saving": "Ukládám...",
+    "updateConfirmation": "Údaje byly úspěšně aktualizovány."
+  }
+}

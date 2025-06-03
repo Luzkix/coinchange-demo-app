@@ -21,6 +21,20 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User findActiveUserByUsername(String username) {
+        return userRepository.findByUsernameIgnoreCaseTrimmed(username)
+                .filter(UserUtils::isActiveUser)
+                .orElse(null);
+    }
+
+    @Override
+    public User findActiveUserByEmail(String email) {
+        return userRepository.findByEmailIgnoreCaseTrimmed(email)
+                .filter(UserUtils::isActiveUser)
+                .orElse(null);
+    }
+
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }

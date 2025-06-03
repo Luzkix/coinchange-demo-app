@@ -7,5 +7,9 @@ public interface UserDao {
 
     User findActiveUserByUsernameOrEmail(String username, String email);
 
+    User findActiveUserByUsername(String username);
+
+    User findActiveUserByEmail(String email);
+
     User findById(Long userId);
 }

@@ -2,10 +2,7 @@ package org.luzkix.coinchange.controller;
 
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.openapi.backendapi.api.UserApi;
-import org.luzkix.coinchange.openapi.backendapi.model.RefreshTokenResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.UserLoginRequestDto;
-import org.luzkix.coinchange.openapi.backendapi.model.UserLoginResponseDto;
-import org.luzkix.coinchange.openapi.backendapi.model.UserRegistrationRequestDto;
+import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.validations.BusinessValidations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +40,15 @@ public class UserController extends GenericController implements UserApi {
         RefreshTokenResponseDto refreshTokenDto = userService.refreshToken(user);
 
         return ResponseEntity.status(201).body(refreshTokenDto);
+    }
+
+    @Override
+    public ResponseEntity<UserLoginResponseDto> updateUser(UserUpdateRequestDto userUpdateRequestDto) {
+        User user = getUserFromAuthentication();
+
+        UserLoginResponseDto updatedUser = userService.updateUser(userUpdateRequestDto, user);
+
+        return ResponseEntity.status(201).body(updatedUser);
     }
 
     private void validateUserRegistrationRequestDto(UserRegistrationRequestDto registrationDto) {

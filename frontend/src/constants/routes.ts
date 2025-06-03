@@ -6,6 +6,7 @@ export const ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   PORTFOLIO: '/portfolio',
+  PROFILE: '/profile',
 };
 
 export default ROUTES;

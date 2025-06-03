@@ -1,0 +1,15 @@
+{
+  "profilePage": {
+    "title": "User Profile",
+    "newPassword": "New Password",
+    "usernameHelper": "Edit only if you want to change your username",
+    "emailHelper": "Edit only if you want to change your email address",
+    "passwordHelper": "Edit only if you want to change your password",
+    "feeCategory": "Fee Category",
+    "feeRate": "Exchange Fee",
+    "roles": "Application Roles",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "updateConfirmation": "Profile details have been successfully updated."
+  }
+}

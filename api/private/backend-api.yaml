@@ -343,7 +343,19 @@ components:
         - feeRate
         - transactionType
         - createdAt
-
+    UserUpdateRequestDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: JohnDow2
+        email:
+          type: string
+          example: JohnDow2@gmail.com
+        password:
+          type: string
+          example: JohnDowPassw2
+      description: All fields are optional. Only provided fields will be updated.
 
 
 paths:
@@ -699,6 +711,36 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /user/update:
+    post:
+      tags:
+        - ApiUser
+      summary: Update user data
+      operationId: updateUser
+      description: |
+        Update logged-in user's data. Returns updated user info and new JWT.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequestDto'
+      responses:
+        201:
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
