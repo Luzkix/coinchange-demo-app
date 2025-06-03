@@ -45,12 +45,13 @@ public interface TransactionService {
 
     List<TotalFeesForCurrencyDto> getTotalConvertedFeesForProcessedTransactionsAndUser(User user);
 
-    List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactions();
-
-    List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(User user);
     List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user);
+
     Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency);
+
     Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency);
+
     Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency);
+
     Transaction cancelPendingTransaction(Long id);
 }

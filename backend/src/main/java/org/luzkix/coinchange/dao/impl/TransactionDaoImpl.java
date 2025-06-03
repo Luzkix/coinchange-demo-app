@@ -102,16 +102,6 @@ public class TransactionDaoImpl implements TransactionDao {
     }
 
     @Override
-    public List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactions() {
-        return transactionRepository.getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactions();
-    }
-
-    @Override
-    public List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(User user) {
-        return transactionRepository.getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(user);
-    }
-
-    @Override
     public List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user) {
         return transactionRepository.findUniqueCurrenciesUsedByUser(user);
     }

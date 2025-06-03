@@ -64,33 +64,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<TotalFeesForCurrencyDto> getTotalConvertedFeesForProcessedTransactionsAndUser(@Param("user") User user);
 
     @Query("""
-        SELECT
-            t.transactionFeeCurrency AS currency,
-            SUM(t.transactionFeeAmount) AS totalFees
-        FROM Transaction t
-        WHERE t.processedAt IS NULL
-            AND t.cancelledAt IS NULL
-            AND t.transactionFeeAmount IS NOT NULL
-            AND t.transactionFeeAmount <> 0
-        GROUP BY t.transactionFeeCurrency
-    """)
-    List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactions();
-
-    @Query("""
-        SELECT
-            t.transactionFeeCurrency AS currency,
-            SUM(t.transactionFeeAmount) AS totalFees
-        FROM Transaction t
-        WHERE t.user = :user
-            AND t.processedAt IS NULL
-            AND t.cancelledAt IS NULL
-            AND t.transactionFeeAmount IS NOT NULL
-            AND t.transactionFeeAmount <> 0
-        GROUP BY t.transactionFeeCurrency
-    """)
-    List<TotalFeesForCurrencyDto> getTotalFeesInTransactionFeeCurrencyForNotProcessedTransactionsAndUser(@Param("user") User user);
-
-    @Query("""
         SELECT t.soldCurrency as soldCurrency, t.boughtCurrency as boughtCurrency
         FROM Transaction t
         WHERE t.user = :user
