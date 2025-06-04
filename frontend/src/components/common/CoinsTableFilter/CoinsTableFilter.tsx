@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CoinsFilterType } from '../../../constants/customEnums.ts';
+import { CoinsFilterTypeEnum } from '../../../constants/customEnums.ts';
 import { Box, Button, Menu, MenuItem } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -8,8 +8,8 @@ import { coinsTableFilterStyles } from './styles.ts';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 interface CoinsTableFilterProps {
-  coinsFilterType: CoinsFilterType;
-  setCoinsFilterType: (type: CoinsFilterType) => void;
+  coinsFilterType: CoinsFilterTypeEnum;
+  setCoinsFilterType: (type: CoinsFilterTypeEnum) => void;
   selectedCurrency: string;
   setSelectedCurrency: (currency: string) => void;
 }
@@ -31,7 +31,7 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
   const handleCoinFilterTypeClose = () => {
     setCoinFilterTypeAnchorEl(null);
   };
-  const handleCoinFilterTypeSelect = (type: CoinsFilterType) => {
+  const handleCoinFilterTypeSelect = (type: CoinsFilterTypeEnum) => {
     setCoinsFilterType(type);
     handleCoinFilterTypeClose();
   };
@@ -68,7 +68,7 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         transformOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        {Object.values(CoinsFilterType).map((filterValue) => (
+        {Object.values(CoinsFilterTypeEnum).map((filterValue) => (
           <MenuItem
             key={filterValue}
             onClick={() => handleCoinFilterTypeSelect(filterValue)}

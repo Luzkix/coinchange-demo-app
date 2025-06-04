@@ -8,6 +8,7 @@ import enFooter from './en/footer.json';
 import enErrors from './en/errors.json';
 import enSignInSignUpPage from './en/signInSignUpPage.json';
 import enProfilePage from './en/profilePage.json';
+import enPortfolioPage from './en/portfolioPage.json';
 import csCommon from './cs/common.json';
 import csCryptocurrenciesPage from './cs/cryptocurrenciesPage.json';
 import csHomePage from './cs/homePage.json';
@@ -15,6 +16,7 @@ import csFooter from './cs/footer.json';
 import csErrors from './cs/errors.json';
 import csSignInSignUpPage from './cs/signInSignUpPage.json';
 import csProfilePage from './cs/profilePage.json';
+import csPortfolioPage from './cs/portfolioPage.json';
 
 // Function to change language and its saving to localStorage so the users choice is remembered
 export const changeAndSaveLanguage = (newLanguage: string) => {
@@ -32,6 +34,7 @@ i18nConfig.use(initReactI18next).init({
       cryptocurrenciesPage: enCryptocurrenciesPage,
       signInSignUpPage: enSignInSignUpPage,
       profilePage: enProfilePage,
+      portfolioPage: enPortfolioPage,
     },
     CS: {
       common: csCommon,
@@ -41,6 +44,7 @@ i18nConfig.use(initReactI18next).init({
       cryptocurrenciesPage: csCryptocurrenciesPage,
       signInSignUpPage: csSignInSignUpPage,
       profilePage: csProfilePage,
+      portfolioPage: csPortfolioPage,
     },
   },
   lng: localStorage.getItem('selectedLanguage') || 'EN', // using of last saved language or 'EN'
@@ -53,6 +57,7 @@ i18nConfig.use(initReactI18next).init({
     'cryptocurrenciesPage',
     'signInSignUpPage',
     'profilePage',
+    'portfolioPage',
   ],
   defaultNS: 'common',
   interpolation: {

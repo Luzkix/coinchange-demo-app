@@ -5,6 +5,8 @@ import {
   DEFAULT_ALL_COINS_REFRESH_INTERVAL,
 } from './configVariables.ts';
 import { CoinsDataService } from '../services/CoinsDataService.ts';
+import { BalanceTypeEnum } from './customEnums.ts';
+import { BalanceService } from '../services/BalanceService.ts';
 
 export const creteFetchCoinsDataOptions = (
   supportedFiatCurrencies?: string[],
@@ -44,4 +46,10 @@ export const createFetchSupportedCurrenciesOptions = () =>
     gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
     staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL, // Defines how long the data should be considered "fresh"
     refetchInterval: () => DEFAULT_ALL_COINS_REFRESH_INTERVAL, // Automatically fetches new data so it is already pre-fetched when requested + automatically reloads components which use fetched data. Note: using function which ensures that automatic interval fetching will be done even after error occurs
+  });
+
+export const createFetchBalancesOptions = (balanceType: BalanceTypeEnum) =>
+  queryOptions({
+    queryKey: ['fetchBalances', balanceType],
+    queryFn: () => BalanceService.fetchBalances(balanceType),
   });

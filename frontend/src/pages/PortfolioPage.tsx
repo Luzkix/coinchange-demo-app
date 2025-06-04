@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import PortfolioPageContent from '../layouts/PortfolioPageContent/PortfolioPageContent.tsx';
 
 const PortfolioPage: React.FC = () => {
-  return <Box />;
+  return <PortfolioPageContent />;
 };
 
 export default PortfolioPage;

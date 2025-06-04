@@ -14,6 +14,14 @@ export type Language = {
 };
 
 /**
+ * Type for storing detailed data about loaded fiat currencies. Properties are:
+ */
+export type FiatCurrencyDetails = {
+  code: string;
+  name: string;
+};
+
+/**
  * Type definition for FetchedCoinPair specifying CoinPair and boolean defining whether CoinPair is tradeable on CoinChange exchange,
  * example: {coinPair : BTC-USD CoinPair, isTradeable: true}
  */

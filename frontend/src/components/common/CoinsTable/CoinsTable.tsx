@@ -10,6 +10,7 @@ import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts'
 import { Link } from 'react-router-dom';
 import ROUTES from '../../../constants/routes.ts';
 import CoinHeader from '../CoinHeader/CoinHeader.tsx';
+import cssStyles from './CoinsTable.module.css';
 
 export interface CoinsTableRowData {
   id: string;
@@ -21,6 +22,7 @@ export interface CoinsTableRowData {
   isTradeable: boolean;
   isNew: boolean;
   fullCoinPairData: any;
+  userBalance?: number; //field to be conditionally displayed only in PortfolioPage table
 }
 
 interface CoinsDataGridProps {
@@ -60,6 +62,20 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
     ).format(value);
   };
 
+  const tableHasUserBalanceColumn = data.some(
+    (row) => row.userBalance !== undefined && row.userBalance !== null,
+  );
+
+  const userBalanceColumn: GridColDef = {
+    field: 'userBalance',
+    headerName: t('table.userBalance'),
+    minWidth: 150,
+    type: 'number',
+    align: 'right',
+    headerAlign: 'right',
+    cellClassName: (params) => (params.value > 0 ? cssStyles.userBalanceCell : ''),
+  };
+
   const columns: GridColDef[] = [
     {
       field: 'coinName',
@@ -77,6 +93,10 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
       filterable: true,
       sortComparator: (a, b) => a.localeCompare(b),
     },
+
+    //display userBalance column only if userBalance is not null or undefined
+    ...(tableHasUserBalanceColumn ? [userBalanceColumn] : []),
+
     {
       field: 'price',
       headerName: t('table.price'),

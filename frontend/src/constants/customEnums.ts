@@ -27,6 +27,8 @@ export enum CurrencyTypeEnum {
  * Enum defining color of tradeable coins
  */
 export enum CoinsDefaultColorEnum {
+  EUR = '#17288F',
+  USD = '#FBCE3A',
   BTC = '#F7931A',
   ETH = '#627EEA',
   XRP = '#000000',
@@ -47,10 +49,15 @@ export enum SupportedLanguageEnum {
   CZECH = 'CS',
 }
 
-export enum CoinsFilterType {
+export enum CoinsFilterTypeEnum {
   ALL = 'all',
   TRADEABLE = 'tradeable',
   NEW = 'new',
   GAINERS = 'gainers',
   LOSERS = 'losers',
+}
+
+export enum BalanceTypeEnum {
+  AVAILABLE = 'AVAILABLE',
+  TOTAL = 'TOTAL',
 }

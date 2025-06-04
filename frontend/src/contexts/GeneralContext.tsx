@@ -1,10 +1,15 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { ErrorPopup } from '../components/common/ErrorPopup/ErrorPopup.tsx';
 import { ErrorModal } from '../components/common/ErrorModal/ErrorModal.tsx';
-import { getCryptoCurrencies, getFiatCurrencies } from '../services/utils/coinsUtils.ts';
+import {
+  getCryptoCurrencies,
+  getFiatCurrencies,
+  getFiatCurrenciesDetails,
+} from '../services/utils/coinsUtils.ts';
 import { useQuery } from '@tanstack/react-query';
 import { createFetchSupportedCurrenciesOptions } from '../constants/customQueryOptions.ts';
 import { DEFAULT_CRYPTO_CURRENCIES, DEFAULT_FIAT_CURRENCIES } from '../constants/configVariables';
+import { FiatCurrencyDetails } from '../constants/customTypes.ts';
 
 interface ErrorPopupMessage {
   id: number;
@@ -24,6 +29,7 @@ interface GeneralContextType {
   addErrorModal: (message: string, title?: string) => void;
   supportedFiatCurrencies: string[];
   supportedCryptoCurrencies: string[];
+  supportedFiatCurrenciesDetails: FiatCurrencyDetails[];
 }
 
 // Vytvoření kontextu s výchozími hodnotami
@@ -70,12 +76,16 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     useState<string[]>(DEFAULT_FIAT_CURRENCIES);
   const [supportedCryptoCurrencies, setSupportedCryptoCurrencies] =
     useState<string[]>(DEFAULT_CRYPTO_CURRENCIES);
+  const [supportedFiatCurrenciesDetails, setSupportedFiatCurrenciesDetails] = useState<
+    FiatCurrencyDetails[]
+  >([]);
 
   // using useEffect to monitor changes in fetchedCurrenciesResult (changes coming from initial fetching or refreshing of coinsData)
   useEffect(() => {
     if (fetchedCurrenciesResult.data && fetchedCurrenciesResult.data.length > 0) {
       setSupportedFiatCurrencies(getFiatCurrencies(fetchedCurrenciesResult.data));
       setSupportedCryptoCurrencies(getCryptoCurrencies(fetchedCurrenciesResult.data));
+      setSupportedFiatCurrenciesDetails(getFiatCurrenciesDetails(fetchedCurrenciesResult.data));
     }
   }, [fetchedCurrenciesResult.data]);
 
@@ -93,6 +103,7 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         addErrorModal,
         supportedFiatCurrencies: supportedFiatCurrencies,
         supportedCryptoCurrencies: supportedCryptoCurrencies,
+        supportedFiatCurrenciesDetails: supportedFiatCurrenciesDetails,
       }}
     >
       {children}

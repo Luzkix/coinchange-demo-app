@@ -9,11 +9,12 @@
 
   "table": {
     "coinName": "Asset",
-    "price": "Price",
+    "price": "Market price",
     "priceChange24": "Price Change (24h)",
     "volume24": "Volume (24h)",
     "actions": "Action",
-    "trade": "Trade"
+    "trade": "Trade",
+    "userBalance": "Balance"
   },
 
   "tableContent": {

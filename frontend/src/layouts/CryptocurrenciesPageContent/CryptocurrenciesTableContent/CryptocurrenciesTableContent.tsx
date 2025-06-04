@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
 import { Languages } from '../../../constants/customConstants';
-import { CoinsFilterType } from '../../../constants/customEnums.ts';
+import { CoinsFilterTypeEnum } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
@@ -40,17 +40,17 @@ const CryptocurrenciesTableContent: React.FC = () => {
   }, [coinsData, selectedCurrency]);
 
   //setting selected coin filter from CoinsTableFilter, default is ALL
-  const [coinsFilterType, setCoinsFilterType] = useState(CoinsFilterType.ALL);
+  const [coinsFilterType, setCoinsFilterType] = useState(CoinsFilterTypeEnum.ALL);
 
   const filteredData = React.useMemo(() => {
     switch (coinsFilterType) {
-      case CoinsFilterType.TRADEABLE:
+      case CoinsFilterTypeEnum.TRADEABLE:
         return coinsTableRowData.filter((coin) => coin.isTradeable);
-      case CoinsFilterType.NEW:
+      case CoinsFilterTypeEnum.NEW:
         return coinsTableRowData.filter((coin) => coin.isNew);
-      case CoinsFilterType.GAINERS:
+      case CoinsFilterTypeEnum.GAINERS:
         return [...coinsTableRowData].sort((a, b) => b.priceChange24 - a.priceChange24);
-      case CoinsFilterType.LOSERS:
+      case CoinsFilterTypeEnum.LOSERS:
         return [...coinsTableRowData].sort((a, b) => a.priceChange24 - b.priceChange24);
       default:
         return coinsTableRowData;

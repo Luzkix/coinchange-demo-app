@@ -9,11 +9,12 @@
 
   "table": {
     "coinName": "Aktivum",
-    "price": "Cena",
+    "price": "Tržní cena",
     "priceChange24": "Změna ceny (24h)",
     "volume24": "Objem (24h)",
     "actions": "Akce",
-    "trade": "Obchodovat"
+    "trade": "Obchodovat",
+    "userBalance": "Zůstatek"
   },
 
   "tableContent": {

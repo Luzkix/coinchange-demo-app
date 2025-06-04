@@ -1,12 +1,13 @@
 import { CoinsDefaultColorEnum, CurrencyTypeEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
-import { CoinsMap } from '../../constants/customTypes.ts';
+import { CoinsMap, FiatCurrencyDetails } from '../../constants/customTypes.ts';
 import { QueryClient } from '@tanstack/react-query';
 import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
 import { FetchCoinStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
 import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
-import { CurrencyResponseDto } from '../../api-generated/backend';
+import { CurrencyBalanceResponseDto, CurrencyResponseDto } from '../../api-generated/backend';
+import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
@@ -157,7 +158,7 @@ export const updateCoinsPrices = async (
 /**
  * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
  * @param coinsData - original coinsData to be converted
- * @param selectedCurrency - currency to be used to filter coins matching this currency
+ * @param selectedCurrency - fiat currency to be used to filter coins matching this currency
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
 export const convertCoinsDataIntoCoinsTableRowData = (
@@ -180,10 +181,99 @@ export const convertCoinsDataIntoCoinsTableRowData = (
 };
 
 /**
+ * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
+ * @param coinsData - original coinsData to be converted
+ * @param balances - balances of all FIAT/CRYPTO currencies owned by the user
+ * @param selectedCurrency - fiat currency to be used to filter coins matching this currency
+ * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
+ */
+export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
+  coinsData: CoinsMap,
+  balances: CurrencyBalanceResponseDto[],
+  selectedCurrency: string,
+): CoinsTableRowData[] => {
+  const { supportedFiatCurrenciesDetails } = useGeneralContext();
+
+  // 1. Získej všechny tradeable coiny pro danou fiat měnu
+  const convertedTradeableCoinsData: CoinsTableRowData[] = convertCoinsDataIntoCoinsTableRowData(
+    coinsData,
+    selectedCurrency,
+  ).filter((coin) => coin.isTradeable);
+
+  // 2. Pro každý coin najdi odpovídající balance podle symbolu
+  const coinsDataWithBalances: CoinsTableRowData[] = convertedTradeableCoinsData.map((coin) => {
+    const balanceDto = balances.find((balance) => balance.currency.code === coin.coinSymbol);
+    return {
+      ...coin,
+      userBalance: balanceDto ? balanceDto.balance : 0,
+    };
+  });
+
+  // 3. Najdi balance pro samotnou fiat měnu (např. EUR/USD) a vytvoř speciální řádek
+  const selectedFiatCurrencyBalanceDto = balances.find(
+    (dto) => dto.currency.code === selectedCurrency,
+  );
+
+  // Pokud fiat měna existuje v balances, přidej ji jako speciální řádek
+  if (selectedFiatCurrencyBalanceDto) {
+    const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
+      id: `${selectedFiatCurrencyBalanceDto.currency.code}-${selectedFiatCurrencyBalanceDto.currency.code}`,
+      coinSymbol: selectedFiatCurrencyBalanceDto.currency.code,
+      coinName: selectedFiatCurrencyBalanceDto.currency.name,
+      price: 0,
+      priceChange24: 0,
+      volume24: 0,
+      isNew: false,
+      isTradeable: false,
+      fullCoinPairData: null,
+      userBalance: selectedFiatCurrencyBalanceDto.balance,
+    };
+    // Fiat měnu přidej na začátek pole (aby byla vždy první v tabulce)
+    return [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
+  } else {
+    // Pokud neexistuje, přidám ji s nulovým zůstatkem jako speciální řádek
+
+    const selectedFiatCurrencyDetails = supportedFiatCurrenciesDetails.find(
+      (curr) => curr.code == selectedCurrency,
+    );
+
+    const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
+      id: `${selectedCurrency}-${selectedCurrency}`,
+      coinSymbol: selectedCurrency,
+      coinName: selectedFiatCurrencyDetails ? selectedFiatCurrencyDetails.name : selectedCurrency,
+      price: 0,
+      priceChange24: 0,
+      volume24: 0,
+      isNew: false,
+      isTradeable: false,
+      fullCoinPairData: null,
+      userBalance: 0,
+    };
+    // Fiat měnu přidej na začátek pole (aby byla vždy první v tabulce)
+    return [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
+  }
+
+  // Pokud fiat měna není v balances, vrať jen coiny s balances
+  return coinsDataWithBalances;
+};
+
+/**
  * Function filters and returns only FIAT currencies out of all currencies.
  */
 export const getFiatCurrencies = (data: CurrencyResponseDto[]) => {
   return data.filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf()).map((cur) => cur.code);
+};
+
+/**
+ * Function filters and returns only FIAT currencies out of all currencies with additional currencies details.
+ */
+export const getFiatCurrenciesDetails = (data: CurrencyResponseDto[]): FiatCurrencyDetails[] => {
+  return data
+    .filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf())
+    .map((cur) => ({
+      code: cur.code,
+      name: cur.name,
+    }));
 };
 
 /**

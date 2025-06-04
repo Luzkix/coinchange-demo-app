@@ -31,7 +31,7 @@ export const HotCoinsTabs: React.FC = () => {
   const queryClient = useQueryClient(); //queryClient to be used for fetching stats for individual coins within .map function where useQuerry cant be used
 
   //currency is derived from selected language (English = USD, Czech = EUR)
-  const selectedCurrency = Languages[i18n.language].currency; //currency is derived from selected language (English = USD, Czech = EUR)
+  const selectedCurrency = Languages[i18n.language].currency;
 
   // useMemo slouzi pro memoizaci vysledku, tzn neprepocitavaji se znovu hodnoty pri prenacteni komponenty pokud se nezmenily zavislosti coinsData nebo selectedCurrency
   const topGainerCoins = useMemo(
