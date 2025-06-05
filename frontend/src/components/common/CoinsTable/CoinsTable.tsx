@@ -66,16 +66,6 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
     (row) => row.userBalance !== undefined && row.userBalance !== null,
   );
 
-  const userBalanceColumn: GridColDef = {
-    field: 'userBalance',
-    headerName: t('table.userBalance'),
-    minWidth: 150,
-    type: 'number',
-    align: 'right',
-    headerAlign: 'right',
-    cellClassName: (params) => (params.value > 0 ? cssStyles.userBalanceCell : ''),
-  };
-
   const columns: GridColDef[] = [
     {
       field: 'coinName',
@@ -95,63 +85,77 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
     },
 
     //display userBalance column only if userBalance is not null or undefined
-    ...(tableHasUserBalanceColumn ? [userBalanceColumn] : []),
+    ...(tableHasUserBalanceColumn
+      ? ([
+          {
+            field: 'userBalance',
+            headerName: t('table.userBalance'),
+            minWidth: 150,
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+            cellClassName: (params) => (params.value > 0 ? cssStyles.userBalanceCell : ''),
+          },
+        ] as GridColDef[])
+      : []),
 
     {
       field: 'price',
-      headerName: t('table.price'),
+      headerName: tableHasUserBalanceColumn ? t('table.valueInCurrency') : t('table.price'),
       minWidth: 150,
-      valueFormatter: (value) => {
-        if (typeof value === 'number') {
-          return formatPrice(value);
-        }
-        return formatPrice(0);
-      },
+      valueFormatter: (value) => formatPrice(value == null ? 0 : value),
       type: 'number',
       align: 'right',
       headerAlign: 'right',
+      cellClassName: (params) =>
+        tableHasUserBalanceColumn && params.value > 0 ? cssStyles.userBalanceCell : '',
     },
-    {
-      field: 'priceChange24',
-      headerName: t('table.priceChange24'),
-      minWidth: 150,
-      renderCell: (params: GridRenderCellParams<any, CoinsTableRowData>) => {
-        const value = typeof params.value === 'number' ? params.value : 0;
-        const isPositive = value > 0;
-        const isNegative = value < 0;
-        return (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              color: isPositive ? 'success.main' : isNegative ? 'error.main' : 'text.secondary',
-            }}
-          >
-            {isPositive && <ArrowDropUpIcon />}
-            {isNegative && <ArrowDropDownIcon />}
-            <Typography variant="body2">{Math.abs(value).toFixed(2)}%</Typography>
-          </Box>
-        );
-      },
-      type: 'number',
-      align: 'right',
-      headerAlign: 'right',
-    },
-    {
-      field: 'volume24',
-      headerName: t('table.volume24'),
-      minWidth: 150,
-      valueFormatter: (value) => {
-        if (typeof value === 'number') {
-          return formatVolume(value);
-        }
-        return formatVolume(0);
-      },
-      type: 'number',
-      align: 'right',
-      headerAlign: 'right',
-    },
+
+    //dont display priceChange24 and volume24 on portfolio page which is displaying userBalance instead
+    ...(!tableHasUserBalanceColumn
+      ? ([
+          {
+            field: 'priceChange24',
+            headerName: t('table.priceChange24'),
+            minWidth: 150,
+            renderCell: (params: GridRenderCellParams<CoinsTableRowData>) => {
+              const value: number = params.row.priceChange24 ?? 0;
+              const isPositive = value > 0;
+              const isNegative = value < 0;
+              return (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    color: isPositive
+                      ? 'success.main'
+                      : isNegative
+                        ? 'error.main'
+                        : 'text.secondary',
+                  }}
+                >
+                  {isPositive && <ArrowDropUpIcon />}
+                  {isNegative && <ArrowDropDownIcon />}
+                  <Typography variant="body2">{Math.abs(value).toFixed(2)}%</Typography>
+                </Box>
+              );
+            },
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+          },
+          {
+            field: 'volume24',
+            headerName: t('table.volume24'),
+            minWidth: 150,
+            valueFormatter: (value) => formatVolume(value == null ? 0 : value),
+            type: 'number',
+            align: 'right',
+            headerAlign: 'right',
+          },
+        ] as GridColDef[])
+      : []),
     {
       field: 'actions',
       headerName: t('table.actions'),
@@ -161,7 +165,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           {params.row.isTradeable && (
             <Button
               component={Link}
-              to={ROUTES.LOGIN}
+              to={ROUTES.TRADE + '/' + selectedCurrency + '-' + params.row.coinSymbol}
               variant="contained"
               size="small"
               sx={coinsTableStyles.tradeButton}

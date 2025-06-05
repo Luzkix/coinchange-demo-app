@@ -1,9 +1,9 @@
-// src/layouts/PortfolioPageContent/styles.ts
-import { SxProps, Theme } from '@mui/material/styles';
+import { SxProps } from '@mui/material/styles';
+import { Theme } from '@mui/system';
 
 export const portfolioPageContentStyles: Record<string, SxProps<Theme>> = {
   container: {
-    maxWidth: 1000,
+    maxWidth: 700,
     mx: 'auto',
     mt: 4,
     px: 2,
@@ -21,5 +21,19 @@ export const portfolioPageContentStyles: Record<string, SxProps<Theme>> = {
     mt: 4,
     mb: 2,
     fontWeight: 600,
+  },
+  totalBalanceRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 2,
+    mb: 2,
+    mt: 1,
+  },
+  totalBalanceValue: {
+    fontSize: '2rem',
+    fontWeight: 700,
+    color: '#27ae60',
+    letterSpacing: 1,
+    ml: 0, // mezera od popisku
   },
 };

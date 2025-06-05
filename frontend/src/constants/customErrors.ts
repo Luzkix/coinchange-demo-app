@@ -40,3 +40,17 @@ export class FetchSupportedCurrenciesError extends Error {
     }
   }
 }
+
+export class FetchMarketConversionRateError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'FetchMarketConversionRateError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, FetchMarketConversionRateError);
+    }
+  }
+}

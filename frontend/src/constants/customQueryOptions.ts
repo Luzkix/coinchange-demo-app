@@ -53,3 +53,12 @@ export const createFetchBalancesOptions = (balanceType: BalanceTypeEnum) =>
     queryKey: ['fetchBalances', balanceType],
     queryFn: () => BalanceService.fetchBalances(balanceType),
   });
+
+export const createFetchMarketConversionRateOptions = (
+  soldCurrencyCode: string,
+  boughtCurrencyCode: string,
+) =>
+  queryOptions({
+    queryKey: ['fetchMarketConversionRate', soldCurrencyCode, boughtCurrencyCode],
+    queryFn: () => CoinsDataService.fetchMarketConversionRate(soldCurrencyCode, boughtCurrencyCode),
+  });

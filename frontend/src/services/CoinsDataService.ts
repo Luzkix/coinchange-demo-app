@@ -9,9 +9,14 @@ import { ApiCoinStatsService, CoinStats } from '../api-generated/coinbase-exchan
 import {
   FetchCoinsDataError,
   FetchCoinStatsError,
+  FetchMarketConversionRateError,
   FetchSupportedCurrenciesError,
 } from '../constants/customErrors.ts';
-import { ApiCurrencyService, CurrencyResponseDto } from '../api-generated/backend';
+import {
+  ApiCurrencyService,
+  type CurrencyConversionRateResponseDto,
+  CurrencyResponseDto,
+} from '../api-generated/backend';
 import { useGeneralContext } from '../contexts/GeneralContext.tsx';
 
 /**
@@ -102,6 +107,24 @@ export const CoinsDataService = {
       return await ApiCurrencyService.getSupportedCurrencies();
     } catch (error) {
       throw new FetchSupportedCurrenciesError(
+        `Failed to fetch supported currencies`,
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    }
+  },
+
+  /**
+   * Fetches backend validated market conversion rate for a pair of sold/bought currencies
+   */
+  async fetchMarketConversionRate(
+    soldCurrencyCode: string,
+    boughtCurrencyCode: string,
+  ): Promise<CurrencyConversionRateResponseDto> {
+    try {
+      console.log('Fetching market conversion rate from backend');
+      return await ApiCurrencyService.getMarketConversionRate(soldCurrencyCode, boughtCurrencyCode);
+    } catch (error) {
+      throw new FetchMarketConversionRateError(
         `Failed to fetch supported currencies`,
         error instanceof Error ? error : new Error(String(error)),
       );

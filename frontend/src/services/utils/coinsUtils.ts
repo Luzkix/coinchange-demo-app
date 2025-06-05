@@ -6,7 +6,11 @@ import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOpti
 import { FetchCoinStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
 import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
-import { CurrencyBalanceResponseDto, CurrencyResponseDto } from '../../api-generated/backend';
+import {
+  CurrencyBalanceResponseDto,
+  CurrencyConversionRateResponseDto,
+  CurrencyResponseDto,
+} from '../../api-generated/backend';
 import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
 
 /**
@@ -66,8 +70,8 @@ export const getTradeableCoins = (fetchedCoinsData: CoinsMap, currency: string):
   if (!currencyData) return [];
 
   return Array.from(currencyData.entries())
-    .filter(([_, { isTradeable }]) => isTradeable)
-    .map(([_, { coinPair }]) => coinPair)
+    .filter((fetchedCoinPair) => fetchedCoinPair[1].isTradeable)
+    .map((fetchedCoinPair) => fetchedCoinPair[1].coinPair)
     .sort((a, b) => {
       const volumeA = Number(a.approximate_quote_24h_volume || 0);
       const volumeB = Number(b.approximate_quote_24h_volume || 0);
@@ -184,76 +188,101 @@ export const convertCoinsDataIntoCoinsTableRowData = (
  * Function accepts [CoinPair] - for each CoinPair properties such as 'price' and 'price_percentage_change_24h' are being updated with fresh values
  * @param coinsData - original coinsData to be converted
  * @param balances - balances of all FIAT/CRYPTO currencies owned by the user
+ * @param eurToUsdRate - EUR to USD rate for calculations of current balances values in selected currency
  * @param selectedCurrency - fiat currency to be used to filter coins matching this currency
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
 export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
   coinsData: CoinsMap,
   balances: CurrencyBalanceResponseDto[],
+  eurToUsdRate: CurrencyConversionRateResponseDto,
   selectedCurrency: string,
 ): CoinsTableRowData[] => {
   const { supportedFiatCurrenciesDetails } = useGeneralContext();
 
-  // 1. Získej všechny tradeable coiny pro danou fiat měnu
+  // 1. collect all tradeable coins for particular selectedCurrency converted to output table format (note - the final [] does not include any FIAT coins, these will be added later)
   const convertedTradeableCoinsData: CoinsTableRowData[] = convertCoinsDataIntoCoinsTableRowData(
     coinsData,
     selectedCurrency,
   ).filter((coin) => coin.isTradeable);
 
-  // 2. Pro každý coin najdi odpovídající balance podle symbolu
-  const coinsDataWithBalances: CoinsTableRowData[] = convertedTradeableCoinsData.map((coin) => {
+  // 2. for each coin (crypto currency) find and assign user balance or set 0 as balance
+  let coinsDataWithBalances: CoinsTableRowData[] = convertedTradeableCoinsData.map((coin) => {
     const balanceDto = balances.find((balance) => balance.currency.code === coin.coinSymbol);
-    return {
+    const coinWithBalanceField = {
       ...coin,
       userBalance: balanceDto ? balanceDto.balance : 0,
     };
+
+    //update column "price" with calculated value of the balance in selected currency
+    return {
+      ...coinWithBalanceField,
+      price: coinWithBalanceField.userBalance * coinWithBalanceField.price,
+    };
   });
 
-  // 3. Najdi balance pro samotnou fiat měnu (např. EUR/USD) a vytvoř speciální řádek
-  const selectedFiatCurrencyBalanceDto = balances.find(
-    (dto) => dto.currency.code === selectedCurrency,
-  );
+  let fiatCurrenciesWithoutBalance: FiatCurrencyDetails[] = [];
+  let fiatCurrenciesWithBalance: CurrencyBalanceResponseDto[] = [];
 
-  // Pokud fiat měna existuje v balances, přidej ji jako speciální řádek
-  if (selectedFiatCurrencyBalanceDto) {
-    const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
-      id: `${selectedFiatCurrencyBalanceDto.currency.code}-${selectedFiatCurrencyBalanceDto.currency.code}`,
-      coinSymbol: selectedFiatCurrencyBalanceDto.currency.code,
-      coinName: selectedFiatCurrencyBalanceDto.currency.name,
-      price: 0,
-      priceChange24: 0,
-      volume24: 0,
-      isNew: false,
-      isTradeable: false,
-      fullCoinPairData: null,
-      userBalance: selectedFiatCurrencyBalanceDto.balance,
-    };
-    // Fiat měnu přidej na začátek pole (aby byla vždy první v tabulce)
-    return [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
-  } else {
-    // Pokud neexistuje, přidám ji s nulovým zůstatkem jako speciální řádek
-
-    const selectedFiatCurrencyDetails = supportedFiatCurrenciesDetails.find(
-      (curr) => curr.code == selectedCurrency,
+  // Adding FIAT currencies to the output
+  // 3. split FIAT currencies based on whether they have or have not some balance
+  supportedFiatCurrenciesDetails.forEach((supportedFiatDetail) => {
+    const supportedFiatCurrencyBalanceDto = balances.find(
+      (dto) => dto.currency.code === supportedFiatDetail.code,
     );
 
+    if (!supportedFiatCurrencyBalanceDto) {
+      fiatCurrenciesWithoutBalance.push(supportedFiatDetail);
+    } else fiatCurrenciesWithBalance.push(supportedFiatCurrencyBalanceDto);
+  });
+
+  // 4. process FIAT currencies without balances - adding rows with zero balance values
+  fiatCurrenciesWithoutBalance.forEach((fiatCurrencyDetail) => {
     const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
-      id: `${selectedCurrency}-${selectedCurrency}`,
-      coinSymbol: selectedCurrency,
-      coinName: selectedFiatCurrencyDetails ? selectedFiatCurrencyDetails.name : selectedCurrency,
+      id: `${fiatCurrencyDetail.code}-${fiatCurrencyDetail.code}`,
+      coinSymbol: fiatCurrencyDetail.code,
+      coinName: fiatCurrencyDetail.name,
       price: 0,
       priceChange24: 0,
       volume24: 0,
       isNew: false,
-      isTradeable: false,
+      isTradeable: selectedCurrency != fiatCurrencyDetail.code,
       fullCoinPairData: null,
       userBalance: 0,
     };
-    // Fiat měnu přidej na začátek pole (aby byla vždy první v tabulce)
-    return [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
-  }
 
-  // Pokud fiat měna není v balances, vrať jen coiny s balances
+    // Add FIAT currency to the beginning of future data table
+    coinsDataWithBalances = [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
+  });
+
+  // 5. process FIAT currencies with balances
+  fiatCurrenciesWithBalance.forEach((supportedFiatCurrencyBalanceDto) => {
+    const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
+      id: `${supportedFiatCurrencyBalanceDto.currency.code}-${supportedFiatCurrencyBalanceDto.currency.code}`,
+      coinSymbol: supportedFiatCurrencyBalanceDto.currency.code,
+      coinName: supportedFiatCurrencyBalanceDto.currency.name,
+
+      //conversion of FIAT balance into the Current Value in selectedCurrency
+      price:
+        selectedCurrency == 'EUR'
+          ? supportedFiatCurrencyBalanceDto.currency.code == 'EUR'
+            ? supportedFiatCurrencyBalanceDto.balance
+            : supportedFiatCurrencyBalanceDto.balance / eurToUsdRate.marketConversionRate
+          : supportedFiatCurrencyBalanceDto.currency.code == 'EUR'
+            ? supportedFiatCurrencyBalanceDto.balance * eurToUsdRate.marketConversionRate
+            : supportedFiatCurrencyBalanceDto.balance,
+      priceChange24: 0,
+      volume24: 0,
+      isNew: false,
+      isTradeable: selectedCurrency != supportedFiatCurrencyBalanceDto.currency.code,
+      fullCoinPairData: null,
+      userBalance: supportedFiatCurrencyBalanceDto.balance,
+    };
+
+    // Add FIAT currency to the very beginning of future data table before fiat currencies with 0 balance
+    coinsDataWithBalances = [selectedFiatCurrencyCoinsData, ...coinsDataWithBalances];
+  });
+
   return coinsDataWithBalances;
 };
 

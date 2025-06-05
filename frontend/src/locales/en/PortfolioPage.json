@@ -1,7 +1,7 @@
 {
   "portfolioPage": {
     "title": "Portfolio Overview",
-    "availableBalances": "Available Balances",
+    "totalAvailableBalance": "Total Available Balance",
     "hideZeroBalances": "Hide zero balances"
   }
 }

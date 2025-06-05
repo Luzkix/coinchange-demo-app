@@ -1,7 +1,7 @@
 {
   "portfolioPage": {
     "title": "Přehled portfolia",
-    "availableBalances": "Dostupné zůstatky",
+    "totalAvailableBalance": "Celkový použitelný zůstatek",
     "hideZeroBalances": "Skrýt měny bez zůstatku"
   }
 }

@@ -13,8 +13,9 @@
     "priceChange24": "Změna ceny (24h)",
     "volume24": "Objem (24h)",
     "actions": "Akce",
-    "trade": "Obchodovat",
-    "userBalance": "Zůstatek"
+    "trade": "Koupit",
+    "userBalance": "Dostupný zůstatek",
+    "valueInCurrency": "Současná hodnota"
   },
 
   "tableContent": {
