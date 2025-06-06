@@ -15,7 +15,8 @@
     "actions": "Action",
     "trade": "Buy",
     "userBalance": "Available Balance",
-    "valueInCurrency": "Current Value"
+    "valueInCurrency": "Current Value",
+    "rowsPerPage": "Rows per page:"
   },
 
   "tableContent": {

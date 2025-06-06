@@ -15,7 +15,8 @@
     "actions": "Akce",
     "trade": "Koupit",
     "userBalance": "Dostupný zůstatek",
-    "valueInCurrency": "Současná hodnota"
+    "valueInCurrency": "Současná hodnota",
+    "rowsPerPage": "Řádků na stránku:"
   },
 
   "tableContent": {

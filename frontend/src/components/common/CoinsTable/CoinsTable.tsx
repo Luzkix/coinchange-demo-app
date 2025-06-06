@@ -196,6 +196,9 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           ...coinsTableStyles.dataGrid,
           height: 'auto',
         }}
+        localeText={{
+          paginationRowsPerPage: t('table.rowsPerPage'),
+        }}
       />
     </Box>
   );
