@@ -63,6 +63,7 @@ public class CurrencyController extends GenericController implements CurrencyApi
                     dto.setId(currency.getId());
                     dto.setName(currency.getName());
                     dto.setCode(currency.getCode());
+                    dto.setColor(currency.getColor());
                     dto.setIsActive(currency.isActive());
                     dto.setType(currency.getType().getTypeValue());
                     return dto;

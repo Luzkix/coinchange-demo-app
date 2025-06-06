@@ -47,6 +47,7 @@ public class BalanceServiceImpl implements BalanceService {
                     currency.setId(currencyBalance.getCurrency().getId());
                     currency.setCode(currencyBalance.getCurrency().getCode());
                     currency.setName(currencyBalance.getCurrency().getName());
+                    currency.setColor(currencyBalance.getCurrency().getColor());
                     currency.setIsActive(currencyBalance.getCurrency().isActive());
                     currency.setType(currencyBalance.getCurrency().getType().getTypeValue());
 
