@@ -22,6 +22,9 @@ public class Currency {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @Column(nullable = false, length = 10)
+    private String color;
+
     @Column(nullable = false)
     private boolean isActive;
 

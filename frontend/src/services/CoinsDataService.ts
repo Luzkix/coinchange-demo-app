@@ -18,6 +18,7 @@ import {
   CurrencyResponseDto,
 } from '../api-generated/backend';
 import { useGeneralContext } from '../contexts/GeneralContext.tsx';
+import { convertCurrenciesToStringArrayOfCodes } from './utils/coinsUtils.ts';
 
 /**
  * Service for fetching and processing coin data from Coinbase API
@@ -45,19 +46,27 @@ export const CoinsDataService = {
       const resultMap: CoinsMap = new Map();
       // Initialize maps for each allowed currency
       supportedFiatCurrencies.forEach((supportedCurrency) => {
-        resultMap.set(supportedCurrency, new Map());
+        resultMap.set(supportedCurrency.code, new Map());
       });
 
       // Step 3: Process the response and populate the map
       if (response && response.products && response.products.length > 0) {
         response.products.forEach((coinPair) => {
           // Check if this coinPair has supported quote currency (USD or EUR or other supported currency) and supported base currency (BTC, ETH, etc.)
-          if (supportedFiatCurrencies.includes(coinPair.quote_currency_id)) {
+          if (
+            convertCurrenciesToStringArrayOfCodes(supportedFiatCurrencies).includes(
+              coinPair.quote_currency_id,
+            )
+          ) {
             // Get the appropriate USD/EUR... currency map
             const currencyMap = resultMap.get(coinPair.quote_currency_id);
             // set the coinPair to the appropriate currency map with proper isTradeable boolean value
             if (currencyMap) {
-              if (supportedCryptoCurrencies.includes(coinPair.base_currency_id)) {
+              if (
+                convertCurrenciesToStringArrayOfCodes(supportedCryptoCurrencies).includes(
+                  coinPair.base_currency_id,
+                )
+              ) {
                 currencyMap.set(coinPair.base_currency_id, {
                   coinPair: coinPair,
                   isTradeable: true,

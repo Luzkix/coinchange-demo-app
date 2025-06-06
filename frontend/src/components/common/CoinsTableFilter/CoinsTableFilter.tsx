@@ -98,11 +98,11 @@ const CoinsTableFilter: React.FC<CoinsTableFilterProps> = ({
       >
         {supportedFiatCurrencies.map((supportedCurrency) => (
           <MenuItem
-            key={supportedCurrency}
-            onClick={() => handleCurrencySelect(supportedCurrency)}
-            selected={selectedCurrency === supportedCurrency}
+            key={supportedCurrency.code}
+            onClick={() => handleCurrencySelect(supportedCurrency.code)}
+            selected={selectedCurrency === supportedCurrency.code}
           >
-            {supportedCurrency}
+            {supportedCurrency.code}
           </MenuItem>
         ))}
       </Menu>

@@ -3,6 +3,7 @@ import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { hotCoinsTabsStyles } from './styles.ts';
 import {
+  convertCurrenciesToStringArrayOfCodes,
   getTopGainers,
   getTradeableCoins,
   updateCoinsPrices,
@@ -24,7 +25,10 @@ export const HotCoinsTabs: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+    creteFetchCoinsDataOptions(
+      convertCurrenciesToStringArrayOfCodes(supportedFiatCurrencies),
+      convertCurrenciesToStringArrayOfCodes(supportedCryptoCurrencies),
+    ),
   );
   const coinsData = fetchedCoinsDataResult.data;
 

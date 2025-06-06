@@ -5,6 +5,7 @@ import org.luzkix.coinchange.exceptions.CustomSecurityExceptionHandlerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,8 +31,9 @@ public class SecurityConfig {
                         // Allow access to Swagger UI and API docs without authentication for testing purposes
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
-                        // Allow public access to login and register endpoints
-                        .requestMatchers("/user/login", "/user/register", "/currencies").permitAll()
+                        // Allow public access to GET/currency and login + register endpoints
+                        .requestMatchers(HttpMethod.GET, "/currency").permitAll()
+                        .requestMatchers("/user/login", "/user/register").permitAll()
 
                         // Restrict access to /admin/** only for ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")

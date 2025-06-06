@@ -21,29 +21,6 @@ export const DEFAULT_COINS_TYPE = CoinsTypeEnum.SPOT;
 export const DEFAULT_COINS_SORTING = CoinsSortOrderTypeEnum.VOLUME_24_DESC;
 
 /**
- * Array of supported fiat currencies (USD, EUR, ...)
- * Values match quote_currency_id field from CoinPair model
- */
-export const DEFAULT_FIAT_CURRENCIES = ['USD', 'EUR'];
-
-/**
- * Array of supported cryptocurrencies (BTC, ETH, ...)
- * Values match base_currency_id field from CoinPair model
- */
-export const DEFAULT_CRYPTO_CURRENCIES = [
-  'BTC',
-  'ETH',
-  'XRP',
-  'BNB',
-  'SOL',
-  'DOGE',
-  'TRX',
-  'ADA',
-  'LINK',
-  'AVAX',
-];
-
-/**
  * Default number of "top" coins to be displayed (e.g.Tradeable,Top fainers, New on CoinChange...)
  */
 export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
@@ -51,7 +28,7 @@ export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
 /**
  * Default time in miliseconds for refreshing "top" coins price data (e.g.Tradeable,Top fainers, New on CoinChange...)
  */
-export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 5000; //milisec
+export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 10000; //milisec
 
 /**
  * Default time in miliseconds for automatic hiding of popup error messages

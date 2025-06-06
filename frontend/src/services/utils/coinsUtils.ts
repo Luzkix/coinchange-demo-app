@@ -1,6 +1,6 @@
-import { CoinsDefaultColorEnum, CurrencyTypeEnum } from '../../constants/customEnums.ts';
+import { CurrencyTypeEnum } from '../../constants/customEnums.ts';
 import { CoinPair } from '../../api-generated/coinbase';
-import { CoinsMap, FiatCurrencyDetails } from '../../constants/customTypes.ts';
+import { CoinsMap } from '../../constants/customTypes.ts';
 import { QueryClient } from '@tanstack/react-query';
 import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
 import { FetchCoinStatsError } from '../../constants/customErrors.ts';
@@ -20,20 +20,15 @@ import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
  * @returns Hex color string in format #RRGGBB
  */
 export const createCoinColor = (coinSymbol: string): string => {
-  // collect all keys from CoinsColorEnum (enum contains all coins with predefined colors)
-  const coinsWithDefaultColor = Object.keys(
-    CoinsDefaultColorEnum,
-  ) as (keyof typeof CoinsDefaultColorEnum)[];
+  const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
-  // find coinSymbol in enum (case-insensitive)
-  const foundSymbol = coinsWithDefaultColor.find(
-    (predefinedCoin) => predefinedCoin.toLowerCase() === coinSymbol.toLowerCase(),
-  );
-
-  // if symbol found, return related color
-  if (foundSymbol) {
-    return CoinsDefaultColorEnum[foundSymbol];
-  }
+  // try to find coinSymbol within known currencies -> if found, return the predefined color
+  const allSupportedCurrencies: CurrencyResponseDto[] = [
+    ...supportedFiatCurrencies,
+    ...supportedCryptoCurrencies,
+  ];
+  const foundCurrency = allSupportedCurrencies.find((currency) => currency.code === coinSymbol);
+  if (foundCurrency && foundCurrency.color) return foundCurrency.color;
 
   // otherwise generate random color in hex format
   return (
@@ -198,7 +193,7 @@ export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
   eurToUsdRate: CurrencyConversionRateResponseDto,
   selectedCurrency: string,
 ): CoinsTableRowData[] => {
-  const { supportedFiatCurrenciesDetails } = useGeneralContext();
+  const { supportedFiatCurrencies } = useGeneralContext();
 
   // 1. collect all tradeable coins for particular selectedCurrency converted to output table format (note - the final [] does not include any FIAT coins, these will be added later)
   const convertedTradeableCoinsData: CoinsTableRowData[] = convertCoinsDataIntoCoinsTableRowData(
@@ -221,32 +216,32 @@ export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
     };
   });
 
-  let fiatCurrenciesWithoutBalance: FiatCurrencyDetails[] = [];
+  let fiatCurrenciesWithoutBalance: CurrencyResponseDto[] = [];
   let fiatCurrenciesWithBalance: CurrencyBalanceResponseDto[] = [];
 
   // Adding FIAT currencies to the output
   // 3. split FIAT currencies based on whether they have or have not some balance
-  supportedFiatCurrenciesDetails.forEach((supportedFiatDetail) => {
+  supportedFiatCurrencies.forEach((supportedFiatCurrency) => {
     const supportedFiatCurrencyBalanceDto = balances.find(
-      (dto) => dto.currency.code === supportedFiatDetail.code,
+      (dto) => dto.currency.code === supportedFiatCurrency.code,
     );
 
     if (!supportedFiatCurrencyBalanceDto) {
-      fiatCurrenciesWithoutBalance.push(supportedFiatDetail);
+      fiatCurrenciesWithoutBalance.push(supportedFiatCurrency);
     } else fiatCurrenciesWithBalance.push(supportedFiatCurrencyBalanceDto);
   });
 
   // 4. process FIAT currencies without balances - adding rows with zero balance values
-  fiatCurrenciesWithoutBalance.forEach((fiatCurrencyDetail) => {
+  fiatCurrenciesWithoutBalance.forEach((fiatCurrency) => {
     const selectedFiatCurrencyCoinsData: CoinsTableRowData = {
-      id: `${fiatCurrencyDetail.code}-${fiatCurrencyDetail.code}`,
-      coinSymbol: fiatCurrencyDetail.code,
-      coinName: fiatCurrencyDetail.name,
+      id: `${fiatCurrency.code}-${fiatCurrency.code}`,
+      coinSymbol: fiatCurrency.code,
+      coinName: fiatCurrency.name,
       price: 0,
       priceChange24: 0,
       volume24: 0,
       isNew: false,
-      isTradeable: selectedCurrency != fiatCurrencyDetail.code,
+      isTradeable: selectedCurrency != fiatCurrency.code,
       fullCoinPairData: null,
       userBalance: 0,
     };
@@ -287,29 +282,24 @@ export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
 };
 
 /**
- * Function filters and returns only FIAT currencies out of all currencies.
+ * Function that converts CurrencyResponseDto[] into string[] with currency codes.
  */
-export const getFiatCurrencies = (data: CurrencyResponseDto[]) => {
-  return data.filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf()).map((cur) => cur.code);
+export const convertCurrenciesToStringArrayOfCodes = (
+  currencies: CurrencyResponseDto[],
+): string[] => {
+  return currencies.map((cur) => cur.code);
 };
 
 /**
- * Function filters and returns only FIAT currencies out of all currencies with additional currencies details.
+ * Function returns only FIAT currencies out of all currencies.
  */
-export const getFiatCurrenciesDetails = (data: CurrencyResponseDto[]): FiatCurrencyDetails[] => {
-  return data
-    .filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf())
-    .map((cur) => ({
-      code: cur.code,
-      name: cur.name,
-    }));
+export const getFiatCurrencies = (data: CurrencyResponseDto[]): CurrencyResponseDto[] => {
+  return data.filter((cur) => cur.type === CurrencyTypeEnum.FIAT.valueOf());
 };
 
 /**
- * Function filters and returns only CRYPTO currencies out of all currencies.
+ * Function returns only CRYPTO currencies out of all currencies.
  */
-export const getCryptoCurrencies = (data: CurrencyResponseDto[]) => {
-  return data
-    .filter((cur) => cur.type === CurrencyTypeEnum.CRYPTO.valueOf())
-    .map((cur) => cur.code);
+export const getCryptoCurrencies = (data: CurrencyResponseDto[]): CurrencyResponseDto[] => {
+  return data.filter((cur) => cur.type === CurrencyTypeEnum.CRYPTO.valueOf());
 };

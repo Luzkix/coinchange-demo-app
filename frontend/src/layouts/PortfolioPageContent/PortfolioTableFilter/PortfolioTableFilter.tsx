@@ -27,17 +27,17 @@ const PortfolioTableFilter: React.FC<PortfolioTableFilterProps> = ({
       <Box sx={portfolioTableFilterStyles.tabsRow}>
         {supportedFiatCurrencies.map((currency) => (
           <Button
-            key={currency}
-            variant={selectedCurrency === currency ? 'contained' : 'outlined'}
-            onClick={() => setSelectedCurrency(currency)}
+            key={currency.code}
+            variant={selectedCurrency === currency.code ? 'contained' : 'outlined'}
+            onClick={() => setSelectedCurrency(currency.code)}
             sx={
               [
                 portfolioTableFilterStyles.tabButton,
-                selectedCurrency === currency && portfolioTableFilterStyles.tabButtonActive,
+                selectedCurrency === currency.code && portfolioTableFilterStyles.tabButtonActive,
               ] as SxProps<Theme>
             }
           >
-            {currency}
+            {currency.code}
           </Button>
         ))}
       </Box>

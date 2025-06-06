@@ -24,25 +24,7 @@ export enum CurrencyTypeEnum {
 }
 
 /**
- * Enum defining color of tradeable coins
- */
-export enum CoinsDefaultColorEnum {
-  EUR = '#17288F',
-  USD = '#FBCE3A',
-  BTC = '#F7931A',
-  ETH = '#627EEA',
-  XRP = '#000000',
-  BNB = '#F0B90B',
-  SOL = '#14F195',
-  DOGE = '#C3A634',
-  TRX = '#E60815',
-  ADA = '#0033AD',
-  LINK = '#2A5ADA',
-  AVAX = '#E84142',
-}
-
-/**
- * Enum defining color of tradeable coins
+ * Enum defining supported languages
  */
 export enum SupportedLanguageEnum {
   ENGLISH = 'EN',
