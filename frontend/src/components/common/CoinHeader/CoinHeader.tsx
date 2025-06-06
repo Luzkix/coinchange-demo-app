@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, SxProps, Theme, Typography } from '@mui/material';
 import { coinHeaderStyles } from './styles';
 import { createCoinColor } from '../../../services/utils/coinsUtils.ts';
+import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 
 export interface CoinHeaderProps {
   coinSymbol: string;
@@ -16,8 +17,13 @@ export const CoinHeader: React.FC<CoinHeaderProps> = ({
   size = 'medium',
   iconOnly = false,
 }) => {
+  const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
+
   //defining iconBackgroundColor using 'useMemo' -> it allows to change icon color only when coinSymbol changes, not each time the component is refreshed
-  const iconBackgroundColor: string = useMemo(() => createCoinColor(coinSymbol), [coinSymbol]);
+  const iconBackgroundColor: string = useMemo(
+    () => createCoinColor(coinSymbol, supportedFiatCurrencies, supportedCryptoCurrencies),
+    [coinSymbol],
+  );
 
   // constants to define styles to be used based on size input
   const containerStyles = {
@@ -31,7 +37,7 @@ export const CoinHeader: React.FC<CoinHeaderProps> = ({
     ...(size === 'small' ? coinHeaderStyles.smallIcon : {}),
     ...(size === 'large' ? coinHeaderStyles.largeIcon : {}),
     ...{ bgcolor: iconBackgroundColor },
-  };
+  } as Record<string, SxProps<Theme>>;
 
   const nameStyles = {
     ...coinHeaderStyles.name,

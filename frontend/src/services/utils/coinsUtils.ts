@@ -11,17 +11,21 @@ import {
   CurrencyConversionRateResponseDto,
   CurrencyResponseDto,
 } from '../../api-generated/backend';
-import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
 
 /**
  * Returns color for specified coin symbol from CoinsColorEnum.
  * If symbol is not found, returns random hex color.
  * @param coinSymbol - Symbol of the coin (e.g. 'BTC', 'ETH')
+ * @param supportedFiatCurrencies - supported fiat currencies
+ * @param supportedCryptoCurrencies - supported crypto currencies
+ * @param coinSymbol - Symbol of the coin (e.g. 'BTC', 'ETH')
  * @returns Hex color string in format #RRGGBB
  */
-export const createCoinColor = (coinSymbol: string): string => {
-  const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
-
+export const createCoinColor = (
+  coinSymbol: string,
+  supportedFiatCurrencies: CurrencyResponseDto[],
+  supportedCryptoCurrencies: CurrencyResponseDto[],
+): string => {
   // try to find coinSymbol within known currencies -> if found, return the predefined color
   const allSupportedCurrencies: CurrencyResponseDto[] = [
     ...supportedFiatCurrencies,
@@ -192,9 +196,8 @@ export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (
   balances: CurrencyBalanceResponseDto[],
   eurToUsdRate: CurrencyConversionRateResponseDto,
   selectedCurrency: string,
+  supportedFiatCurrencies: CurrencyResponseDto[],
 ): CoinsTableRowData[] => {
-  const { supportedFiatCurrencies } = useGeneralContext();
-
   // 1. collect all tradeable coins for particular selectedCurrency converted to output table format (note - the final [] does not include any FIAT coins, these will be added later)
   const convertedTradeableCoinsData: CoinsTableRowData[] = convertCoinsDataIntoCoinsTableRowData(
     coinsData,

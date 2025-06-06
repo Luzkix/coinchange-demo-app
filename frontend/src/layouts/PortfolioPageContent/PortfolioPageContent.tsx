@@ -55,6 +55,7 @@ const PortfolioPageContent: React.FC = () => {
       userBalancesData,
       eurToUsdRate,
       selectedCurrency,
+      supportedFiatCurrencies,
     );
   }, [coinsData, userBalancesData, eurToUsdRate, selectedCurrency]);
 
