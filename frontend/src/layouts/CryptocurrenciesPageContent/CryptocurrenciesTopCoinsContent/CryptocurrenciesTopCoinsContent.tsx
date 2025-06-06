@@ -5,7 +5,6 @@ import { cryptocurrenciesTopCoinsContentStyles } from './styles';
 import { useGeneralContext } from '../../../contexts/GeneralContext.tsx';
 import { Languages } from '../../../constants/customConstants.ts';
 import {
-  convertCurrenciesToStringArrayOfCodes,
   getNewCoins,
   getTopGainers,
   updateCoinsPrices,
@@ -25,10 +24,7 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(
-      convertCurrenciesToStringArrayOfCodes(supportedFiatCurrencies),
-      convertCurrenciesToStringArrayOfCodes(supportedCryptoCurrencies),
-    ),
+    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
   );
   const coinsData = fetchedCoinsDataResult.data;
 

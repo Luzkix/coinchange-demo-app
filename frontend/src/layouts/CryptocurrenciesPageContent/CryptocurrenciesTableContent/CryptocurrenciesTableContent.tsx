@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { cryptocurrenciesTableContentStyles } from './styles';
 import { Languages } from '../../../constants/customConstants';
 import { CoinsFilterTypeEnum } from '../../../constants/customEnums.ts';
-import {
-  convertCoinsDataIntoCoinsTableRowData,
-  convertCurrenciesToStringArrayOfCodes,
-} from '../../../services/utils/coinsUtils.ts';
+import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 import CoinsTable, {
@@ -21,10 +18,7 @@ const CryptocurrenciesTableContent: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(
-      convertCurrenciesToStringArrayOfCodes(supportedFiatCurrencies),
-      convertCurrenciesToStringArrayOfCodes(supportedCryptoCurrencies),
-    ),
+    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
   );
   const coinsData = fetchedCoinsDataResult.data;
 

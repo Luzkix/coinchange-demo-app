@@ -12,10 +12,7 @@ import { portfolioPageContentStyles } from './styles';
 import { BalanceTypeEnum } from '../../constants/customEnums.ts';
 import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
 import { Languages } from '../../constants/customConstants.ts';
-import {
-  convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData,
-  convertCurrenciesToStringArrayOfCodes,
-} from '../../services/utils/coinsUtils.ts';
+import { convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData } from '../../services/utils/coinsUtils.ts';
 import PortfolioTableFilter from './PortfolioTableFilter/PortfolioTableFilter.tsx';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
@@ -24,10 +21,7 @@ const PortfolioPageContent: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(
-      convertCurrenciesToStringArrayOfCodes(supportedFiatCurrencies),
-      convertCurrenciesToStringArrayOfCodes(supportedCryptoCurrencies),
-    ),
+    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
   );
   const fetchedUserBalancesResult = useSuspenseQuery(
     createFetchBalancesOptions(BalanceTypeEnum.AVAILABLE),

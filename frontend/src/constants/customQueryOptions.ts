@@ -7,10 +7,11 @@ import {
 import { CoinsDataService } from '../services/CoinsDataService.ts';
 import { BalanceTypeEnum } from './customEnums.ts';
 import { BalanceService } from '../services/BalanceService.ts';
+import { CurrencyResponseDto } from '../api-generated/backend';
 
 export const creteFetchCoinsDataOptions = (
-  supportedFiatCurrencies?: string[],
-  supportedCryptoCurrencies?: string[],
+  supportedFiatCurrencies: CurrencyResponseDto[],
+  supportedCryptoCurrencies: CurrencyResponseDto[],
   fetchCoinsDataOptions?: FetchCoinsDataOptions,
 ) => {
   return queryOptions({
@@ -20,7 +21,12 @@ export const creteFetchCoinsDataOptions = (
       supportedCryptoCurrencies,
       fetchCoinsDataOptions,
     ],
-    queryFn: () => CoinsDataService.fetchCoinsData(fetchCoinsDataOptions),
+    queryFn: () =>
+      CoinsDataService.fetchCoinsData(
+        supportedFiatCurrencies,
+        supportedCryptoCurrencies,
+        fetchCoinsDataOptions,
+      ),
     // caching setup
     gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
     staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh"

@@ -17,7 +17,6 @@ import {
   type CurrencyConversionRateResponseDto,
   CurrencyResponseDto,
 } from '../api-generated/backend';
-import { useGeneralContext } from '../contexts/GeneralContext.tsx';
 import { convertCurrenciesToStringArrayOfCodes } from './utils/coinsUtils.ts';
 
 /**
@@ -29,9 +28,11 @@ export const CoinsDataService = {
    * organized by quote currency (USD/EUR) and fetched cryptocurrency (BTC, ETH...)
    * @returns Promise returning loaded coins data organized as a CoinsMap data type
    */
-  async fetchCoinsData(options?: FetchCoinsDataOptions): Promise<CoinsMap> {
-    const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
-
+  async fetchCoinsData(
+    supportedFiatCurrencies: CurrencyResponseDto[],
+    supportedCryptoCurrencies: CurrencyResponseDto[],
+    options?: FetchCoinsDataOptions,
+  ): Promise<CoinsMap> {
     try {
       // Step 1: Call the API with specified parameters or default ones if not specified
       const response = await ApiCoinPairService.getListOfCoinsWithTradingDetails(
