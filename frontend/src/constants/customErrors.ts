@@ -12,17 +12,17 @@ export class FetchCoinsDataError extends Error {
   }
 }
 
-export class FetchCoinStatsError extends Error {
+export class FetchCoinPairStatsError extends Error {
   constructor(
-    public readonly productId: string,
     message: string,
+    public readonly productId: string,
     public readonly originalError?: unknown,
   ) {
     super(message);
-    this.name = 'FetchCoinStatsError';
+    this.name = 'FetchCoinPairStatsError';
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchCoinStatsError);
+      Error.captureStackTrace(this, FetchCoinPairStatsError);
     }
   }
 }
@@ -51,6 +51,76 @@ export class FetchMarketConversionRateError extends Error {
 
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, FetchMarketConversionRateError);
+    }
+  }
+}
+
+export class FetchBalancesError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'FetchBalancesError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, FetchBalancesError);
+    }
+  }
+}
+
+export class RegisterUserError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'RegisterUserError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, RegisterUserError);
+    }
+  }
+}
+
+export class LoginUserError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'LoginUserError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, LoginUserError);
+    }
+  }
+}
+
+export class RefreshTokenError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'RefreshTokenError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, RefreshTokenError);
+    }
+  }
+}
+
+export class UpdateUserError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'UpdateUserError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, UpdateUserError);
     }
   }
 }

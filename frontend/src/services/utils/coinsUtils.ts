@@ -3,7 +3,7 @@ import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
 import { QueryClient } from '@tanstack/react-query';
 import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
-import { FetchCoinStatsError } from '../../constants/customErrors.ts';
+import { FetchCoinPairStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
 import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
 import {
@@ -149,7 +149,7 @@ export const updateCoinsPrices = async (
       } catch (error) {
         console.error('Error updating prices:', error);
 
-        if (error instanceof FetchCoinStatsError && addErrorPopup && t) {
+        if (error instanceof FetchCoinPairStatsError && addErrorPopup && t) {
           addErrorPopup(t('errors:message.fetchCoinStatsError') + coin.product_id);
         }
         return coin;

@@ -7,8 +7,8 @@ import {
 import { CoinsMap, FetchCoinsDataOptions } from '../constants/customTypes.ts';
 import { ApiCoinStatsService, CoinStats } from '../api-generated/coinbase-exchange';
 import {
+  FetchCoinPairStatsError,
   FetchCoinsDataError,
-  FetchCoinStatsError,
   FetchMarketConversionRateError,
   FetchSupportedCurrenciesError,
 } from '../constants/customErrors.ts';
@@ -35,6 +35,7 @@ export const CoinsDataService = {
   ): Promise<CoinsMap> {
     try {
       // Step 1: Call the API with specified parameters or default ones if not specified
+      console.log(`Fetching supported coins data...`);
       const response = await ApiCoinPairService.getListOfCoinsWithTradingDetails(
         options && options.limit ? options.limit : DEFAULT_LOADED_COINS_LIMIT, // limit
         options && options.offset ? options.offset : undefined, // offset
@@ -83,11 +84,14 @@ export const CoinsDataService = {
         });
       }
 
-      console.log('Refreshed CoinsMap loaded');
+      console.log('Coins data loaded successfully, CoinsMap created');
       return resultMap;
     } catch (error) {
+      const message = 'Failed to fetch coins data';
+      console.log(message);
+
       throw new FetchCoinsDataError(
-        'Failed to fetch coins data',
+        message,
         error instanceof Error ? error : new Error(String(error)),
       );
     }
@@ -98,11 +102,15 @@ export const CoinsDataService = {
    */
   async fetchCoinPairStats(productId: string): Promise<CoinStats> {
     try {
+      console.log(`Fetching supported coin pair stats for ${productId} ...`);
       return await ApiCoinStatsService.getCoinStats(productId);
     } catch (error) {
-      throw new FetchCoinStatsError(
+      const message = `Failed to fetch stats for ${productId}`;
+      console.log(message);
+
+      throw new FetchCoinPairStatsError(
         productId,
-        `Failed to fetch stats for ${productId}`,
+        message,
         error instanceof Error ? error : new Error(String(error)),
       );
     }
@@ -113,11 +121,14 @@ export const CoinsDataService = {
    */
   async fetchSupportedCurrencies(): Promise<CurrencyResponseDto[]> {
     try {
-      console.log('Fetching supported currencies from backend');
+      console.log('Fetching supported currencies from backend...');
       return await ApiCurrencyService.getSupportedCurrencies();
     } catch (error) {
+      const message = `Failed to fetch supported currencies`;
+      console.log(message);
+
       throw new FetchSupportedCurrenciesError(
-        `Failed to fetch supported currencies`,
+        message,
         error instanceof Error ? error : new Error(String(error)),
       );
     }
@@ -131,11 +142,14 @@ export const CoinsDataService = {
     boughtCurrencyCode: string,
   ): Promise<CurrencyConversionRateResponseDto> {
     try {
-      console.log('Fetching market conversion rate from backend');
+      console.log('Fetching market conversion rate from backend...');
       return await ApiCurrencyService.getMarketConversionRate(soldCurrencyCode, boughtCurrencyCode);
     } catch (error) {
+      const message = `Failed to fetch market conversion rate for ${soldCurrencyCode}-${boughtCurrencyCode}`;
+      console.log(message);
+
       throw new FetchMarketConversionRateError(
-        `Failed to fetch supported currencies`,
+        message,
         error instanceof Error ? error : new Error(String(error)),
       );
     }

@@ -5,6 +5,10 @@ import { getCryptoCurrencies, getFiatCurrencies } from '../services/utils/coinsU
 import { useQuery } from '@tanstack/react-query';
 import { createFetchSupportedCurrenciesOptions } from '../constants/customQueryOptions.ts';
 import { CurrencyResponseDto } from '../api-generated/backend';
+import {
+  DEFAULT_ALL_COINS_REFRESH_INTERVAL,
+  DEFAULT_ERROR_REFETCH_INTERVAL,
+} from '../constants/configVariables.ts';
 
 interface ErrorPopupMessage {
   id: number;
@@ -65,7 +69,16 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   };
 
   // Načtení a refresh povolených fiat/ktrypto měn
-  const fetchedCurrenciesResult = useQuery(createFetchSupportedCurrenciesOptions());
+  const fetchedCurrenciesResult = useQuery({
+    ...createFetchSupportedCurrenciesOptions(),
+    refetchInterval: (query) => {
+      if (query.state.status === 'error') {
+        //v případě erroru refetchuj ve zkráceném intervalu dokud se nenačtou data, poté standardní interval
+        return DEFAULT_ERROR_REFETCH_INTERVAL;
+      }
+      return DEFAULT_ALL_COINS_REFRESH_INTERVAL;
+    },
+  });
   const [supportedFiatCurrencies, setSupportedFiatCurrencies] = useState<CurrencyResponseDto[]>([]);
   const [supportedCryptoCurrencies, setSupportedCryptoCurrencies] = useState<CurrencyResponseDto[]>(
     [],
@@ -77,7 +90,7 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
       setSupportedFiatCurrencies(getFiatCurrencies(fetchedCurrenciesResult.data));
       setSupportedCryptoCurrencies(getCryptoCurrencies(fetchedCurrenciesResult.data));
     }
-  }, [fetchedCurrenciesResult.data]);
+  }, [fetchedCurrenciesResult.data, fetchedCurrenciesResult.error]);
 
   // Uložení preference cookies do localStorage
   useEffect(() => {

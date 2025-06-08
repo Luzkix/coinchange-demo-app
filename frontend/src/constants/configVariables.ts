@@ -6,6 +6,11 @@ import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './customEnums.ts';
 export const DEFAULT_ALL_COINS_REFRESH_INTERVAL = 1800000; //30 mins (coinbase free api refreshes data once per several hours so it is sufficient)
 
 /**
+ * Interval for automatic re-fetching in case any error happens during fetching
+ */
+export const DEFAULT_ERROR_REFETCH_INTERVAL = 20000; //20 sec
+
+/**
  * Maximum number of coins for fetching coins details from coinbase api
  */
 export const DEFAULT_LOADED_COINS_LIMIT = 1000;

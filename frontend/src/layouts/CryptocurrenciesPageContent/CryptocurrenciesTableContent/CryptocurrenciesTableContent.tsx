@@ -23,7 +23,7 @@ const CryptocurrenciesTableContent: React.FC = () => {
   const coinsData = fetchedCoinsDataResult.data;
 
   const [selectedCurrency, setSelectedCurrency] = useState(
-    Languages[i18n.language]?.currency || supportedFiatCurrencies[0].code,
+    Languages[i18n.language]?.currency || supportedFiatCurrencies[0]?.code,
   );
 
   useEffect(() => {
