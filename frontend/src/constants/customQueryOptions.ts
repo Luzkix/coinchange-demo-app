@@ -8,6 +8,7 @@ import { CoinsDataService } from '../services/CoinsDataService.ts';
 import { BalanceTypeEnum } from './customEnums.ts';
 import { BalanceService } from '../services/BalanceService.ts';
 import { CurrencyResponseDto } from '../api-generated/backend';
+import { CurrencyService } from '../services/CurrencyService.ts';
 
 export const creteFetchCoinsDataOptions = (
   supportedFiatCurrencies: CurrencyResponseDto[],
@@ -47,7 +48,7 @@ export const createFetchCoinPairStatsOptions = (productId: string) => {
 export const createFetchSupportedCurrenciesOptions = () =>
   queryOptions({
     queryKey: ['fetchSupportedCurrencies'],
-    queryFn: () => CoinsDataService.fetchSupportedCurrencies(),
+    queryFn: () => CurrencyService.fetchSupportedCurrencies(),
     // caching setup
     gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
     staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh"
@@ -66,5 +67,5 @@ export const createFetchMarketConversionRateOptions = (
 ) =>
   queryOptions({
     queryKey: ['fetchMarketConversionRate', soldCurrencyCode, boughtCurrencyCode],
-    queryFn: () => CoinsDataService.fetchMarketConversionRate(soldCurrencyCode, boughtCurrencyCode),
+    queryFn: () => CurrencyService.fetchMarketConversionRate(soldCurrencyCode, boughtCurrencyCode),
   });

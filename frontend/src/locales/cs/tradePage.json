@@ -1,0 +1,22 @@
+{
+  "switcher": {
+    "simple": "Rychlý nákup",
+    "advanced": "Pokročilý nákup",
+    "exchange": "směna"
+  },
+
+  "form": {
+    "soldAmount": "Prodávám:",
+    "boughtAmount": "Získávám:",
+    "currency": "Měna",
+    "availableBalance": "Dostupný zůstatek",
+    "balance": "Zůstatek",
+    "rate": "Kurz",
+    "rateExpired": "Zafixovaný kurz vypršel",
+    "fee": "Poplatek",
+    "exchange": "Směnit",
+    "invalidRate": "Neplatný kurz",
+    "validity": "Platnost",
+    "rateError": "Chyba při načítání kurzu"
+  }
+}

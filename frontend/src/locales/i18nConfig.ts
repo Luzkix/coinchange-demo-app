@@ -9,6 +9,7 @@ import enErrors from './en/errors.json';
 import enSignInSignUpPage from './en/signInSignUpPage.json';
 import enProfilePage from './en/profilePage.json';
 import enPortfolioPage from './en/portfolioPage.json';
+import enTradePage from './en/tradePage.json';
 import csCommon from './cs/common.json';
 import csCryptocurrenciesPage from './cs/cryptocurrenciesPage.json';
 import csHomePage from './cs/homePage.json';
@@ -17,6 +18,7 @@ import csErrors from './cs/errors.json';
 import csSignInSignUpPage from './cs/signInSignUpPage.json';
 import csProfilePage from './cs/profilePage.json';
 import csPortfolioPage from './cs/portfolioPage.json';
+import csTradePage from './cs/tradePage.json';
 
 // Function to change language and its saving to localStorage so the users choice is remembered
 export const changeAndSaveLanguage = (newLanguage: string) => {
@@ -35,6 +37,7 @@ i18nConfig.use(initReactI18next).init({
       signInSignUpPage: enSignInSignUpPage,
       profilePage: enProfilePage,
       portfolioPage: enPortfolioPage,
+      tradePage: enTradePage,
     },
     CS: {
       common: csCommon,
@@ -45,6 +48,7 @@ i18nConfig.use(initReactI18next).init({
       signInSignUpPage: csSignInSignUpPage,
       profilePage: csProfilePage,
       portfolioPage: csPortfolioPage,
+      tradePage: csTradePage,
     },
   },
   lng: localStorage.getItem('selectedLanguage') || 'EN', // using of last saved language or 'EN'
@@ -58,6 +62,7 @@ i18nConfig.use(initReactI18next).init({
     'signInSignUpPage',
     'profilePage',
     'portfolioPage',
+    'tradePage',
   ],
   defaultNS: 'common',
   interpolation: {

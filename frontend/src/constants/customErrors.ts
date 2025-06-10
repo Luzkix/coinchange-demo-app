@@ -124,3 +124,31 @@ export class UpdateUserError extends Error {
     }
   }
 }
+
+export class SimpleTradingError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'SimpleTradingError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, SimpleTradingError);
+    }
+  }
+}
+
+export class AdvancedTradingError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'AdvancedTradingError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AdvancedTradingError);
+    }
+  }
+}

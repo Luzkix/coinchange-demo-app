@@ -1,0 +1,22 @@
+{
+  "switcher": {
+    "simple": "Quick Buy",
+    "advanced": "Advanced Buy",
+    "exchange": "Exchange"
+  },
+
+  "form": {
+    "soldAmount": "Seelling:",
+    "boughtAmount": "Receiving:",
+    "currency": "Currency",
+    "availableBalance": "Available Balance",
+    "balance": "Balance",
+    "rate": "Exchange Rate",
+    "rateExpired": "Fixed exchange rate expired",
+    "fee": "Fee",
+    "exchange": "Exchange",
+    "invalidRate": "Invalid rate",
+    "validity": "Validity",
+    "rateError": "Error while loading exchange rate"
+  }
+}

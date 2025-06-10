@@ -39,6 +39,7 @@ const HeaderPublic: React.FC = () => {
               to={ROUTES.PORTFOLIO}
               active={isActive(ROUTES.PORTFOLIO)}
             />
+            <NavTab label={t('header.trade')} to={ROUTES.TRADE} active={isActive(ROUTES.TRADE)} />
             <NavTab
               label={t('header.cryptocurrencies')}
               to={ROUTES.CRYPTOCURRENCIES_PRIVATE}
@@ -71,6 +72,11 @@ const HeaderPublic: React.FC = () => {
                   label={t('header.portfolio')}
                   to={ROUTES.PORTFOLIO}
                   active={isActive(ROUTES.PORTFOLIO)}
+                />
+                <NavTab
+                  label={t('header.trade')}
+                  to={ROUTES.TRADE}
+                  active={isActive(ROUTES.TRADE)}
                 />
                 <NavTab
                   label={t('header.cryptocurrencies')}

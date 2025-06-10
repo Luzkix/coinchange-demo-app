@@ -6,17 +6,8 @@ import {
 } from '../constants/configVariables.ts';
 import { CoinsMap, FetchCoinsDataOptions } from '../constants/customTypes.ts';
 import { ApiCoinStatsService, CoinStats } from '../api-generated/coinbase-exchange';
-import {
-  FetchCoinPairStatsError,
-  FetchCoinsDataError,
-  FetchMarketConversionRateError,
-  FetchSupportedCurrenciesError,
-} from '../constants/customErrors.ts';
-import {
-  ApiCurrencyService,
-  type CurrencyConversionRateResponseDto,
-  CurrencyResponseDto,
-} from '../api-generated/backend';
+import { FetchCoinPairStatsError, FetchCoinsDataError } from '../constants/customErrors.ts';
+import { CurrencyResponseDto } from '../api-generated/backend';
 import { convertCurrenciesToStringArrayOfCodes } from './utils/coinsUtils.ts';
 
 /**
@@ -110,45 +101,6 @@ export const CoinsDataService = {
 
       throw new FetchCoinPairStatsError(
         productId,
-        message,
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    }
-  },
-
-  /**
-   * Fetches both fiat/crypto currencies which are allowed to be used for trading
-   */
-  async fetchSupportedCurrencies(): Promise<CurrencyResponseDto[]> {
-    try {
-      console.log('Fetching supported currencies from backend...');
-      return await ApiCurrencyService.getSupportedCurrencies();
-    } catch (error) {
-      const message = `Failed to fetch supported currencies`;
-      console.log(message);
-
-      throw new FetchSupportedCurrenciesError(
-        message,
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    }
-  },
-
-  /**
-   * Fetches backend validated market conversion rate for a pair of sold/bought currencies
-   */
-  async fetchMarketConversionRate(
-    soldCurrencyCode: string,
-    boughtCurrencyCode: string,
-  ): Promise<CurrencyConversionRateResponseDto> {
-    try {
-      console.log('Fetching market conversion rate from backend...');
-      return await ApiCurrencyService.getMarketConversionRate(soldCurrencyCode, boughtCurrencyCode);
-    } catch (error) {
-      const message = `Failed to fetch market conversion rate for ${soldCurrencyCode}-${boughtCurrencyCode}`;
-      console.log(message);
-
-      throw new FetchMarketConversionRateError(
         message,
         error instanceof Error ? error : new Error(String(error)),
       );
