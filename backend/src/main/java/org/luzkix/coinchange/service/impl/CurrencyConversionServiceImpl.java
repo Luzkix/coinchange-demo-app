@@ -57,6 +57,9 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         if (OffsetDateTime.now().isAfter(conversionDetails.getValidTo())) throw new InvalidInputDataException(
                 String.format("Validity of conversion rate already expired. ValidTo: %s / CurrentTime: %s", conversionDetails.getValidTo(), OffsetDateTime.now()),
                 ErrorBusinessCodeEnum.CONVERSION_RATE_EXPIRED);
+        if (conversionDetails.getSoldCurrencyCode().equals(conversionDetails.getBoughtCurrencyCode())) throw new InvalidInputDataException(
+                ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES.getMessage(),
+                ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES);
 
         Currency soldCurrency = currencyService.findByCode(conversionDetails.getSoldCurrencyCode())
                 .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getSoldCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
@@ -92,6 +95,10 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
                                                              BigDecimal userSelectedConversionRate,
                                                              BigDecimal soldCurrencyAmount,
                                                              User user) {
+        if (soldCurrencyCode.equals(boughtCurrencyCode)) throw new InvalidInputDataException(
+                ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES.getMessage(),
+                ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES);
+
         Currency soldCurrency = currencyService.findByCode(soldCurrencyCode)
                 .orElseThrow(() -> new InvalidInputDataException("Currency with code " + soldCurrencyCode + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
 
