@@ -5,13 +5,22 @@ import { conversionInfoStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 
 interface ConversionInfoProps {
+  soldCurrency: string;
+  boughtCurrency: string;
   rate: number;
   secondsLeft: number;
   isError: boolean;
 }
 
-const ConversionRateInfo: React.FC<ConversionInfoProps> = ({ rate, secondsLeft, isError }) => {
+const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
+  soldCurrency,
+  boughtCurrency,
+  rate,
+  secondsLeft,
+  isError,
+}) => {
   const { t } = useTranslation('tradePage');
+  const price = rate ? 1 / rate : 0;
 
   return (
     <Box sx={conversionInfoStyles.container}>
@@ -20,7 +29,11 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({ rate, secondsLeft, 
       ) : (
         <>
           <Typography>
-            {t('form.rate')}: <b>{rate.toFixed(8)}</b>
+            {t('form.price')}:{' '}
+            <b>
+              {price > 1 ? price.toFixed(3) : price == 0 ? price.toFixed(0) : price.toFixed(8)}{' '}
+              {soldCurrency}/{boughtCurrency}
+            </b>
           </Typography>
           <Typography sx={conversionInfoStyles.timer}>
             {secondsLeft > 0 ? `${t('form.validity')}: ${secondsLeft}s` : t('form.invalidRate')}

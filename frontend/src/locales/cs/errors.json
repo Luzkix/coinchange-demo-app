@@ -59,6 +59,34 @@
     "AUTHENTICATION_GENERAL_FAILURE": {
       "title": "Chyba autentizace",
       "message": "Nelze ověřit uživatele (např. chybějící autentizační token apod.)."
+    },
+    "ENTITY_NOT_FOUND": {
+      "title": "Objekt nenalezen",
+      "message": "Požadovaný objekt nebyl nalezen v databázi."
+    },
+    "EXTERNAL_API_ERROR": {
+      "title": "Chyba externího API",
+      "message": "Při dotazování externího API došlo k neznámé chybě."
+    },
+    "CONVERSION_RATE_EXPIRED": {
+      "title": "Kurz expiroval",
+      "message": "Platnost konverzního kurzu již vypršela. Je nutné získat nový kurz."
+    },
+    "INSUFFICIENT_BALANCE": {
+      "title": "Nedostatečný zůstatek",
+      "message": "Zůstatek v prodávané měně není dostatečný pro provedení konverze."
+    },
+    "CONVERSION_TRANSACTION_FAILURE": {
+      "title": "Chyba při zpracování konverzní transakce",
+      "message": "Při přípravě nebo aktualizaci konverzní transakce došlo k chybě."
+    },
+    "CANCELLATION_TRANSACTION_FAILURE": {
+      "title": "Chyba při pokusu o zrušení transakce",
+      "message": "Transakci nelze zrušit! Již byla zpracována, zrušena nebo došlo k neznámé chybě pokusu o její zrušení."
+    },
+    "CONVERSION_SAME_CURRENCIES": {
+      "title": "Shodné měny",
+      "message": "Prodávaná a kupovaná měna nemohou být stejné."
     }
   }
 }

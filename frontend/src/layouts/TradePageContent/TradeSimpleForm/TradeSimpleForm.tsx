@@ -1,6 +1,5 @@
-// src/layouts/TradePageContent/TradeSimpleForm/TradeSimpleForm.tsx
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { tradeSimpleFormStyles } from './styles';
@@ -15,6 +14,8 @@ import {
 } from '../../../constants/customQueryOptions.ts';
 import { BalanceTypeEnum, CurrencyTypeEnum } from '../../../constants/customEnums.ts';
 import { useConvertBySimpleTrading } from '../../../hooks/useConvertBySimpleTrading.ts';
+import { type CurrencyBalanceResponseDto } from '../../../api-generated/backend';
+import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../../constants/configVariables.ts';
 
 const TradeSimpleForm: React.FC = () => {
   const { t } = useTranslation(['tradePage', 'errors']);
@@ -22,48 +23,72 @@ const TradeSimpleForm: React.FC = () => {
     useGeneralContext();
   const { mutate: convertCurrencies, isPending: isConverting } = useConvertBySimpleTrading();
 
-  // 1. Načtení zůstatků
   const {
     data: balancesData,
     refetch: refetchBalancesData,
     isLoading: isBalancesLoading,
-    isError: isBalancesError,
-  } = useQuery(createFetchBalancesOptions(BalanceTypeEnum.AVAILABLE));
+    error: balancesError,
+    isError: isBalancesErrorResult,
+  } = useQuery({
+    ...createFetchBalancesOptions(BalanceTypeEnum.AVAILABLE),
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? DEFAULT_ERROR_REFETCH_INTERVAL : false,
+  });
 
-  const allCurrencies = useMemo(
-    () => [...supportedFiatCurrencies, ...supportedCryptoCurrencies],
-    [supportedFiatCurrencies, supportedCryptoCurrencies],
-  );
-  const availableBalances = balancesData?.currenciesBalances ?? [];
-  const [soldCurrency, setSoldCurrency] = useState('');
-  const [boughtCurrency, setBoughtCurrency] = useState('');
-  const [soldAmount, setSoldAmount] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
+  const allCurrencies = useMemo(() => {
+    return [...supportedFiatCurrencies, ...supportedCryptoCurrencies];
+  }, [supportedFiatCurrencies, supportedCryptoCurrencies]);
+
+  const [availableBalances, setAvailableBalances] = useState<CurrencyBalanceResponseDto[]>([]);
+  useEffect(() => {
+    if (balancesData?.currenciesBalances) {
+      setAvailableBalances(balancesData.currenciesBalances);
+    }
+  }, [balancesData]);
 
   const soldCurrencyBalance =
     availableBalances.find((b) => b.currency.code === soldCurrency)?.balance ?? 0;
   const boughtCurrencyBalance =
     availableBalances.find((b) => b.currency.code === boughtCurrency)?.balance ?? 0;
 
+  const [soldCurrency, setSoldCurrency] = useState('');
+  const [boughtCurrency, setBoughtCurrency] = useState('');
+  const [soldAmount, setSoldAmount] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const {
     data: conversionRateData,
     refetch: refetchConversionRate,
-    isFetching: isRateLoading,
-    isError: isRateError,
+    isLoading: isRateLoading,
     error: conversionRateError,
   } = useQuery({
     ...createFetchMarketConversionRateOptions(soldCurrency, boughtCurrency),
     enabled: !!(soldCurrency && boughtCurrency),
-    retry: false,
-    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
-    if (isRateError && conversionRateError) {
-      //addErrorModal(conversionRateError.message);
+    if (conversionRateError) {
       addErrorPopup(conversionRateError.message);
     }
-  }, [isRateError, conversionRateError, addErrorModal]);
+  }, [conversionRateError]);
+
+  const [isBalancesError, setIsBalancesError] = useState<boolean>(false);
+
+  useEffect(() => {
+    //behem loadingu pri refetchi se na chvili zmeni stav pro isBalancesErrorResult na false a pak zpet na true,
+    // coz vedlo k zobrazeni erroru pri kazdem refetchi. Kontrola na !isBalancesLoading toto resi.
+    if (!isBalancesLoading && isBalancesErrorResult) {
+      setIsBalancesError(isBalancesErrorResult);
+    }
+  }, [isBalancesErrorResult]);
+
+  useEffect(() => {
+    // Zobrazí chybovou hlášku jen napoprvé, když se detekuje error (tzn při změně stavu isError z false na true)
+    if (isBalancesError && !!balancesError) {
+      setAvailableBalances([]);
+      addErrorPopup(balancesError.message);
+    }
+  }, [isBalancesError]);
 
   const feeRate = conversionRateData?.feeRate ?? 0;
   const marketConversionRate = conversionRateData?.marketConversionRate ?? 0;
@@ -127,11 +152,14 @@ const TradeSimpleForm: React.FC = () => {
         verificationToken,
       },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 5000);
           refetchConversionRate();
-          refetchBalancesData();
+
+          if (result?.currenciesBalances) {
+            setAvailableBalances(result.currenciesBalances);
+          } else refetchBalancesData();
         },
       },
     );
@@ -146,14 +174,20 @@ const TradeSimpleForm: React.FC = () => {
   };
 
   const handleSoldCurrencyChange = (code: string) => {
-    if (boughtCurrency == code) {
-      setSoldCurrency('');
+    if (code == boughtCurrency) {
+      setBoughtCurrency('');
     }
     setSoldCurrency(code);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={tradeSimpleFormStyles.form}>
+      {(balancesError || allCurrencies.length == 0) && (
+        <Alert severity="error" sx={{ fontWeight: 700 }}>
+          {t('errors:common.genericErrorTitle')}
+        </Alert>
+      )}
+
       <AmountInput
         label={t('tradePage:form.soldAmount')}
         value={soldAmount}
@@ -208,7 +242,13 @@ const TradeSimpleForm: React.FC = () => {
         onCurrencyChange={setBoughtCurrency}
       />
 
-      <ConversionRateInfo rate={finalRate} secondsLeft={secondsLeft} isError={isRateError} />
+      <ConversionRateInfo
+        soldCurrency={soldCurrency}
+        boughtCurrency={boughtCurrency}
+        rate={finalRate}
+        secondsLeft={secondsLeft}
+        isError={!!conversionRateError}
+      />
 
       <FeeInfo feeAmount={feeAmount} boughtCurrency={boughtCurrency} />
       <Button
@@ -216,7 +256,9 @@ const TradeSimpleForm: React.FC = () => {
         variant="contained"
         color="primary"
         type="submit"
-        disabled={!!amountError || isConverting || !soldAmount}
+        disabled={
+          !!conversionRateError || !!balancesError || !!amountError || isConverting || !soldAmount
+        }
         fullWidth
       >
         {isConverting ? (

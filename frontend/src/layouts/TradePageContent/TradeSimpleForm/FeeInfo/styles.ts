@@ -7,6 +7,6 @@ export const feeInfoStyles: Record<string, SxProps<Theme>> = {
     fontSize: '0.95rem',
     mt: 1,
     mb: 2,
-    textAlign: 'right',
+    textAlign: 'left',
   },
 };

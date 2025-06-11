@@ -59,6 +59,34 @@
     "AUTHENTICATION_GENERAL_FAILURE": {
       "title": "Authentication Failed",
       "message": "Unable to authenticate the user (e.g. missing authentication token, etc.)."
+    },
+    "ENTITY_NOT_FOUND": {
+      "title": "Object not found",
+      "message": "The requested object was not found in the database."
+    },
+    "EXTERNAL_API_ERROR": {
+      "title": "External API error",
+      "message": "An unknown error occurred while querying the external API."
+    },
+    "CONVERSION_RATE_EXPIRED": {
+      "title": "Conversion rate expired",
+      "message": "The validity of the conversion rate has already expired. A new rate needs to be requested."
+    },
+    "INSUFFICIENT_BALANCE": {
+      "title": "Insufficient balance",
+      "message": "The balance in the sold currency is insufficient to process the conversion."
+    },
+    "CONVERSION_TRANSACTION_FAILURE": {
+      "title": "Conversion transaction error",
+      "message": "An error occurred while preparing or updating the conversion transaction."
+    },
+    "CANCELLATION_TRANSACTION_FAILURE": {
+      "title": "Cancellation transaction error",
+      "message": "The transaction cannot be cancelled! It has already been processed, cancelled, or an unknown error occurred during the cancellation attempt."
+    },
+    "CONVERSION_SAME_CURRENCIES": {
+      "title": "Identical currencies",
+      "message": "The sold and bought currencies cannot be the same."
     }
   }
 }

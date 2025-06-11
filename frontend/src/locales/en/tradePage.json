@@ -17,6 +17,7 @@
     "exchange": "Exchange",
     "invalidRate": "Invalid rate",
     "validity": "Validity",
-    "rateError": "Error while loading exchange rate"
+    "rateError": "Error while loading exchange rate",
+    "price": "Price"
   }
 }

@@ -6,12 +6,7 @@ import {
   UserRegistrationRequestDto,
   UserUpdateRequestDto,
 } from '../api-generated/backend';
-import {
-  LoginUserError,
-  RefreshTokenError,
-  RegisterUserError,
-  UpdateUserError,
-} from '../constants/customErrors.ts';
+import { RefreshTokenError } from '../constants/customErrors.ts';
 
 /**
  * UserService provides api calls related to user administration.
@@ -22,33 +17,16 @@ export const UserService = {
    * Returns UserLoginResponseDto on success.
    */
   async register(data: UserRegistrationRequestDto): Promise<UserLoginResponseDto> {
-    try {
-      console.log('Registering user...');
-      return await ApiUserService.createUser(data);
-    } catch (error) {
-      const message = `Failed to register new user with username: ${data.username}`;
-      console.log(message);
-
-      throw new RegisterUserError(
-        message,
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    }
+    console.log('Registering user...');
+    return ApiUserService.createUser(data);
   },
   /**
    * Logs-in a user using the backend API.
    * Returns UserLoginResponseDto on success.
    */
   async login(data: UserLoginRequestDto): Promise<UserLoginResponseDto> {
-    try {
-      console.log(`Logging-in the user with username/email: ${data.usernameOrEmail} ...`);
-      return await ApiUserService.loginUser(data);
-    } catch (error) {
-      const message = `Failed to log-in the user with username/email: ${data.usernameOrEmail}`;
-      console.log(message);
-
-      throw new LoginUserError(message, error instanceof Error ? error : new Error(String(error)));
-    }
+    console.log(`Logging-in the user with username/email: ${data.usernameOrEmail} ...`);
+    return ApiUserService.loginUser(data);
   },
   /**
    * Getting fresh token with updated validity using the backend API.
@@ -73,14 +51,7 @@ export const UserService = {
    * Returns UserLoginResponseDto on success.
    */
   async update(data: UserUpdateRequestDto): Promise<UserLoginResponseDto> {
-    try {
-      console.log('Updating user data...');
-      return await ApiUserService.updateUser(data);
-    } catch (error) {
-      const message = `Failed to update user data`;
-      console.log(message);
-
-      throw new UpdateUserError(message, error instanceof Error ? error : new Error(String(error)));
-    }
+    console.log('Updating user data...');
+    return ApiUserService.updateUser(data);
   },
 };

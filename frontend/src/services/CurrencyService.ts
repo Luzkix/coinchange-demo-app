@@ -10,7 +10,6 @@ import {
   AdvancedTradingError,
   FetchMarketConversionRateError,
   FetchSupportedCurrenciesError,
-  SimpleTradingError,
 } from '../constants/customErrors.ts';
 
 /**
@@ -63,18 +62,21 @@ export const CurrencyService = {
   async convertBySimpleTrading(
     data: SimpleTradingConversionRequestDto,
   ): Promise<BalancesResponseDto> {
-    try {
-      console.log(`Converting currencies using simple trading...`);
-      return await ApiCurrencyService.convertCurrenciesUsingSimppleTrading(data);
-    } catch (error) {
-      const message = `Failed to convert currencies using simple trading`;
-      console.log(message);
+    console.log(`Converting currencies using simple trading...`);
+    return await ApiCurrencyService.convertCurrenciesUsingSimppleTrading(data);
 
-      throw new SimpleTradingError(
-        message,
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    }
+    // try {
+    //   console.log(`Converting currencies using simple trading...`);
+    //   return await ApiCurrencyService.convertCurrenciesUsingSimppleTrading(data);
+    // } catch (error) {
+    //   const message = `Failed to convert currencies using simple trading`;
+    //   console.log(message);
+    //
+    //   throw new SimpleTradingError(
+    //     message,
+    //     error instanceof Error ? error : new Error(String(error)),
+    //   );
+    // }
   },
 
   /**

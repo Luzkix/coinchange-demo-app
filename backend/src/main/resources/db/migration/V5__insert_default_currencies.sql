@@ -12,7 +12,6 @@ INSERT INTO currencies (code, name, color, is_active, type) VALUES
     ('LINK', 'Chainlink', '#2A5ADA', TRUE, 'C'),
     ('AVAX', 'Avalanche', '#E84142', TRUE, 'C'),
     ('XLM', 'Stellar Lumens', '#0A0A0A', TRUE, 'C'),
-    ('TON', 'Toncoin', '#0098EA', TRUE, 'C'),
     ('SHIB', 'SHIBA INU', '#FDA000', TRUE, 'C'),
     ('HBAR', 'Hedera', '#0A0B0D', TRUE, 'C'),
     ('LTC', 'Litecoin', '#A5A8A9', TRUE, 'C'),

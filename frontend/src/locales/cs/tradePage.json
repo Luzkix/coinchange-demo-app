@@ -17,6 +17,7 @@
     "exchange": "Směnit",
     "invalidRate": "Neplatný kurz",
     "validity": "Platnost",
-    "rateError": "Chyba při načítání kurzu"
+    "rateError": "Chyba při načítání kurzu",
+    "price": "Cena"
   }
 }
