@@ -9,6 +9,8 @@
   "message": {
     "fetchCoinsDataError": "Nepodařilo se načíst data o kryptoměnách",
     "fetchCoinStatsError": "Nepodařilo se zaktualizovat cenu kryptoměny ",
+    "fetchBalancesError": "Nepodařilo se načíst data o zůstatcích měn ",
+    "fetchConversionRateError": "Nepodařilo se načíst data o kurzech měn ",
     "emailFormatError": "Zadejte email ve správném formátu 'example@email.com'",
     "passwordFormatError": "Heslo musí mít alespoň 4 znaky",
     "invalidValueError": "Neplatná hodnota",
@@ -87,6 +89,10 @@
     "CONVERSION_SAME_CURRENCIES": {
       "title": "Shodné měny",
       "message": "Prodávaná a kupovaná měna nemohou být stejné."
+    },
+    "EXCHANGE_RATE_NOT_FOUND": {
+      "title": "Směnný kurz nenalezen",
+      "message": "Směnný kurz nebyl nalezen pro požadovaný pár měn."
     }
   }
 }

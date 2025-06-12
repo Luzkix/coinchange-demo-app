@@ -21,10 +21,14 @@ import {
 } from '../../api-generated/backend';
 import { BalanceTypeEnum } from '../../constants/customEnums.ts';
 import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../constants/configVariables.ts';
+import { useProcessApiError } from '../../hooks/useProcessApiError.ts';
+import { isApiError } from '../../services/utils/errorUtils.ts';
 
 const PortfolioPageContent: React.FC = () => {
   const { t, i18n } = useTranslation(['portfolioPage', 'cryptocurrenciesPage', 'errors']);
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
+  const processApiError = useProcessApiError();
+  const processName = PortfolioPageContent.name;
 
   const fetchedCoinsDataResult = useQuery({
     ...creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
@@ -47,37 +51,8 @@ const PortfolioPageContent: React.FC = () => {
   });
 
   const [coinsData, setCoinsData] = useState<CoinsMap>();
-  const [userBalancesData, setUserBalancesData] = useState<CurrencyBalanceResponseDto[]>();
+  const [userBalancesData, setUserBalancesData] = useState<CurrencyBalanceResponseDto[]>([]);
   const [eurToUsdRate, setEurToUsdRate] = useState<CurrencyConversionRateResponseDto>();
-
-  const [isError, setIsError] = useState<boolean>(false);
-
-  useEffect(() => {
-    const anyError =
-      fetchedCoinsDataResult.isError ||
-      fetchedUserBalancesResult.isError ||
-      fetchedEurToUsdResult.isError;
-
-    setIsError(anyError);
-  }, [
-    fetchedCoinsDataResult.isError,
-    fetchedUserBalancesResult.isError,
-    fetchedEurToUsdResult.isError,
-  ]);
-
-  useEffect(() => {
-    // Zobrazí chybovou hlášku jen napoprvé, když se detekuje error (tzn při změně stavu isError z false na true)
-    if (fetchedCoinsDataResult.isError) {
-      setCoinsData(undefined);
-      addErrorPopup(fetchedCoinsDataResult.error.message);
-    } else if (fetchedUserBalancesResult.isError) {
-      setUserBalancesData(undefined);
-      addErrorPopup(fetchedUserBalancesResult.error.message);
-    } else if (fetchedEurToUsdResult.isError) {
-      setEurToUsdRate(undefined);
-      addErrorPopup(fetchedEurToUsdResult.error.message);
-    }
-  }, [isError]);
 
   useEffect(() => {
     if (fetchedCoinsDataResult.data && fetchedCoinsDataResult.data.size > 0) {
@@ -119,7 +94,7 @@ const PortfolioPageContent: React.FC = () => {
     [coinsTableRowData],
   );
 
-  // nonZeroBalances filtration
+  // final filtered table data
   const filteredTableRowData = useMemo(
     () =>
       nonZeroBalances
@@ -128,6 +103,73 @@ const PortfolioPageContent: React.FC = () => {
     [coinsTableRowData, nonZeroBalances],
   );
 
+  //ERRORS HANDLING
+  const [isCoinsDataError, setIsCoinsDataError] = useState(false);
+  const [isUserBalancesDataError, setIsUserBalancesDataError] = useState(false);
+  const [isEurToUsdRateError, setIsEurToUsdRateError] = useState(false);
+  const [isAnyError, setIsAnyError] = useState(false);
+
+  //setování error stavů pro všechny možné errory
+  useEffect(() => {
+    if (!fetchedCoinsDataResult.isLoading && fetchedCoinsDataResult.isError) {
+      setIsCoinsDataError(!!fetchedCoinsDataResult.error);
+    }
+  }, [fetchedCoinsDataResult.isError]);
+
+  useEffect(() => {
+    if (!fetchedUserBalancesResult.isLoading && fetchedUserBalancesResult.isError) {
+      setIsUserBalancesDataError(!!fetchedUserBalancesResult.error);
+    }
+  }, [fetchedUserBalancesResult.isError]);
+
+  useEffect(() => {
+    if (!fetchedEurToUsdResult.isLoading && fetchedEurToUsdResult.isError) {
+      setIsEurToUsdRateError(!!fetchedEurToUsdResult.error);
+    }
+  }, [fetchedEurToUsdResult.isError]);
+
+  useEffect(() => {
+    const anyError =
+      fetchedCoinsDataResult.isError ||
+      fetchedUserBalancesResult.isError ||
+      fetchedEurToUsdResult.isError;
+
+    setIsAnyError(anyError);
+  }, [
+    fetchedCoinsDataResult.isError,
+    fetchedUserBalancesResult.isError,
+    fetchedEurToUsdResult.isError,
+  ]);
+
+  useEffect(() => {
+    // Zobrazí chybovou hlášku jen napoprvé, když se detekuje error (tzn při změně stavu isAnyError z false na true)
+    if (isCoinsDataError && fetchedCoinsDataResult.error) {
+      setCoinsData(undefined);
+      if (isApiError(fetchedCoinsDataResult.error)) {
+        processApiError(fetchedCoinsDataResult.error, processName);
+      } else {
+        //not ApiError
+        addErrorPopup('errors:message.fetchCoinsDataError');
+      }
+    } else if (isUserBalancesDataError && fetchedUserBalancesResult.error) {
+      setUserBalancesData([]);
+      if (isApiError(fetchedUserBalancesResult.error)) {
+        processApiError(fetchedUserBalancesResult.error, processName);
+      } else {
+        //not ApiError
+        addErrorPopup(t('errors:message.fetchBalancesError'));
+      }
+    } else if (isEurToUsdRateError && fetchedEurToUsdResult.error) {
+      setEurToUsdRate(undefined);
+      if (isApiError(fetchedEurToUsdResult.error)) {
+        processApiError(fetchedEurToUsdResult.error, processName);
+      } else {
+        //not ApiError
+        addErrorPopup(t('errors:message.fetchConversionRateError'));
+      }
+    }
+  }, [isCoinsDataError, isUserBalancesDataError, isEurToUsdRateError]);
+
   return (
     <Box sx={portfolioPageContentStyles.container}>
       <Typography variant="h4" sx={portfolioPageContentStyles.title}>
@@ -135,7 +177,7 @@ const PortfolioPageContent: React.FC = () => {
       </Typography>
 
       <Box sx={portfolioPageContentStyles.totalBalanceRow}>
-        {isError ? (
+        {isAnyError ? (
           <Alert severity="error" sx={{ fontWeight: 700 }}>
             {t('errors:common.genericErrorTitle')}
           </Alert>

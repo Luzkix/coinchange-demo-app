@@ -41,20 +41,6 @@ export class FetchSupportedCurrenciesError extends Error {
   }
 }
 
-export class FetchMarketConversionRateError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError?: unknown,
-  ) {
-    super(message);
-    this.name = 'FetchMarketConversionRateError';
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchMarketConversionRateError);
-    }
-  }
-}
-
 export class FetchBalancesError extends Error {
   constructor(
     message: string,
@@ -79,20 +65,6 @@ export class RefreshTokenError extends Error {
 
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, RefreshTokenError);
-    }
-  }
-}
-
-export class AdvancedTradingError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError?: unknown,
-  ) {
-    super(message);
-    this.name = 'AdvancedTradingError';
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, AdvancedTradingError);
     }
   }
 }

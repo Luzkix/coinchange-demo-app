@@ -16,11 +16,14 @@ import { BalanceTypeEnum, CurrencyTypeEnum } from '../../../constants/customEnum
 import { useConvertBySimpleTrading } from '../../../hooks/useConvertBySimpleTrading.ts';
 import { type CurrencyBalanceResponseDto } from '../../../api-generated/backend';
 import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../../constants/configVariables.ts';
+import { useProcessApiError } from '../../../hooks/useProcessApiError.ts';
+import { isApiError } from '../../../services/utils/errorUtils.ts';
 
 const TradeSimpleForm: React.FC = () => {
   const { t } = useTranslation(['tradePage', 'errors']);
-  const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorModal, addErrorPopup } =
-    useGeneralContext();
+  const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
+  const processApiError = useProcessApiError();
+  const processName = TradeSimpleForm.name;
   const { mutate: convertCurrencies, isPending: isConverting } = useConvertBySimpleTrading();
 
   const {
@@ -46,49 +49,24 @@ const TradeSimpleForm: React.FC = () => {
     }
   }, [balancesData]);
 
-  const soldCurrencyBalance =
-    availableBalances.find((b) => b.currency.code === soldCurrency)?.balance ?? 0;
-  const boughtCurrencyBalance =
-    availableBalances.find((b) => b.currency.code === boughtCurrency)?.balance ?? 0;
-
   const [soldCurrency, setSoldCurrency] = useState('');
   const [boughtCurrency, setBoughtCurrency] = useState('');
   const [soldAmount, setSoldAmount] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const soldCurrencyBalance =
+    availableBalances.find((b) => b.currency.code === soldCurrency)?.balance ?? 0;
+  const boughtCurrencyBalance =
+    availableBalances.find((b) => b.currency.code === boughtCurrency)?.balance ?? 0;
+
   const {
     data: conversionRateData,
     refetch: refetchConversionRate,
-    isLoading: isRateLoading,
     error: conversionRateError,
   } = useQuery({
     ...createFetchMarketConversionRateOptions(soldCurrency, boughtCurrency),
     enabled: !!(soldCurrency && boughtCurrency),
   });
-
-  useEffect(() => {
-    if (conversionRateError) {
-      addErrorPopup(conversionRateError.message);
-    }
-  }, [conversionRateError]);
-
-  const [isBalancesError, setIsBalancesError] = useState<boolean>(false);
-
-  useEffect(() => {
-    //behem loadingu pri refetchi se na chvili zmeni stav pro isBalancesErrorResult na false a pak zpet na true,
-    // coz vedlo k zobrazeni erroru pri kazdem refetchi. Kontrola na !isBalancesLoading toto resi.
-    if (!isBalancesLoading && isBalancesErrorResult) {
-      setIsBalancesError(isBalancesErrorResult);
-    }
-  }, [isBalancesErrorResult]);
-
-  useEffect(() => {
-    // Zobrazí chybovou hlášku jen napoprvé, když se detekuje error (tzn při změně stavu isError z false na true)
-    if (isBalancesError && !!balancesError) {
-      setAvailableBalances([]);
-      addErrorPopup(balancesError.message);
-    }
-  }, [isBalancesError]);
 
   const feeRate = conversionRateData?.feeRate ?? 0;
   const marketConversionRate = conversionRateData?.marketConversionRate ?? 0;
@@ -179,6 +157,37 @@ const TradeSimpleForm: React.FC = () => {
     }
     setSoldCurrency(code);
   };
+
+  //ERRORS HANDLING
+  const [isBalancesError, setIsBalancesError] = useState<boolean>(false);
+
+  useEffect(() => {
+    //Note: behem loadingu pri refetchi se na chvili zmeni stav pro isBalancesErrorResult na false a pak zpet na true,
+    // coz vedlo k zobrazeni erroru pri kazdem refetchi. Kontrola na !isBalancesLoading toto resi.
+    if (!isBalancesLoading && isBalancesErrorResult) {
+      setIsBalancesError(isBalancesErrorResult);
+    }
+  }, [isBalancesErrorResult]);
+
+  useEffect(() => {
+    // Zobrazí chybovou hlášku jen napoprvé, když se detekuje error (tzn při změně stavu isError z false na true)
+    if (isBalancesError && isApiError(balancesError)) {
+      setAvailableBalances([]);
+      processApiError(balancesError, processName);
+    } else if (isBalancesError && !!balancesError) {
+      //not ApiError
+      addErrorPopup(t('errors:message.fetchBalancesError'));
+    }
+  }, [isBalancesError]);
+
+  useEffect(() => {
+    if (isApiError(conversionRateError)) {
+      processApiError(conversionRateError, processName);
+    } else if (conversionRateError) {
+      //not ApiError
+      addErrorPopup(t('errors:message.fetchConversionRateError'));
+    }
+  }, [conversionRateError]);
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={tradeSimpleFormStyles.form}>

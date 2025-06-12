@@ -9,6 +9,8 @@
   "message": {
     "fetchCoinsDataError": "Unable to fetch data about cryptoassets.",
     "fetchCoinStatsError": "Unable to refresh the price of cryptoasset ",
+    "fetchBalancesError": "Unable to fetch data about balances of currencies ",
+    "fetchConversionRateError": "Unable to fetch data about conversion rates of currencies ",
     "emailFormatError": "Enter email address in correct format 'example@email.com'",
     "passwordFormatError": "Password must be at least 4 characters long",
     "invalidValueError": "Invalid value",
@@ -87,6 +89,10 @@
     "CONVERSION_SAME_CURRENCIES": {
       "title": "Identical currencies",
       "message": "The sold and bought currencies cannot be the same."
+    },
+    "EXCHANGE_RATE_NOT_FOUND": {
+      "title": "Exchange Rate Not Found",
+      "message": "Exchange rate could not be loaded for requested pair of currencies"
     }
   }
 }
