@@ -192,7 +192,7 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
 
         if (eurUsdStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for fiat currencies pair: %s ", CustomConstants.EUR_USD_ID),
-                ErrorBusinessCodeEnum.EXTERNAL_API_ERROR);
+                ErrorBusinessCodeEnum.EXCHANGE_RATE_NOT_FOUND);
 
         return new BigDecimal(eurUsdStats.getLast());
     }
@@ -206,7 +206,7 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
 
         if (eurUsdStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for fiat currencies pair: %s ", CustomConstants.EUR_USD_ID),
-                ErrorBusinessCodeEnum.EXTERNAL_API_ERROR);
+                ErrorBusinessCodeEnum.EXCHANGE_RATE_NOT_FOUND);
 
         return BigDecimal.ONE.divide(
                 new BigDecimal(eurUsdStats.getLast()),
@@ -226,7 +226,7 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
 
         if (reversedPairStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for currency pair: %s ", procuctId),
-                ErrorBusinessCodeEnum.EXTERNAL_API_ERROR);
+                ErrorBusinessCodeEnum.EXCHANGE_RATE_NOT_FOUND);
 
         //2. return calculated reversed value of conversion rate
         return BigDecimal.ONE.divide(
@@ -246,7 +246,7 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
 
         if (currencyPairStats == null) throw new CustomInternalErrorException(
                 String.format("Conversion rate could not be loaded for currency pair: %s ", procuctId),
-                ErrorBusinessCodeEnum.EXTERNAL_API_ERROR);
+                ErrorBusinessCodeEnum.EXCHANGE_RATE_NOT_FOUND);
 
         return new BigDecimal(currencyPairStats.getLast());
     }

@@ -1,7 +1,6 @@
 package org.luzkix.coinchange.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.client.ApiCoinStatsApi;
 import org.luzkix.coinchange.openapi.coinbaseexchangeclient.model.CoinStats;
 import org.luzkix.coinchange.service.CoinbaseExchangeService;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
-
-import static org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum.EXTERNAL_API_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +27,7 @@ public class CoinbaseExchangeServiceImpl implements CoinbaseExchangeService {
             // Blocking Mono since we require synchronous result (this is common for service layer)
             return Optional.ofNullable(coinStatsMono.block());
         } catch (Exception ex) {
-            throw new CustomInternalErrorException(ex.getMessage(), EXTERNAL_API_ERROR);
+            return Optional.empty();
         }
     }
 }
