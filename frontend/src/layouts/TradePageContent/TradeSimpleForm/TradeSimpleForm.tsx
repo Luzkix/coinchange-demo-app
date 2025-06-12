@@ -14,7 +14,10 @@ import {
 } from '../../../constants/customQueryOptions.ts';
 import { BalanceTypeEnum, CurrencyTypeEnum } from '../../../constants/customEnums.ts';
 import { useConvertBySimpleTrading } from '../../../hooks/useConvertBySimpleTrading.ts';
-import { type CurrencyBalanceResponseDto } from '../../../api-generated/backend';
+import {
+  type CurrencyBalanceResponseDto,
+  CurrencyResponseDto,
+} from '../../../api-generated/backend';
 import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../../constants/configVariables.ts';
 import { useProcessApiError } from '../../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../../services/utils/errorUtils.ts';
@@ -49,35 +52,39 @@ const TradeSimpleForm: React.FC = () => {
     }
   }, [balancesData]);
 
-  const [soldCurrency, setSoldCurrency] = useState('');
-  const [boughtCurrency, setBoughtCurrency] = useState('');
+  const [soldCurrency, setSoldCurrency] = useState<CurrencyResponseDto | null>(null);
+  const [boughtCurrency, setBoughtCurrency] = useState<CurrencyResponseDto | null>(null);
   const [soldAmount, setSoldAmount] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
   const soldCurrencyBalance =
-    availableBalances.find((b) => b.currency.code === soldCurrency)?.balance ?? 0;
+    availableBalances.find((balanceDto) => balanceDto.currency.code === soldCurrency?.code)
+      ?.balance ?? 0;
   const boughtCurrencyBalance =
-    availableBalances.find((b) => b.currency.code === boughtCurrency)?.balance ?? 0;
+    availableBalances.find((balanceDto) => balanceDto.currency.code === boughtCurrency?.code)
+      ?.balance ?? 0;
 
   const {
     data: conversionRateData,
     refetch: refetchConversionRate,
     error: conversionRateError,
   } = useQuery({
-    ...createFetchMarketConversionRateOptions(soldCurrency, boughtCurrency),
+    ...createFetchMarketConversionRateOptions(soldCurrency?.code ?? '', boughtCurrency?.code ?? ''),
     enabled: !!(soldCurrency && boughtCurrency),
   });
 
   const feeRate = conversionRateData?.feeRate ?? 0;
   const marketConversionRate = conversionRateData?.marketConversionRate ?? 0;
-  const validTo = conversionRateData?.validTo ? new Date(conversionRateData.validTo) : null;
+  const conversionRateValidTo = conversionRateData?.validTo
+    ? new Date(conversionRateData.validTo)
+    : null;
   const verificationToken = conversionRateData?.verificationToken ?? '';
 
-  const finalRate = marketConversionRate * (1 - feeRate);
+  const finalConversionRate = marketConversionRate * (1 - feeRate);
   const finalFeeRate = marketConversionRate * feeRate;
 
   const boughtAmount =
-    soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalRate : 0;
+    soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalConversionRate : 0;
   const feeAmount =
     soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalFeeRate : 0;
 
@@ -94,26 +101,42 @@ const TradeSimpleForm: React.FC = () => {
     }
   }, [soldAmount, soldCurrencyBalance, t]);
 
-  const [secondsLeft, setSecondsLeft] = useState<number>(0);
+  const [secondsLeftForUsingConversionRate, setSecondsLeftForUsingConversionRate] =
+    useState<number>(0);
 
   useEffect(() => {
-    if (!validTo) return;
+    if (!conversionRateValidTo) return;
     const tick = () => {
       const now = Date.now();
-      const diff = Math.max(0, Math.floor((validTo.getTime() - now) / 1000));
-      setSecondsLeft(diff);
+      const diff = Math.max(0, Math.floor((conversionRateValidTo.getTime() - now) / 1000));
+      setSecondsLeftForUsingConversionRate(diff);
     };
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [validTo]);
+  }, [conversionRateValidTo]);
 
   useEffect(() => {
-    // Pokud secondsLeft dosáhne nuly a máme platné měny, refetchni kurz
-    if (secondsLeft === 0 && !!(soldCurrency && boughtCurrency)) {
+    // If secondsLeftForUsingConversionRate reaches 0 and currencies are selected, re-fetch conversion rate automatically
+    if (secondsLeftForUsingConversionRate === 0 && !!(soldCurrency && boughtCurrency)) {
       refetchConversionRate();
     }
-  }, [secondsLeft, soldCurrency, boughtCurrency, soldAmount]);
+  }, [secondsLeftForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
+
+  const handleSoldCurrencyChange = (currency: CurrencyResponseDto | null) => {
+    if (currency == boughtCurrency) {
+      setBoughtCurrency(null);
+    }
+    setSoldCurrency(currency);
+  };
+
+  const handleSwap = () => {
+    if (boughtCurrencyBalance > 0) {
+      setSoldCurrency(boughtCurrency);
+      setBoughtCurrency(soldCurrency);
+      setSoldAmount('');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,21 +164,6 @@ const TradeSimpleForm: React.FC = () => {
         },
       },
     );
-  };
-
-  const handleSwap = () => {
-    if (boughtCurrencyBalance > 0) {
-      setSoldCurrency(boughtCurrency);
-      setBoughtCurrency(soldCurrency);
-      setSoldAmount('');
-    }
-  };
-
-  const handleSoldCurrencyChange = (code: string) => {
-    if (code == boughtCurrency) {
-      setBoughtCurrency('');
-    }
-    setSoldCurrency(code);
   };
 
   //ERRORS HANDLING
@@ -206,14 +214,17 @@ const TradeSimpleForm: React.FC = () => {
         error={amountError}
         listedCurrencies={allCurrencies
           .map((currency) => {
-            const found = availableBalances.find(
-              (b) => b.currency.code === currency.code && b.balance > 0,
+            const foundBalance = availableBalances.find(
+              (balanceDto) => balanceDto.currency.code === currency.code && balanceDto.balance > 0,
             );
-            return found
-              ? { code: currency.code, name: currency.name, balance: found.balance }
-              : null;
+            return foundBalance ? { currency: currency, balance: foundBalance.balance } : null;
           })
-          .filter((c): c is { code: string; name: string; balance: number } => !!c)}
+          .filter(
+            (
+              listedCurrency,
+            ): listedCurrency is { currency: CurrencyResponseDto; balance: number } =>
+              !!listedCurrency,
+          )}
         onCurrencyChange={handleSoldCurrencyChange}
       />
       <Button
@@ -232,19 +243,18 @@ const TradeSimpleForm: React.FC = () => {
         readOnly
         disabled={false}
         listedCurrencies={allCurrencies
-          .filter((currency) => currency.code !== soldCurrency) //nezobrazuju v nabídce soldCurrency
+          .filter((currency) => currency.code !== soldCurrency?.code) //nezobrazuju v nabídce soldCurrency
           .filter((currency) => {
             //pokud je jako soldCurrency CRYPTO a nikoli FIAT, nabidni pouze fiat meny (nepodporujeme konverze crypto-crypto)
-            const soldCurrencyIsCrypto = !supportedFiatCurrencies.some(
-              (fiat) => fiat.code === soldCurrency,
-            );
+            const soldCurrencyIsCrypto = soldCurrency?.type === CurrencyTypeEnum.CRYPTO;
             return soldCurrencyIsCrypto ? currency.type === CurrencyTypeEnum.FIAT : true;
           })
           .map((currency) => {
-            const found = availableBalances.find((b) => b.currency.code === currency.code);
+            const found = availableBalances.find(
+              (balanceDto) => balanceDto.currency.code === currency.code,
+            );
             return {
-              code: currency.code,
-              name: currency.name,
+              currency: currency,
               balance: found ? found.balance : 0,
             };
           })}
@@ -254,8 +264,8 @@ const TradeSimpleForm: React.FC = () => {
       <ConversionRateInfo
         soldCurrency={soldCurrency}
         boughtCurrency={boughtCurrency}
-        rate={finalRate}
-        secondsLeft={secondsLeft}
+        rate={finalConversionRate}
+        secondsLeft={secondsLeftForUsingConversionRate}
         isError={!!conversionRateError}
       />
 

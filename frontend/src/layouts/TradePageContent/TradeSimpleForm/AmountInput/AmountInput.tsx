@@ -3,18 +3,19 @@ import React from 'react';
 import { Box, FormControl, MenuItem, OutlinedInput, Select, Typography } from '@mui/material';
 import { amountInputStyles } from './styles';
 import { useTranslation } from 'react-i18next';
+import { CurrencyResponseDto } from '../../../../api-generated/backend';
 
 interface AmountInputProps {
   label: string;
   value: string;
   onChange?: (val: string) => void;
-  currency: string;
+  currency: CurrencyResponseDto | null;
   balance: number;
   error?: string | null;
   readOnly?: boolean;
   disabled?: boolean;
-  listedCurrencies: { code: string; name: string; balance: number }[];
-  onCurrencyChange: (code: string) => void;
+  listedCurrencies: { currency: CurrencyResponseDto; balance: number }[];
+  onCurrencyChange: (currency: CurrencyResponseDto | null) => void;
 }
 
 const AmountInput: React.FC<AmountInputProps> = ({
@@ -49,12 +50,20 @@ const AmountInput: React.FC<AmountInputProps> = ({
         </FormControl>
         <FormControl sx={{ flex: 1 }}>
           <Select
-            value={currency}
-            onChange={(e) => onCurrencyChange(e.target.value)}
+            value={currency?.code || ''}
+            onChange={(e) => {
+              const selectedCode = e.target.value;
+              const selectedCurrency =
+                listedCurrencies.find((listed) => listed.currency.code === selectedCode)
+                  ?.currency || null;
+              onCurrencyChange(selectedCurrency);
+            }}
             sx={amountInputStyles.currencySelect}
-            renderValue={(selected) => {
-              const selectedCurrency = listedCurrencies.find((c) => c.code === selected);
-              return selectedCurrency ? selectedCurrency.code : selected;
+            renderValue={(selectedCode) => {
+              const listedCurrency = listedCurrencies.find(
+                (listed) => listed.currency.code === selectedCode,
+              );
+              return listedCurrency ? listedCurrency.currency.code : selectedCode;
             }}
             disabled={!!disabled ? disabled : false}
             displayEmpty
@@ -72,12 +81,12 @@ const AmountInput: React.FC<AmountInputProps> = ({
                 <span>{t('form.balance')}</span>
               </Box>
             </MenuItem>
-            {listedCurrencies.map((c) => (
-              <MenuItem key={c.code} value={c.code}>
+            {listedCurrencies.map((listedCurrency) => (
+              <MenuItem key={listedCurrency.currency.code} value={listedCurrency.currency.code}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <span>{c.code}</span>
+                  <span>{listedCurrency.currency.code}</span>
                   <Typography variant="caption" color="text.secondary">
-                    {c.balance}
+                    <span>{listedCurrency.balance}</span>
                   </Typography>
                 </Box>
               </MenuItem>
