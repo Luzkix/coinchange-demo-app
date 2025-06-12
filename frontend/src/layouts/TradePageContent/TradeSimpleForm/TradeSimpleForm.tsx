@@ -123,11 +123,11 @@ const TradeSimpleForm: React.FC = () => {
     }
   }, [secondsLeftForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
 
-  const handleSoldCurrencyChange = (currency: CurrencyResponseDto | null) => {
-    if (currency == boughtCurrency) {
+  const handleSoldCurrencyChange = (soldCurrency: CurrencyResponseDto | null) => {
+    if (soldCurrency == boughtCurrency || soldCurrency?.type == CurrencyTypeEnum.CRYPTO) {
       setBoughtCurrency(null);
     }
-    setSoldCurrency(currency);
+    setSoldCurrency(soldCurrency);
   };
 
   const handleSwap = () => {
