@@ -47,7 +47,11 @@ const AmountInput: React.FC<AmountInputProps> = ({
           disabled={readOnly || currency == null}
           inputProps={{ min: 0, step: 'any' }}
           error={!!error}
-          sx={amountInputStyles.input}
+          sx={
+            !isSoldAmount && Number(value) > 0
+              ? amountInputStyles.highlightedOutput
+              : amountInputStyles.input
+          }
         />
         <Select
           value={currency?.code || ''}

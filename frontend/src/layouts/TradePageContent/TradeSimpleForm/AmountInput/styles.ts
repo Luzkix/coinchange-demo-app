@@ -19,6 +19,17 @@ export const amountInputStyles: Record<string, SxProps<Theme>> = {
   input: {
     flex: 2,
   },
+  highlightedOutput: {
+    flex: 2,
+    '& .MuiOutlinedInput-input': {
+      fontWeight: 700,
+    },
+    '& .MuiOutlinedInput-input.Mui-disabled': {
+      color: '#1cb955 !important',
+      WebkitTextFillColor: '#1cb955 !important',
+      fontWeight: 700,
+    },
+  },
   currencySelect: {
     flex: 1,
   },
