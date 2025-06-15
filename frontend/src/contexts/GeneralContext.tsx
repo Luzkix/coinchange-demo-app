@@ -42,7 +42,7 @@ export const useGeneralContext = (): GeneralContextType => {
 // Provider komponenta, která poskytuje kontext
 export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cookiesAccepted, setCookiesAccepted] = useState(
-    localStorage.getItem('cookiesAccepted') === 'true',
+    localStorage.getItem('coinChangeCookiesAccepted') === 'true',
   );
 
   // Správa 2 typů errorů (popup a modal)
@@ -94,7 +94,7 @@ export const GeneralContextProvider: React.FC<{ children: ReactNode }> = ({ chil
 
   // Uložení preference cookies do localStorage
   useEffect(() => {
-    localStorage.setItem('cookiesAccepted', cookiesAccepted.toString());
+    localStorage.setItem('coinChangeCookiesAccepted', cookiesAccepted.toString());
   }, [cookiesAccepted]);
 
   return (

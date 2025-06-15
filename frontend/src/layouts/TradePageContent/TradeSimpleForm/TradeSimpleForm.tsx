@@ -128,6 +128,7 @@ const TradeSimpleForm: React.FC = () => {
       setBoughtCurrency(null);
     }
     setSoldCurrency(soldCurrency);
+    setSoldAmount('');
   };
 
   const handleSwap = () => {
@@ -154,6 +155,7 @@ const TradeSimpleForm: React.FC = () => {
       },
       {
         onSuccess: (result) => {
+          setSoldAmount('');
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 5000);
           refetchConversionRate();
@@ -206,6 +208,7 @@ const TradeSimpleForm: React.FC = () => {
       )}
 
       <AmountInput
+        isSoldAmount={true}
         label={t('tradePage:form.soldAmount')}
         value={soldAmount}
         onChange={setSoldAmount}
@@ -226,6 +229,7 @@ const TradeSimpleForm: React.FC = () => {
               !!listedCurrency,
           )}
         onCurrencyChange={handleSoldCurrencyChange}
+        onBalanceClick={() => setSoldAmount(String(soldCurrencyBalance))}
       />
       <Button
         sx={tradeSimpleFormStyles.swapButton}
@@ -236,6 +240,7 @@ const TradeSimpleForm: React.FC = () => {
         ↔
       </Button>
       <AmountInput
+        isSoldAmount={false}
         label={t('tradePage:form.boughtAmount')}
         value={Number(boughtAmount).toFixed(8)} //zobrazujeme zaokrouhledne cislo na 8 desetinnych mist ve string formatu
         currency={boughtCurrency}

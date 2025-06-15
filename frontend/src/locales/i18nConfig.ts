@@ -23,7 +23,7 @@ import csTradePage from './cs/tradePage.json';
 // Function to change language and its saving to localStorage so the users choice is remembered
 export const changeAndSaveLanguage = (newLanguage: string) => {
   i18nConfig.changeLanguage(newLanguage);
-  localStorage.setItem('selectedLanguage', newLanguage);
+  localStorage.setItem('coinChangeSelectedLanguage', newLanguage);
 };
 
 i18nConfig.use(initReactI18next).init({
@@ -51,7 +51,7 @@ i18nConfig.use(initReactI18next).init({
       tradePage: csTradePage,
     },
   },
-  lng: localStorage.getItem('selectedLanguage') || 'EN', // using of last saved language or 'EN'
+  lng: localStorage.getItem('coinChangeSelectedLanguage') || 'EN', // using of last saved language or 'EN'
   fallbackLng: 'EN', // backup
   ns: [
     'common',
