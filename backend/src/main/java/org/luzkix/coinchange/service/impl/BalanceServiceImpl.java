@@ -91,7 +91,7 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public void creditRegistrationBonus(User user, Currency currency, BigDecimal bonus) {
-        List<Transaction> allTransactions = transactionService.findAll();
+        List<Transaction> allTransactions = transactionService.findByUser(user);
 
         //creating registration bonus transaction only for new users
         if (allTransactions.isEmpty()) {

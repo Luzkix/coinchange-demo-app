@@ -70,11 +70,11 @@ public class UserServiceImpl implements UserService {
         //create user
         user = createAndSaveUser(registrationDto,roles);
 
-        //give user a bonus of 100K USD for registration
+        //give user a bonus of 100K EUR for registration
         List<Currency> allCurrencies = currencyService.findAllActive();
-        Currency usdCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("EUR")).findFirst().orElse(null);
-        if(usdCurrency != null) {
-            balanceService.creditRegistrationBonus(user, usdCurrency, BigDecimal.valueOf(100000L));
+        Currency bonusCurrency = allCurrencies.stream().filter(a -> a.getCode().equals("EUR")).findFirst().orElse(null);
+        if(bonusCurrency != null) {
+            balanceService.creditRegistrationBonus(user, bonusCurrency, BigDecimal.valueOf(100000L));
         }
 
         // Prepare response DTO
