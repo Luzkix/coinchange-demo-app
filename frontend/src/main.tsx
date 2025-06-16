@@ -12,9 +12,11 @@ import { setApiBaseToProxyUrl } from '../proxy-server/setApiBase.ts';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0, // data jsou okamžitě po načtení označena jako stará a při dalším fetchi se načítají znovu. Než se načtou, zobrazují se data z cache (pokud neuplynula platnost cache)
+      gcTime: 1 * 60 * 1000, // (1min) - garbage collection time - doba, po kterou budou data uložena v cache (tato data se zobrazí než se načtou nová data)
+      refetchOnWindowFocus: true, // Při návratu uživatele do okna (focus) se dotazy automaticky refetchují, pokud jsou stale.
+      refetchOnMount: true, // Při mountu komponenty se dotaz znovu fetchuje, pokud jsou data stale.
+      retry: false, // Dotaz se při chybě neopakuje
     },
   },
 });

@@ -10,6 +10,8 @@ import { BalanceService } from '../services/BalanceService.ts';
 import { CurrencyResponseDto } from '../api-generated/backend';
 import { CurrencyService } from '../services/CurrencyService.ts';
 
+//!!!NOTE! Default behavior for all useQuery is defined in main.tsx
+
 export const creteFetchCoinsDataOptions = (
   supportedFiatCurrencies: CurrencyResponseDto[],
   supportedCryptoCurrencies: CurrencyResponseDto[],
@@ -29,8 +31,8 @@ export const creteFetchCoinsDataOptions = (
         fetchCoinsDataOptions,
       ),
     // caching setup
-    gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
-    staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh"
+    gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL + 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
+    staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh", i.e. reusable
     refetchInterval: () => DEFAULT_ALL_COINS_REFRESH_INTERVAL, // Automatically fetches new data so it is already pre-fetched when requested + automatically reloads components which use fetched data. Note: using function which ensures that automatic interval fetching will be done even after error occurs
   });
 };
@@ -40,8 +42,7 @@ export const createFetchCoinPairStatsOptions = (productId: string) => {
     queryKey: [productId],
     queryFn: () => CoinsDataService.fetchCoinPairStats(productId),
     // caching setup
-    gcTime: DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED - 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
-    staleTime: DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED - 1000, // Defines how long the data should be considered "fresh"
+    staleTime: DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED - 1000, // Defines how long the data should be considered "fresh", i.e. reusable
   });
 };
 
@@ -50,8 +51,8 @@ export const createFetchSupportedCurrenciesOptions = () =>
     queryKey: ['fetchSupportedCurrencies'],
     queryFn: () => CurrencyService.fetchSupportedCurrencies(),
     // caching setup
-    gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
-    staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh"
+    gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL + 1000, // gcTime should not be less than staleTime otherwise when component is unmounted and later remounted the data may be fetched again before time specified by staleTime
+    staleTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL - 1000, // Defines how long the data should be considered "fresh", i.e. reusable
     refetchInterval: () => DEFAULT_ALL_COINS_REFRESH_INTERVAL, // Automatically fetches new data so it is already pre-fetched when requested + automatically reloads components which use fetched data. Note: using function which ensures that automatic interval fetching will be done even after error occurs
   });
 
@@ -59,6 +60,7 @@ export const createFetchBalancesOptions = (balanceType: BalanceTypeEnum) =>
   queryOptions({
     queryKey: ['fetchBalances', balanceType],
     queryFn: () => BalanceService.fetchBalances(balanceType),
+    gcTime: 0, //dont use cached data
   });
 
 export const createFetchMarketConversionRateOptions = (
