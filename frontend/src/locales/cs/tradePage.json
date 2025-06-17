@@ -18,6 +18,8 @@
     "invalidRate": "Neplatný kurz",
     "validity": "Platnost",
     "rateError": "Chyba při načítání kurzu",
-    "price": "Cena"
+    "bookedRate": "Rezervovaný kurz:",
+    "marketRate": "Tržní kurz:",
+    "requestedRate": "Požadovaný kurz:"
   }
 }

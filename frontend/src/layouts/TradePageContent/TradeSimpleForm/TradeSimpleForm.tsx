@@ -21,13 +21,21 @@ import {
 import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../../constants/configVariables.ts';
 import { useProcessApiError } from '../../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../../services/utils/errorUtils.ts';
+import { useConvertByAdvancedTrading } from '../../../hooks/useConvertByAdvancedTrading.ts';
 
-const TradeSimpleForm: React.FC = () => {
+interface TradeSimpleFormProps {
+  isSimpleTrading: boolean;
+}
+
+const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) => {
   const { t } = useTranslation(['tradePage', 'errors']);
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
   const processApiError = useProcessApiError();
   const processName = TradeSimpleForm.name;
-  const { mutate: convertCurrencies, isPending: isConverting } = useConvertBySimpleTrading();
+  const { mutate: convertCurrenciesSimple, isPending: isConvertingSimple } =
+    useConvertBySimpleTrading();
+  const { mutate: convertCurrenciesAdvanced, isPending: isConvertingAdvanced } =
+    useConvertByAdvancedTrading();
 
   const {
     data: balancesData,
@@ -55,6 +63,7 @@ const TradeSimpleForm: React.FC = () => {
   const [soldCurrency, setSoldCurrency] = useState<CurrencyResponseDto | null>(null);
   const [boughtCurrency, setBoughtCurrency] = useState<CurrencyResponseDto | null>(null);
   const [soldAmount, setSoldAmount] = useState('');
+  const [userRate, setUserRate] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
   const soldCurrencyBalance =
@@ -65,39 +74,43 @@ const TradeSimpleForm: React.FC = () => {
       ?.balance ?? 0;
 
   const {
-    data: conversionRateData,
-    refetch: refetchConversionRate,
-    error: conversionRateError,
+    data: marketConversionRateData,
+    refetch: refetchMarketConversionRate,
+    error: marketConversionRateError,
   } = useQuery({
     ...createFetchMarketConversionRateOptions(soldCurrency?.code ?? '', boughtCurrency?.code ?? ''),
     enabled: !!(soldCurrency && boughtCurrency),
   });
 
-  const feeRate = conversionRateData?.feeRate ?? 0;
-  const marketConversionRate = conversionRateData?.marketConversionRate ?? 0;
-  const conversionRateValidTo = conversionRateData?.validTo
-    ? new Date(conversionRateData.validTo)
+  const feeRate = marketConversionRateData?.feeRate ?? 0;
+  const marketConversionRate = marketConversionRateData?.marketConversionRate ?? 0;
+  const conversionRateValidTo = marketConversionRateData?.validTo
+    ? new Date(marketConversionRateData.validTo)
     : null;
-  const verificationToken = conversionRateData?.verificationToken ?? '';
+  const verificationToken = marketConversionRateData?.verificationToken ?? '';
 
-  const finalConversionRate = marketConversionRate * (1 - feeRate);
-  const finalFeeRate = marketConversionRate * feeRate;
+  const finalConversionRate = isSimpleTrading
+    ? marketConversionRate * (1 - feeRate)
+    : Number(userRate) * (1 - feeRate);
+  const finalFeeRate = isSimpleTrading
+    ? marketConversionRate * feeRate
+    : Number(userRate) * feeRate;
 
   const boughtAmount =
     soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalConversionRate : 0;
   const feeAmount =
     soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalFeeRate : 0;
 
-  const [amountError, setAmountError] = useState<string | null>(null);
+  const [soldAmountError, setSoldAmountError] = useState<string | null>(null);
   useEffect(() => {
     if (!soldAmount) {
-      setAmountError(null);
+      setSoldAmountError(null);
     } else if (Number(soldAmount) <= 0) {
-      setAmountError(t('errors:message.invalidValueError'));
+      setSoldAmountError(t('errors:message.invalidValueError'));
     } else if (Number(soldAmount) > soldCurrencyBalance) {
-      setAmountError(t('errors:message.invalidValueError'));
+      setSoldAmountError(t('errors:message.invalidValueError'));
     } else {
-      setAmountError(null);
+      setSoldAmountError(null);
     }
   }, [soldAmount, soldCurrencyBalance, t]);
 
@@ -119,7 +132,7 @@ const TradeSimpleForm: React.FC = () => {
   useEffect(() => {
     // If secondsLeftForUsingConversionRate reaches 0 and currencies are selected, re-fetch conversion rate automatically
     if (secondsLeftForUsingConversionRate === 0 && !!(soldCurrency && boughtCurrency)) {
-      refetchConversionRate();
+      refetchMarketConversionRate();
     }
   }, [secondsLeftForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
 
@@ -139,33 +152,72 @@ const TradeSimpleForm: React.FC = () => {
     }
   };
 
+  const handleUserRateChange = (userRate: string) => {
+    setUserRate(userRate);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !soldAmount ||
-      Number(soldAmount) <= 0 ||
-      Number(soldAmount) > soldCurrencyBalance ||
-      !verificationToken
-    )
-      return;
-    convertCurrencies(
-      {
-        soldCurrencyAmount: Number(soldAmount),
-        verificationToken,
-      },
-      {
-        onSuccess: (result) => {
-          setSoldAmount('');
-          setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 5000);
-          refetchConversionRate();
+    if (isSimpleTrading) {
+      if (
+        !soldAmount ||
+        Number(soldAmount) <= 0 ||
+        Number(soldAmount) > soldCurrencyBalance ||
+        !verificationToken
+      )
+        return;
 
-          if (result?.currenciesBalances) {
-            setAvailableBalances(result.currenciesBalances);
-          } else refetchBalancesData();
+      convertCurrenciesSimple(
+        {
+          soldCurrencyAmount: Number(soldAmount),
+          verificationToken,
         },
-      },
-    );
+        {
+          onSuccess: (result) => {
+            setSoldAmount('');
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 5000);
+            refetchMarketConversionRate();
+
+            if (result?.currenciesBalances) {
+              setAvailableBalances(result.currenciesBalances);
+            } else refetchBalancesData();
+          },
+        },
+      );
+    }
+    if (!isSimpleTrading) {
+      if (
+        !soldAmount ||
+        Number(soldAmount) <= 0 ||
+        Number(soldAmount) > soldCurrencyBalance ||
+        !verificationToken ||
+        !soldCurrency?.code ||
+        !boughtCurrency?.code
+      )
+        return;
+
+      convertCurrenciesAdvanced(
+        {
+          soldCurrencyCode: soldCurrency.code,
+          boughtCurrencyCode: boughtCurrency?.code,
+          userSelectedConversionRate: 2,
+          soldCurrencyAmount: Number(soldAmount),
+        },
+        {
+          onSuccess: (result) => {
+            setSoldAmount('');
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 5000);
+            refetchMarketConversionRate();
+
+            if (result?.currenciesBalances) {
+              setAvailableBalances(result.currenciesBalances);
+            } else refetchBalancesData();
+          },
+        },
+      );
+    }
   };
 
   //ERRORS HANDLING
@@ -191,13 +243,13 @@ const TradeSimpleForm: React.FC = () => {
   }, [isBalancesError]);
 
   useEffect(() => {
-    if (isApiError(conversionRateError)) {
-      processApiError(conversionRateError, processName);
-    } else if (conversionRateError) {
+    if (isApiError(marketConversionRateError)) {
+      processApiError(marketConversionRateError, processName);
+    } else if (marketConversionRateError) {
       //not ApiError
       addErrorPopup(t('errors:message.fetchConversionRateError'));
     }
-  }, [conversionRateError]);
+  }, [marketConversionRateError]);
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={tradeSimpleFormStyles.form}>
@@ -214,7 +266,7 @@ const TradeSimpleForm: React.FC = () => {
         onChange={setSoldAmount}
         currency={soldCurrency}
         balance={soldCurrencyBalance}
-        error={amountError}
+        error={soldAmountError}
         listedCurrencies={allCurrencies
           .map((currency) => {
             const foundBalance = availableBalances.find(
@@ -231,6 +283,19 @@ const TradeSimpleForm: React.FC = () => {
         onCurrencyChange={handleSoldCurrencyChange}
         onBalanceClick={() => setSoldAmount(String(soldCurrencyBalance))}
       />
+
+      <ConversionRateInfo
+        isSimpleTrading={isSimpleTrading}
+        soldCurrency={soldCurrency}
+        boughtCurrency={boughtCurrency}
+        rate={finalConversionRate}
+        marketRate={marketConversionRate}
+        secondsLeft={secondsLeftForUsingConversionRate}
+        isError={!!marketConversionRateError}
+        onUserRateChange={handleUserRateChange}
+        userRate={userRate}
+      />
+
       <Button
         sx={tradeSimpleFormStyles.swapButton}
         variant="outlined"
@@ -266,14 +331,6 @@ const TradeSimpleForm: React.FC = () => {
         onCurrencyChange={setBoughtCurrency}
       />
 
-      <ConversionRateInfo
-        soldCurrency={soldCurrency}
-        boughtCurrency={boughtCurrency}
-        rate={finalConversionRate}
-        secondsLeft={secondsLeftForUsingConversionRate}
-        isError={!!conversionRateError}
-      />
-
       <FeeInfo feeAmount={feeAmount} boughtCurrency={boughtCurrency} />
       <Button
         sx={tradeSimpleFormStyles.submitButton}
@@ -281,11 +338,16 @@ const TradeSimpleForm: React.FC = () => {
         color="primary"
         type="submit"
         disabled={
-          !!conversionRateError || !!balancesError || !!amountError || isConverting || !soldAmount
+          !!marketConversionRateError ||
+          !!balancesError ||
+          !!soldAmountError ||
+          isConvertingSimple ||
+          isConvertingAdvanced ||
+          !soldAmount
         }
         fullWidth
       >
-        {isConverting ? (
+        {isConvertingSimple ? (
           <CircularProgress size={24} />
         ) : (
           t('tradePage:form.exchange', { currency: boughtCurrency })

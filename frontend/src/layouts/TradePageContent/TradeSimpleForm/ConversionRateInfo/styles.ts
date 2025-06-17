@@ -5,7 +5,7 @@ export const conversionInfoStyles: Record<string, SxProps<Theme>> = {
   container: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     gap: 2,
     mt: 2,
     mb: 2,

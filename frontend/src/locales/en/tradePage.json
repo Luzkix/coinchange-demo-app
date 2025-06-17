@@ -18,6 +18,8 @@
     "invalidRate": "Invalid rate",
     "validity": "Validity",
     "rateError": "Error while loading exchange rate",
-    "price": "Price"
+    "bookedRate": "Booked Rate",
+    "marketRate": "Market Rate",
+    "requestedRate": "Requested Rate"
   }
 }

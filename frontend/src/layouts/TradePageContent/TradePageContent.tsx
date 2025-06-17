@@ -8,17 +8,17 @@ import { SxProps } from '@mui/material/styles';
 
 const TradePageContent: React.FC = () => {
   const { t } = useTranslation(['tradePage']);
-  const [isSimple, setIsSimple] = useState(true);
+  const [isSimpleTrading, setIsSimpleTrading] = useState(true);
 
   return (
     <Box sx={tradePageContentStyles.container}>
       <Typography variant="h4" sx={tradePageContentStyles.title}>
-        {isSimple
+        {isSimpleTrading
           ? t('switcher.simple') + ' / ' + t('switcher.exchange')
           : t('switcher.advanced') + ' / ' + t('switcher.exchange')}
       </Typography>
       <Box sx={tradePageContentStyles.switchRow}>
-        <Typography sx={(isSimple && { color: 'silver' }) as SxProps<Theme>} color="primary">
+        <Typography sx={(isSimpleTrading && { color: 'silver' }) as SxProps<Theme>} color="primary">
           {t('switcher.advanced')}
         </Typography>
         <FormControlLabel
@@ -26,19 +26,21 @@ const TradePageContent: React.FC = () => {
           label={''}
           control={
             <Switch
-              checked={isSimple}
-              onChange={(_, checked) => setIsSimple(checked)}
+              checked={isSimpleTrading}
+              onChange={(_, checked) => setIsSimpleTrading(checked)}
               color="primary"
             />
           }
         />
-        <Typography sx={(!isSimple && { color: 'silver' }) as SxProps<Theme>} color="primary">
+        <Typography
+          sx={(!isSimpleTrading && { color: 'silver' }) as SxProps<Theme>}
+          color="primary"
+        >
           {t('switcher.simple')}
         </Typography>
       </Box>
 
-      {/* Display relevant form based on the switch */}
-      {isSimple ? <TradeSimpleForm /> : <TradeSimpleForm />}
+      <TradeSimpleForm isSimpleTrading={isSimpleTrading} />
     </Box>
   );
 };
