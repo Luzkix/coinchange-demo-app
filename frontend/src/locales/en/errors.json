@@ -15,7 +15,8 @@
     "passwordFormatError": "Password must be at least 4 characters long",
     "invalidValueError": "Invalid value",
     "fieldIsObligatoryError": "The field is obligatory",
-    "userLoggedOutInvalidToken": "User was automatically signed-out -> token expired"
+    "userLoggedOutInvalidToken": "User was automatically signed-out -> token expired",
+    "zeroOrNegativeNumberError": "Entered value needs to be higher than 0"
   },
   "businessErrors": {
     "NULL_OR_EMPTY": {
@@ -93,6 +94,10 @@
     "EXCHANGE_RATE_NOT_FOUND": {
       "title": "Exchange Rate Not Found",
       "message": "Exchange rate could not be loaded for requested pair of currencies"
+    },
+    "INVALID_CONVERSION_RATE": {
+      "title": "Invalid conversion rate",
+      "message": "Invalid conversion rate detected. Conversion rate cannot be 0 or negative number"
     }
   }
 }

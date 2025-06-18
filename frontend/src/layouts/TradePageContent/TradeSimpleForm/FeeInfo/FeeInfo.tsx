@@ -1,4 +1,3 @@
-// src/layouts/TradePageContent/TradeSimpleForm/FeeInfo/FeeInfo.tsx
 import React from 'react';
 import { Typography } from '@mui/material';
 import { feeInfoStyles } from './styles';

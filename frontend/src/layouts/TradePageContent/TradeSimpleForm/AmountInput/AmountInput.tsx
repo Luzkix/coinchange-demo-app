@@ -12,7 +12,7 @@ interface AmountInputProps {
   onChange?: (val: string) => void;
   currency: CurrencyResponseDto | null;
   balance: number;
-  error?: string | null;
+  isSoldAmountError?: boolean | undefined;
   readOnly?: boolean;
   disabled?: boolean;
   listedCurrencies: { currency: CurrencyResponseDto; balance: number }[];
@@ -27,7 +27,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
   onChange,
   currency,
   balance,
-  error,
+  isSoldAmountError,
   readOnly,
   disabled,
   listedCurrencies,
@@ -41,17 +41,28 @@ const AmountInput: React.FC<AmountInputProps> = ({
       <Typography sx={amountInputStyles.label}>{label}</Typography>
       <Box sx={amountInputStyles.inputRow}>
         <OutlinedInput
-          value={value}
+          value={
+            isSoldAmount
+              ? value
+              : Number(value) > 0 && Number.isFinite(Number(value))
+                ? `${value} ${!!currency ? currency.code : ''}`
+                : `0 ${!!currency ? currency.code : ''}`
+          }
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-          placeholder={readOnly ? '' : `max: ${balance}`}
-          disabled={readOnly || currency == null}
+          placeholder={
+            isSoldAmount
+              ? `max: ${balance} ${!!currency ? currency.code : ''}`
+              : `''  ${!!currency ? currency.code : ''}`
+          }
+          disabled={readOnly}
           inputProps={{ min: 0, step: 'any' }}
-          error={!!error}
+          error={isSoldAmountError}
           sx={
             !isSoldAmount && Number(value) > 0
               ? amountInputStyles.highlightedOutput
               : amountInputStyles.input
           }
+          type={isSoldAmount ? 'number' : 'string'}
         />
         <Select
           value={currency?.code || ''}
@@ -107,7 +118,6 @@ const AmountInput: React.FC<AmountInputProps> = ({
           {`${t('form.availableBalance')}: ${balance}`}
         </Button>
       </Box>
-      {error && <Typography sx={amountInputStyles.error}>{error}</Typography>}
     </Box>
   );
 };

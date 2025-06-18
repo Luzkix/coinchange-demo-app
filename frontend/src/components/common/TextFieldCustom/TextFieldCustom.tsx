@@ -5,29 +5,40 @@ import { SxProps, Theme } from '@mui/material/styles';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../../../constants/customConstants.ts';
 import { useTranslation } from 'react-i18next';
 
-type AllowedTypes = 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url';
-type AllowedMargins = 'none' | 'dense' | 'normal';
+export type AllowedTypesForTextFieldCustom =
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'number'
+  | 'search'
+  | 'tel'
+  | 'url';
+export type AllowedMarginsForTextFieldCustom = 'none' | 'dense' | 'normal';
 
 interface TextFieldCustomProps {
-  label: string;
-  name: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  margin?: AllowedMargins;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  name?: string;
+  label?: string;
+  margin?: AllowedMarginsForTextFieldCustom;
   required?: boolean;
   fullWidth?: boolean;
-  type?: AllowedTypes;
+  type?: AllowedTypesForTextFieldCustom;
   sx?: SxProps<Theme>;
   customRegex?: RegExp;
   validateErrorMessage?: string;
   helperText?: string;
+  isExternalError?: boolean;
+  externalErrorMessage?: string;
+  placeholder?: string | undefined;
+  disabled?: boolean | undefined;
 }
 
 const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
-  label,
   name,
   value,
   onChange,
+  label,
   margin = 'normal',
   required = true,
   fullWidth = true,
@@ -36,6 +47,10 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
   customRegex,
   validateErrorMessage,
   helperText,
+  isExternalError,
+  externalErrorMessage,
+  placeholder,
+  disabled,
   ...rest
 }) => {
   const { t } = useTranslation(['errors']);
@@ -121,7 +136,7 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
       name={name}
       value={value}
       onChange={(e) => {
-        onChange(e);
+        onChange && onChange(e);
         // When input changes and was error, then re-validate using handleInput function
         if (isError) {
           handleInput(e as React.FormEvent<HTMLInputElement>);
@@ -133,8 +148,16 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
       fullWidth={fullWidth}
       type={type}
       sx={sx}
-      error={isError}
-      helperText={isError ? errorMessage : helperText ? helperText : ''}
+      error={isExternalError || isError}
+      helperText={
+        isExternalError && externalErrorMessage
+          ? externalErrorMessage
+          : isError
+            ? errorMessage
+            : helperText
+              ? helperText
+              : ''
+      }
       slotProps={{
         htmlInput: {
           pattern: regexToValidate?.source,
@@ -142,6 +165,8 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
           onInput: handleInput,
         },
       }}
+      placeholder={placeholder}
+      disabled={disabled}
       {...rest}
     />
   );

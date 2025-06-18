@@ -1,4 +1,3 @@
-// src/layouts/TradePageContent/TradeSimpleForm/FeeInfo/styles.ts
 import { SxProps, Theme } from '@mui/material/styles';
 
 export const feeInfoStyles: Record<string, SxProps<Theme>> = {

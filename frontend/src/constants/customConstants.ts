@@ -30,3 +30,8 @@ export const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
  * - at least 4 characters length
  */
 export const PASSWORD_REGEX = /^.{4,}$/;
+
+/**
+ * Own number > 0 regex to be used throughout application in text fields where we want to be sure, that set number is > 0.
+ */
+export const NUMBER_BIGGER_THEN_ZERO_REGEX = /^(?:0*\.[1-9]\d*|[1-9]\d*(?:\.\d+)?)$/;

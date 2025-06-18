@@ -15,7 +15,8 @@
     "passwordFormatError": "Heslo musí mít alespoň 4 znaky",
     "invalidValueError": "Neplatná hodnota",
     "fieldIsObligatoryError": "Toto pole je povinné",
-    "userLoggedOutInvalidToken": "Uživatel byl automaticky odhlášen -> skončila platnost tokenu"
+    "userLoggedOutInvalidToken": "Uživatel byl automaticky odhlášen -> skončila platnost tokenu",
+    "zeroOrNegativeNumberError": "Zadaná hodnota musí být větší než 0"
   },
   "businessErrors": {
     "NULL_OR_EMPTY": {
@@ -93,6 +94,10 @@
     "EXCHANGE_RATE_NOT_FOUND": {
       "title": "Směnný kurz nenalezen",
       "message": "Směnný kurz nebyl nalezen pro požadovaný pár měn."
+    },
+    "INVALID_CONVERSION_RATE": {
+      "title": "Neplatný směnný kurz",
+      "message": "Zjištěn neplatný směnný kurz. Směnný kurz nemůže být s hodnotou 0 nebo se zápornou hodnotou"
     }
   }
 }

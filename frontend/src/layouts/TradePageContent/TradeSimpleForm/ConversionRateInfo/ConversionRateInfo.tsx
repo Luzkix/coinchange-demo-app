@@ -1,11 +1,12 @@
-// src/layouts/TradePageContent/TradeSimpleForm/ConversionRateInfo/ConversionRateInfo.tsx
 import React, { useState } from 'react';
-import { Box, IconButton, OutlinedInput, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { conversionInfoStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 import { CurrencyResponseDto } from '../../../../api-generated/backend';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { amountInputStyles } from '../AmountInput/styles.ts';
+import TextFieldCustom from '../../../../components/common/TextFieldCustom/TextFieldCustom.tsx';
+import { NUMBER_BIGGER_THEN_ZERO_REGEX } from '../../../../constants/customConstants.ts';
 
 interface ConversionInfoProps {
   isSimpleTrading: boolean;
@@ -16,7 +17,7 @@ interface ConversionInfoProps {
   secondsLeft: number;
   isError: boolean;
   onUserRateChange?: (val: string) => void;
-  userRate: string;
+  isUserRateError?: boolean | undefined;
 }
 
 const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
@@ -28,7 +29,7 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
   secondsLeft,
   isError,
   onUserRateChange,
-  userRate,
+  isUserRateError,
 }) => {
   const { t } = useTranslation('tradePage');
 
@@ -36,22 +37,54 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
 
   const reversedRate = rate ? 1 / rate : 0;
   const reversedMarketRate = marketRate ? 1 / marketRate : 0;
-  const displayedCurrenciesReversedRate =
+  const displayedCurrenciesReversed =
     soldCurrency && boughtCurrency ? soldCurrency?.code + '/' + boughtCurrency?.code : '';
-  const displayedCurrenciesOriginalRate =
+  const displayedCurrenciesOriginal =
     soldCurrency && boughtCurrency ? boughtCurrency?.code + '/' + soldCurrency?.code : '';
 
-  const handleSwapReversedRate = () => {
-    if (isReversedRate) {
-      setIsReversedRate(false);
-    } else setIsReversedRate(true);
+  const [userRate, setUserRate] = useState('');
+  const handleUserRateChange = (userRate: string) => {
+    setUserRate(userRate);
+
+    //always converting to standardRate before sending into onUserRateChange function
+    onUserRateChange && onUserRateChange(convertToOriginalRateFormat(userRate));
   };
 
-  const convertToStandardRate = (userRate: string) => {
-    debugger;
+  const convertToOriginalRateFormat = (userRate: string) => {
+    if (userRate == '' || userRate == '0') return userRate;
+
     if (isReversedRate) {
       return (1 / Number(userRate)).toString();
     } else return userRate;
+  };
+
+  const handleSwapRateFormat = () => {
+    if (isReversedRate) {
+      setIsReversedRate(false);
+    } else setIsReversedRate(true);
+
+    //  in advancedTrading set userRate to '' when swapping rates
+    if (!isSimpleTrading) {
+      handleUserRateChange('');
+    }
+  };
+
+  const onMarketRateClick = () => {
+    // Advanced trading: When user clicks on displayed market rate
+    // current value will be entered into the field where user defines the required exchange rate (in same format as displayed on the screen)
+    handleUserRateChange(
+      isReversedRate
+        ? reversedMarketRate > 1
+          ? reversedMarketRate.toFixed(3)
+          : reversedMarketRate == 0
+            ? reversedMarketRate.toFixed(0)
+            : reversedMarketRate.toFixed(8)
+        : marketRate > 1
+          ? marketRate.toFixed(3)
+          : marketRate == 0
+            ? marketRate.toFixed(0)
+            : marketRate.toFixed(8),
+    );
   };
 
   return (
@@ -60,13 +93,15 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
         {isError ? (
           <Typography color="error">{t('form.rateError')}</Typography>
         ) : (
-          <>
+          <Box sx={conversionInfoStyles.container}>
             <Typography sx={{ textAlign: 'center' }}>
               {isSimpleTrading ? t('form.bookedRate') : t('form.marketRate')}{' '}
-              <IconButton onClick={handleSwapReversedRate}>
-                <SwapHorizIcon />
-              </IconButton>
-              {isSimpleTrading && (
+            </Typography>
+            <IconButton onClick={handleSwapRateFormat} sx={conversionInfoStyles.iconSwitchRates}>
+              <SwapHorizIcon />
+            </IconButton>
+            {isSimpleTrading && (
+              <Box sx={{ textAlign: 'center' }}>
                 <b>
                   {isReversedRate &&
                     (reversedRate > 1
@@ -80,11 +115,21 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
                       : rate == 0
                         ? rate.toFixed(0)
                         : rate.toFixed(8))}{' '}
-                  {isReversedRate && displayedCurrenciesReversedRate}
-                  {!isReversedRate && displayedCurrenciesOriginalRate}
+                  {isReversedRate && displayedCurrenciesReversed}
+                  {!isReversedRate && displayedCurrenciesOriginal}
                 </b>
-              )}
-              {!isSimpleTrading && (
+              </Box>
+            )}
+            {!isSimpleTrading && (
+              <Button
+                variant="text"
+                disableRipple
+                onClick={onMarketRateClick}
+                onMouseOver={(e) => (e.currentTarget.style.background = '#e3f2fd')}
+                onMouseOut={(e) => (e.currentTarget.style.background = 'none')}
+                //disabled={marketRate == 0}
+                sx={conversionInfoStyles.marketRateButton}
+              >
                 <b>
                   {isReversedRate &&
                     (reversedMarketRate > 1
@@ -98,11 +143,11 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
                       : marketRate == 0
                         ? marketRate.toFixed(0)
                         : marketRate.toFixed(8))}{' '}
-                  {isReversedRate && displayedCurrenciesReversedRate}
-                  {!isReversedRate && displayedCurrenciesOriginalRate}
+                  {isReversedRate && displayedCurrenciesReversed}
+                  {!isReversedRate && displayedCurrenciesOriginal}
                 </b>
-              )}
-            </Typography>
+              </Button>
+            )}
 
             {isSimpleTrading && (
               <Typography sx={conversionInfoStyles.timer}>
@@ -111,23 +156,20 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
                   : `${t('form.validity')}: 0s`}
               </Typography>
             )}
-          </>
+          </Box>
         )}
       </Box>
       {!isSimpleTrading && (
-        <Box
-          sx={{
-            ...amountInputStyles.container,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1rem',
-          }}
-        >
-          <Typography sx={amountInputStyles.label}>{t('form.requestedRate')}</Typography>
-          <OutlinedInput
-            value={convertToStandardRate(userRate.toString())}
-            onChange={onUserRateChange ? (e) => onUserRateChange(e.target.value) : undefined}
+        <Box sx={conversionInfoStyles.container}>
+          <Typography sx={{ ...amountInputStyles.label, mb: '2' }}>
+            {t('form.requestedRate')}
+          </Typography>
+          <TextFieldCustom
+            value={userRate}
+            onChange={(e) => handleUserRateChange(e.target.value)}
+            required={true}
+            type="number"
+            fullWidth={false}
             placeholder={
               isReversedRate
                 ? reversedMarketRate > 1
@@ -141,9 +183,9 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
                     ? marketRate.toFixed(0)
                     : marketRate.toFixed(8)
             }
-            disabled={false}
-            inputProps={{ min: 0, step: 'any' }}
-            type="number"
+            isExternalError={isUserRateError}
+            customRegex={NUMBER_BIGGER_THEN_ZERO_REGEX}
+            validateErrorMessage={t('errors:message.zeroOrNegativeNumberError')}
           />
         </Box>
       )}

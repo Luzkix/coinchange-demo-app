@@ -1,4 +1,3 @@
-// src/layouts/TradePageContent/TradeSimpleForm/TradeSuccessMessage/styles.ts
 import { SxProps, Theme } from '@mui/material/styles';
 
 export const tradeSuccessMessageStyles: Record<string, SxProps<Theme>> = {

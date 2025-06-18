@@ -1,4 +1,3 @@
-// src/layouts/TradePageContent/TradeSimpleForm/TradeSuccessMessage/TradeSuccessMessage.tsx
 import React from 'react';
 import { Typography } from '@mui/material';
 import { tradeSuccessMessageStyles } from './styles';

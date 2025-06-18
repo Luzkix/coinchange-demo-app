@@ -1,4 +1,3 @@
-// src/layouts/TradePageContent/styles.ts
 import { SxProps, Theme } from '@mui/material/styles';
 
 export const tradePageContentStyles: Record<string, SxProps<Theme>> = {
@@ -9,8 +8,8 @@ export const tradePageContentStyles: Record<string, SxProps<Theme>> = {
     px: 2,
     py: 4,
     bgcolor: 'white',
-    borderRadius: 2,
-    boxShadow: 22,
+    // borderRadius: 2,
+    // boxShadow: 22,
   },
   title: {
     mb: 4,

@@ -1,5 +1,3 @@
-// src/layouts/TradePageContent/TradeSimpleForm/AmountInput/styles.ts
-
 import { SxProps, Theme } from '@mui/material/styles';
 
 export const amountInputStyles: Record<string, SxProps<Theme>> = {

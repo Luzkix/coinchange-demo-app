@@ -101,18 +101,29 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
   const feeAmount =
     soldAmount && !isNaN(Number(soldAmount)) ? Number(soldAmount) * finalFeeRate : 0;
 
-  const [soldAmountError, setSoldAmountError] = useState<string | null>(null);
+  const [isSoldAmountError, setIsSoldAmountError] = useState<boolean | undefined>(undefined);
   useEffect(() => {
     if (!soldAmount) {
-      setSoldAmountError(null);
+      setIsSoldAmountError(true);
     } else if (Number(soldAmount) <= 0) {
-      setSoldAmountError(t('errors:message.invalidValueError'));
+      setIsSoldAmountError(true);
     } else if (Number(soldAmount) > soldCurrencyBalance) {
-      setSoldAmountError(t('errors:message.invalidValueError'));
+      setIsSoldAmountError(true);
     } else {
-      setSoldAmountError(null);
+      setIsSoldAmountError(undefined);
     }
-  }, [soldAmount, soldCurrencyBalance, t]);
+  }, [soldAmount, soldCurrencyBalance]);
+
+  const [isUserRateError, setIsUserRateError] = useState<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (userRate == '' || userRate == '0') {
+      setIsUserRateError(true);
+    } else if (Number(userRate) <= 0) {
+      setIsUserRateError(true);
+    } else {
+      setIsUserRateError(undefined);
+    }
+  }, [userRate]);
 
   const [secondsLeftForUsingConversionRate, setSecondsLeftForUsingConversionRate] =
     useState<number>(0);
@@ -136,12 +147,13 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
     }
   }, [secondsLeftForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
 
-  const handleSoldCurrencyChange = (soldCurrency: CurrencyResponseDto | null) => {
-    if (soldCurrency == boughtCurrency || soldCurrency?.type == CurrencyTypeEnum.CRYPTO) {
+  const handleSoldCurrencyChange = (soldCurr: CurrencyResponseDto | null) => {
+    if (soldCurr == boughtCurrency || soldCurr?.type == CurrencyTypeEnum.CRYPTO) {
       setBoughtCurrency(null);
     }
-    setSoldCurrency(soldCurrency);
-    setSoldAmount('');
+
+    if (soldCurrency != null) setSoldAmount(''); //resetting sold amount only when switching from one currency to another
+    setSoldCurrency(soldCurr);
   };
 
   const handleSwap = () => {
@@ -158,6 +170,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (isSimpleTrading) {
       if (
         !soldAmount ||
@@ -193,15 +206,16 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
         Number(soldAmount) > soldCurrencyBalance ||
         !verificationToken ||
         !soldCurrency?.code ||
-        !boughtCurrency?.code
+        !boughtCurrency?.code ||
+        (!userRate && Number(userRate) <= 0)
       )
         return;
 
       convertCurrenciesAdvanced(
         {
           soldCurrencyCode: soldCurrency.code,
-          boughtCurrencyCode: boughtCurrency?.code,
-          userSelectedConversionRate: 2,
+          boughtCurrencyCode: boughtCurrency.code,
+          userSelectedConversionRate: Number(userRate),
           soldCurrencyAmount: Number(soldAmount),
         },
         {
@@ -266,7 +280,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
         onChange={setSoldAmount}
         currency={soldCurrency}
         balance={soldCurrencyBalance}
-        error={soldAmountError}
+        isSoldAmountError={isSoldAmountError}
         listedCurrencies={allCurrencies
           .map((currency) => {
             const foundBalance = availableBalances.find(
@@ -293,7 +307,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
         secondsLeft={secondsLeftForUsingConversionRate}
         isError={!!marketConversionRateError}
         onUserRateChange={handleUserRateChange}
-        userRate={userRate}
+        isUserRateError={isUserRateError}
       />
 
       <Button
@@ -340,10 +354,11 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
         disabled={
           !!marketConversionRateError ||
           !!balancesError ||
-          !!soldAmountError ||
+          isSoldAmountError ||
           isConvertingSimple ||
           isConvertingAdvanced ||
-          !soldAmount
+          !soldAmount ||
+          (!isSimpleTrading && (!userRate || isUserRateError))
         }
         fullWidth
       >
