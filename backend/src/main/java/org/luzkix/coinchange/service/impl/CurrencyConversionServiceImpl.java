@@ -60,6 +60,9 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         if (conversionDetails.getSoldCurrencyCode().equals(conversionDetails.getBoughtCurrencyCode())) throw new InvalidInputDataException(
                 ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES.getMessage(),
                 ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES);
+        if (conversionDetails.getMarketConversionRate().compareTo(BigDecimal.ZERO) < 1 ) throw new InvalidInputDataException(
+                ErrorBusinessCodeEnum.INVALID_CONVERSION_RATE.getMessage(),
+                ErrorBusinessCodeEnum.INVALID_CONVERSION_RATE);
 
         Currency soldCurrency = currencyService.findByCode(conversionDetails.getSoldCurrencyCode())
                 .orElseThrow(() -> new InvalidInputDataException("Currency with code " + conversionDetails.getSoldCurrencyCode() + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
@@ -98,6 +101,10 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         if (soldCurrencyCode.equals(boughtCurrencyCode)) throw new InvalidInputDataException(
                 ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES.getMessage(),
                 ErrorBusinessCodeEnum.CONVERSION_SAME_CURRENCIES);
+
+        if (userSelectedConversionRate == null || userSelectedConversionRate.compareTo(BigDecimal.ZERO) < 1 ) throw new InvalidInputDataException(
+                ErrorBusinessCodeEnum.INVALID_CONVERSION_RATE.getMessage(),
+                ErrorBusinessCodeEnum.INVALID_CONVERSION_RATE);
 
         Currency soldCurrency = currencyService.findByCode(soldCurrencyCode)
                 .orElseThrow(() -> new InvalidInputDataException("Currency with code " + soldCurrencyCode + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));

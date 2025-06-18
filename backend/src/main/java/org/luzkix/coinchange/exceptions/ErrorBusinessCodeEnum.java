@@ -19,7 +19,8 @@ public enum ErrorBusinessCodeEnum {
     CONVERSION_TRANSACTION_FAILURE("CONVERSION_TRANSACTION_FAILURE", "Something went wrong while preparing/updating currency conversion transaction."),
     CANCELLATION_TRANSACTION_FAILURE("CANCELLATION_TRANSACTION_FAILURE", "Transaction cannot be cancelled! It was already processed or cancelled or some unknown error occurred during cancellation."),
     CONVERSION_SAME_CURRENCIES("CONVERSION_SAME_CURRENCIES", "Sold and bought currencies can not be same!"),
-    EXCHANGE_RATE_NOT_FOUND("EXCHANGE_RATE_NOT_FOUND", "Conversion rate could not be loaded for requested pair of currencies");
+    EXCHANGE_RATE_NOT_FOUND("EXCHANGE_RATE_NOT_FOUND", "Conversion rate could not be loaded for requested pair of currencies"),
+    INVALID_CONVERSION_RATE("INVALID_CONVERSION_RATE", "Invalid conversion rate. Conversion rate cannot be 0 or negative number");
 
 
     private final String code;
