@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { CurrencyResponseDto } from '../../../../api-generated/backend';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { amountInputStyles } from '../AmountInput/styles.ts';
-import TextFieldCustom from '../../../../components/common/TextFieldCustom/TextFieldCustom.tsx';
+import CustomTextField from '../../../../components/common/CustomTextField/CustomTextField.tsx';
 import { NUMBER_BIGGER_THEN_ZERO_REGEX } from '../../../../constants/customConstants.ts';
+import { CustomCircularProgress } from '../../../../components/common/CustomCircularProgress/CustomCircularProgress.tsx';
 
 interface ConversionRateBlockProps {
   isSimpleTrading: boolean;
@@ -14,7 +15,7 @@ interface ConversionRateBlockProps {
   boughtCurrency: CurrencyResponseDto | null;
   rate: number;
   marketRate: number;
-  secondsLeft: number;
+  remainingTimeInPercent: number | undefined;
   isError: boolean;
   onUserRateChange?: (val: string) => void;
   isUserRateError?: boolean | undefined;
@@ -26,7 +27,7 @@ const ConversionRateBlock: React.FC<ConversionRateBlockProps> = ({
   boughtCurrency,
   rate,
   marketRate,
-  secondsLeft,
+  remainingTimeInPercent,
   isError,
   onUserRateChange,
   isUserRateError,
@@ -147,13 +148,7 @@ const ConversionRateBlock: React.FC<ConversionRateBlockProps> = ({
               </Button>
             )}
 
-            {isSimpleTrading && (
-              <Typography sx={conversionInfoStyles.timer}>
-                {secondsLeft > 0
-                  ? `${t('form.validity')}: ${secondsLeft}s`
-                  : `${t('form.validity')}: 0s`}
-              </Typography>
-            )}
+            {isSimpleTrading && <CustomCircularProgress percentLeft={remainingTimeInPercent} />}
           </Box>
         )}
       </Box>
@@ -164,7 +159,7 @@ const ConversionRateBlock: React.FC<ConversionRateBlockProps> = ({
           <Typography sx={{ ...amountInputStyles.label, mb: '2' }}>
             {t('form.requestedRate')}
           </Typography>
-          <TextFieldCustom
+          <CustomTextField
             value={userRate}
             onChange={(e) => handleUserRateChange(e.target.value)}
             required={true}

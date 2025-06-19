@@ -3,7 +3,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { signInFormStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
-import TextFieldCustom from '../../components/common/TextFieldCustom/TextFieldCustom';
+import CustomTextField from '../../components/common/CustomTextField/CustomTextField.tsx';
 import { UserLoginRequestDto } from '../../api-generated/backend';
 
 interface SignInFormProps {
@@ -35,13 +35,13 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, isLoading }) => {
       <Typography variant="body2" gutterBottom>
         {t('signUp.titleDesc')}
       </Typography>
-      <TextFieldCustom
+      <CustomTextField
         label={t('signIn.usernameOrEmail')}
         name="usernameOrEmail"
         value={form.usernameOrEmail}
         onChange={handleChange}
       />
-      <TextFieldCustom
+      <CustomTextField
         label={t('signUp.password')}
         name="password"
         value={form.password}

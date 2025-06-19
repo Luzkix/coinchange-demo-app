@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { TextField } from '@mui/material';
-import { textFieldCustomStyles } from './styles';
+import { customTextFieldStyles } from './styles';
 import { SxProps, Theme } from '@mui/material/styles';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../../../constants/customConstants.ts';
 import { useTranslation } from 'react-i18next';
 
-export type AllowedTypesForTextFieldCustom =
+export type AllowedTypesForCustomTextField =
   | 'text'
   | 'email'
   | 'password'
@@ -13,17 +13,17 @@ export type AllowedTypesForTextFieldCustom =
   | 'search'
   | 'tel'
   | 'url';
-export type AllowedMarginsForTextFieldCustom = 'none' | 'dense' | 'normal';
+export type AllowedMarginsForCustomTextField = 'none' | 'dense' | 'normal';
 
-interface TextFieldCustomProps {
+interface CustomTextFieldProps {
   value: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   name?: string;
   label?: string;
-  margin?: AllowedMarginsForTextFieldCustom;
+  margin?: AllowedMarginsForCustomTextField;
   required?: boolean;
   fullWidth?: boolean;
-  type?: AllowedTypesForTextFieldCustom;
+  type?: AllowedTypesForCustomTextField;
   sx?: SxProps<Theme>;
   customRegex?: RegExp;
   validateErrorMessage?: string;
@@ -34,7 +34,7 @@ interface TextFieldCustomProps {
   disabled?: boolean | undefined;
 }
 
-const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
+const CustomTextField: React.FC<CustomTextFieldProps> = ({
   name,
   value,
   onChange,
@@ -43,7 +43,7 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
   required = true,
   fullWidth = true,
   type = 'text',
-  sx = textFieldCustomStyles.input,
+  sx = customTextFieldStyles.input,
   customRegex,
   validateErrorMessage,
   helperText,
@@ -172,4 +172,4 @@ const TextFieldCustom: React.FC<TextFieldCustomProps> = ({
   );
 };
 
-export default TextFieldCustom;
+export default CustomTextField;

@@ -18,7 +18,10 @@ import {
   type CurrencyBalanceResponseDto,
   CurrencyResponseDto,
 } from '../../../api-generated/backend';
-import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../../constants/configVariables.ts';
+import {
+  CONVERSION_RATE_VALIDITY,
+  DEFAULT_ERROR_REFETCH_INTERVAL,
+} from '../../../constants/configVariables.ts';
 import { useProcessApiError } from '../../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../../services/utils/errorUtils.ts';
 import { useConvertByAdvancedTrading } from '../../../hooks/useConvertByAdvancedTrading.ts';
@@ -125,27 +128,39 @@ const TradingForm: React.FC<TradingFormProps> = ({ isSimpleTrading }) => {
     }
   }, [userRate]);
 
-  const [secondsLeftForUsingConversionRate, setSecondsLeftForUsingConversionRate] =
-    useState<number>(0);
+  const [
+    remainingTimeInPercentForUsingConversionRate,
+    setRemainingTimeInPercentForUsingConversionRate,
+  ] = useState<number | undefined>(undefined);
 
+  //regular recalculation of remaining time for booking conversion rate
   useEffect(() => {
     if (!conversionRateValidTo) return;
     const tick = () => {
       const now = Date.now();
-      const diff = Math.max(0, Math.floor((conversionRateValidTo.getTime() - now) / 1000));
-      setSecondsLeftForUsingConversionRate(diff);
+      const validTo = conversionRateValidTo.getTime();
+      const remainingTimeInSeconds = (validTo - now) / 1000; //difference in seconds
+      const remainingTimeInPercent = (remainingTimeInSeconds / CONVERSION_RATE_VALIDITY) * 100;
+
+      setRemainingTimeInPercentForUsingConversionRate(
+        Math.max(0, Math.floor(remainingTimeInPercent)),
+      );
     };
     tick();
-    const interval = setInterval(tick, 1000);
+    const interval = setInterval(tick, 1000); //recalculate every X ms
     return () => clearInterval(interval);
   }, [conversionRateValidTo]);
 
   useEffect(() => {
-    // If secondsLeftForUsingConversionRate reaches 0 and currencies are selected, re-fetch conversion rate automatically
-    if (secondsLeftForUsingConversionRate === 0 && !!(soldCurrency && boughtCurrency)) {
+    // If remainingTimeInPercentForUsingConversionRate reaches 0 (undefined) and currencies are selected, re-fetch conversion rate automatically
+    if (
+      (!remainingTimeInPercentForUsingConversionRate ||
+        remainingTimeInPercentForUsingConversionRate == 0) &&
+      !!(soldCurrency && boughtCurrency)
+    ) {
       refetchMarketConversionRate();
     }
-  }, [secondsLeftForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
+  }, [remainingTimeInPercentForUsingConversionRate, soldCurrency, boughtCurrency, soldAmount]);
 
   const handleSoldCurrencyChange = (soldCurr: CurrencyResponseDto | null) => {
     if (soldCurr == boughtCurrency || soldCurr?.type == CurrencyTypeEnum.CRYPTO) {
@@ -304,7 +319,7 @@ const TradingForm: React.FC<TradingFormProps> = ({ isSimpleTrading }) => {
         boughtCurrency={boughtCurrency}
         rate={finalConversionRate}
         marketRate={marketConversionRate}
-        secondsLeft={secondsLeftForUsingConversionRate}
+        remainingTimeInPercent={remainingTimeInPercentForUsingConversionRate}
         isError={!!marketConversionRateError}
         onUserRateChange={handleUserRateChange}
         isUserRateError={isUserRateError}

@@ -49,3 +49,8 @@ export const DEFAULT_NUMBER_OF_POPUP_ERROR_MESSAGES = 6;
  * Default pagination options
  */
 export const DEFAUL_PAGE_SIZE_OPTIONS = [10, 30, 50];
+
+/**
+ * Default validity of booked conversion rate promised to the client (note - this value must equal value used on backend!)
+ */
+export const CONVERSION_RATE_VALIDITY = 10;

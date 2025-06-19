@@ -5,7 +5,7 @@ import { profilePageStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 
 import { UserUpdateRequestDto } from '../../api-generated/backend';
-import TextFieldCustom from '../../components/common/TextFieldCustom/TextFieldCustom.tsx';
+import CustomTextField from '../../components/common/CustomTextField/CustomTextField.tsx';
 import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
 
 interface ProfilePageContentFormProps {
@@ -80,7 +80,7 @@ const ProfilePageContentForm: React.FC<ProfilePageContentFormProps> = ({
       <Typography variant="h5" gutterBottom>
         {t('profilePage.title')}
       </Typography>
-      <TextFieldCustom
+      <CustomTextField
         label={t('signInSignUpPage:signUp.username')}
         name="username"
         value={form.username}
@@ -88,7 +88,7 @@ const ProfilePageContentForm: React.FC<ProfilePageContentFormProps> = ({
         helperText={t('profilePage.usernameHelper')}
         required={false}
       />
-      <TextFieldCustom
+      <CustomTextField
         label={t('signInSignUpPage:signUp.email')}
         name="email"
         value={form.email}
@@ -97,7 +97,7 @@ const ProfilePageContentForm: React.FC<ProfilePageContentFormProps> = ({
         helperText={t('profilePage.emailHelper')}
         required={false}
       />
-      <TextFieldCustom
+      <CustomTextField
         label={t('profilePage.newPassword')}
         name="password"
         value={form.password}
@@ -108,7 +108,7 @@ const ProfilePageContentForm: React.FC<ProfilePageContentFormProps> = ({
       />
 
       {isPasswordChanged && (
-        <TextFieldCustom
+        <CustomTextField
           name="passwordConfirm"
           label={t('signInSignUpPage:signUp.passwordConfirm')}
           value={form.passwordConfirm}

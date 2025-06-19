@@ -3,7 +3,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { signUpFormStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
-import TextFieldCustom from '../../components/common/TextFieldCustom/TextFieldCustom';
+import CustomTextField from '../../components/common/CustomTextField/CustomTextField.tsx';
 import { UserRegistrationRequestDto } from '../../api-generated/backend';
 
 interface SignUpFormProps {
@@ -41,27 +41,27 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
       <Typography variant="body2" gutterBottom>
         {t('signUp.titleDesc')}
       </Typography>
-      <TextFieldCustom
+      <CustomTextField
         label={t('signUp.username')}
         name="username"
         value={form.username}
         onChange={handleChange}
       />
-      <TextFieldCustom
+      <CustomTextField
         label={t('signUp.email')}
         name="email"
         value={form.email}
         onChange={handleChange}
         type="email"
       />
-      <TextFieldCustom
+      <CustomTextField
         label={t('signUp.password')}
         name="password"
         value={form.password}
         onChange={handleChange}
         type="password"
       />
-      <TextFieldCustom
+      <CustomTextField
         name="passwordConfirm"
         label={t('signUp.passwordConfirm')}
         value={form.passwordConfirm}
