@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Box, FormControlLabel, Switch, Theme, Typography } from '@mui/material';
 import { tradePageContentStyles } from './styles';
-import TradeSimpleForm from './TradeSimpleForm/TradeSimpleForm';
+import TradingForm from './TradingForm/TradingForm.tsx';
 import { useTranslation } from 'react-i18next';
 import { SxProps } from '@mui/material/styles';
 
@@ -40,7 +40,7 @@ const TradePageContent: React.FC = () => {
         </Typography>
       </Box>
 
-      <TradeSimpleForm isSimpleTrading={isSimpleTrading} />
+      <TradingForm isSimpleTrading={isSimpleTrading} />
     </Box>
   );
 };

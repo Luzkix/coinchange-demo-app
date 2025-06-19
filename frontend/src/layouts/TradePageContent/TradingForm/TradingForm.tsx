@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { tradeSimpleFormStyles } from './styles';
+import { tradingFormStyles } from './styles';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import AmountInput from './AmountInput/AmountInput';
-import ConversionRateInfo from './ConversionRateInfo/ConversionRateInfo.tsx';
+import ConversionRateBlock from './ConversionRateBlock/ConversionRateBlock.tsx';
 import FeeInfo from './FeeInfo/FeeInfo';
 import TradeSuccessMessage from './TradeSuccessMessage/TradeSuccessMessage';
 import {
@@ -23,15 +23,15 @@ import { useProcessApiError } from '../../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../../services/utils/errorUtils.ts';
 import { useConvertByAdvancedTrading } from '../../../hooks/useConvertByAdvancedTrading.ts';
 
-interface TradeSimpleFormProps {
+interface TradingFormProps {
   isSimpleTrading: boolean;
 }
 
-const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) => {
+const TradingForm: React.FC<TradingFormProps> = ({ isSimpleTrading }) => {
   const { t } = useTranslation(['tradePage', 'errors']);
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
   const processApiError = useProcessApiError();
-  const processName = TradeSimpleForm.name;
+  const processName = TradingForm.name;
   const { mutate: convertCurrenciesSimple, isPending: isConvertingSimple } =
     useConvertBySimpleTrading();
   const { mutate: convertCurrenciesAdvanced, isPending: isConvertingAdvanced } =
@@ -266,7 +266,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
   }, [marketConversionRateError]);
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={tradeSimpleFormStyles.form}>
+    <Box component="form" onSubmit={handleSubmit} sx={tradingFormStyles.form}>
       {(balancesError || allCurrencies.length == 0) && (
         <Alert severity="error" sx={{ fontWeight: 700 }}>
           {t('errors:common.genericErrorTitle')}
@@ -298,7 +298,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
         onBalanceClick={() => setSoldAmount(String(soldCurrencyBalance))}
       />
 
-      <ConversionRateInfo
+      <ConversionRateBlock
         isSimpleTrading={isSimpleTrading}
         soldCurrency={soldCurrency}
         boughtCurrency={boughtCurrency}
@@ -311,7 +311,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
       />
 
       <Button
-        sx={tradeSimpleFormStyles.swapButton}
+        sx={tradingFormStyles.swapButton}
         variant="outlined"
         onClick={handleSwap}
         disabled={boughtCurrencyBalance <= 0}
@@ -347,7 +347,7 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
 
       <FeeInfo feeAmount={feeAmount} boughtCurrency={boughtCurrency} />
       <Button
-        sx={tradeSimpleFormStyles.submitButton}
+        sx={tradingFormStyles.submitButton}
         variant="contained"
         color="primary"
         type="submit"
@@ -373,4 +373,4 @@ const TradeSimpleForm: React.FC<TradeSimpleFormProps> = ({ isSimpleTrading }) =>
   );
 };
 
-export default TradeSimpleForm;
+export default TradingForm;

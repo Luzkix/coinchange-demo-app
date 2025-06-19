@@ -1,6 +1,6 @@
 import { SxProps, Theme } from '@mui/material/styles';
 
-export const tradeSimpleFormStyles: Record<string, SxProps<Theme>> = {
+export const tradingFormStyles: Record<string, SxProps<Theme>> = {
   form: {
     width: '100%',
   },

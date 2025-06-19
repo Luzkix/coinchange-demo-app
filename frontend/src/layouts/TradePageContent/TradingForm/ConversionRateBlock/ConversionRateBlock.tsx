@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { conversionInfoStyles } from './styles';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { amountInputStyles } from '../AmountInput/styles.ts';
 import TextFieldCustom from '../../../../components/common/TextFieldCustom/TextFieldCustom.tsx';
 import { NUMBER_BIGGER_THEN_ZERO_REGEX } from '../../../../constants/customConstants.ts';
 
-interface ConversionInfoProps {
+interface ConversionRateBlockProps {
   isSimpleTrading: boolean;
   soldCurrency: CurrencyResponseDto | null;
   boughtCurrency: CurrencyResponseDto | null;
@@ -20,7 +20,7 @@ interface ConversionInfoProps {
   isUserRateError?: boolean | undefined;
 }
 
-const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
+const ConversionRateBlock: React.FC<ConversionRateBlockProps> = ({
   isSimpleTrading,
   soldCurrency,
   boughtCurrency,
@@ -69,22 +69,42 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (userRate != '') handleUserRateChange('');
+  }, [boughtCurrency, soldCurrency]);
+
+  const displayConversionRateSimpleTrading = (): string => {
+    if (isReversedRate) {
+      return reversedRate > 1
+        ? reversedRate.toFixed(3)
+        : reversedRate == 0
+          ? reversedRate.toFixed(0)
+          : reversedRate.toFixed(8);
+    } else {
+      return rate > 1 ? rate.toFixed(3) : rate == 0 ? rate.toFixed(0) : rate.toFixed(8);
+    }
+  };
+
+  const displayConversionRateAdvancedTrading = (): string => {
+    if (isReversedRate) {
+      return reversedMarketRate > 1
+        ? reversedMarketRate.toFixed(3)
+        : reversedMarketRate == 0
+          ? reversedMarketRate.toFixed(0)
+          : reversedMarketRate.toFixed(8);
+    } else {
+      return marketRate > 1
+        ? marketRate.toFixed(3)
+        : marketRate == 0
+          ? marketRate.toFixed(0)
+          : marketRate.toFixed(8);
+    }
+  };
+
   const onMarketRateClick = () => {
     // Advanced trading: When user clicks on displayed market rate
     // current value will be entered into the field where user defines the required exchange rate (in same format as displayed on the screen)
-    handleUserRateChange(
-      isReversedRate
-        ? reversedMarketRate > 1
-          ? reversedMarketRate.toFixed(3)
-          : reversedMarketRate == 0
-            ? reversedMarketRate.toFixed(0)
-            : reversedMarketRate.toFixed(8)
-        : marketRate > 1
-          ? marketRate.toFixed(3)
-          : marketRate == 0
-            ? marketRate.toFixed(0)
-            : marketRate.toFixed(8),
-    );
+    handleUserRateChange(displayConversionRateAdvancedTrading());
   };
 
   return (
@@ -103,18 +123,7 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
             {isSimpleTrading && (
               <Box sx={{ textAlign: 'center' }}>
                 <b>
-                  {isReversedRate &&
-                    (reversedRate > 1
-                      ? reversedRate.toFixed(3)
-                      : reversedRate == 0
-                        ? reversedRate.toFixed(0)
-                        : reversedRate.toFixed(8))}
-                  {!isReversedRate &&
-                    (rate > 1
-                      ? rate.toFixed(3)
-                      : rate == 0
-                        ? rate.toFixed(0)
-                        : rate.toFixed(8))}{' '}
+                  {displayConversionRateSimpleTrading() + ' '}
                   {isReversedRate && displayedCurrenciesReversed}
                   {!isReversedRate && displayedCurrenciesOriginal}
                 </b>
@@ -131,18 +140,7 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
                 sx={conversionInfoStyles.marketRateButton}
               >
                 <b>
-                  {isReversedRate &&
-                    (reversedMarketRate > 1
-                      ? reversedMarketRate.toFixed(3)
-                      : reversedMarketRate == 0
-                        ? reversedMarketRate.toFixed(0)
-                        : reversedMarketRate.toFixed(8))}
-                  {!isReversedRate &&
-                    (marketRate > 1
-                      ? marketRate.toFixed(3)
-                      : marketRate == 0
-                        ? marketRate.toFixed(0)
-                        : marketRate.toFixed(8))}{' '}
+                  {displayConversionRateAdvancedTrading() + ' '}
                   {isReversedRate && displayedCurrenciesReversed}
                   {!isReversedRate && displayedCurrenciesOriginal}
                 </b>
@@ -159,6 +157,8 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
           </Box>
         )}
       </Box>
+
+      {/*For Advanced Trading display field to enter custom conversion rate*/}
       {!isSimpleTrading && (
         <Box sx={conversionInfoStyles.container}>
           <Typography sx={{ ...amountInputStyles.label, mb: '2' }}>
@@ -170,19 +170,7 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
             required={true}
             type="number"
             fullWidth={false}
-            placeholder={
-              isReversedRate
-                ? reversedMarketRate > 1
-                  ? reversedMarketRate.toFixed(3)
-                  : reversedMarketRate == 0
-                    ? reversedMarketRate.toFixed(0)
-                    : reversedMarketRate.toFixed(8)
-                : marketRate > 1
-                  ? marketRate.toFixed(3)
-                  : marketRate == 0
-                    ? marketRate.toFixed(0)
-                    : marketRate.toFixed(8)
-            }
+            placeholder={displayConversionRateAdvancedTrading()}
             isExternalError={isUserRateError}
             customRegex={NUMBER_BIGGER_THEN_ZERO_REGEX}
             validateErrorMessage={t('errors:message.zeroOrNegativeNumberError')}
@@ -193,4 +181,4 @@ const ConversionRateInfo: React.FC<ConversionInfoProps> = ({
   );
 };
 
-export default ConversionRateInfo;
+export default ConversionRateBlock;
