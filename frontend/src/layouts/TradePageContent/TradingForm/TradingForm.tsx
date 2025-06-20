@@ -28,9 +28,15 @@ import { useConvertByAdvancedTrading } from '../../../hooks/useConvertByAdvanced
 
 interface TradingFormProps {
   isSimpleTrading: boolean;
+  initialSoldCurrencyCode?: string | null;
+  initialBoughtCurrencyCode?: string | null;
 }
 
-const TradingForm: React.FC<TradingFormProps> = ({ isSimpleTrading }) => {
+const TradingForm: React.FC<TradingFormProps> = ({
+  isSimpleTrading,
+  initialSoldCurrencyCode,
+  initialBoughtCurrencyCode,
+}) => {
   const { t } = useTranslation(['tradePage', 'errors']);
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
   const processApiError = useProcessApiError();
@@ -65,6 +71,22 @@ const TradingForm: React.FC<TradingFormProps> = ({ isSimpleTrading }) => {
 
   const [soldCurrency, setSoldCurrency] = useState<CurrencyResponseDto | null>(null);
   const [boughtCurrency, setBoughtCurrency] = useState<CurrencyResponseDto | null>(null);
+  useEffect(() => {
+    // Pre-fill sold and bought currencies if initialSold(Bought)CurrencyCode if available
+    if (initialSoldCurrencyCode && allCurrencies.length > 0) {
+      const foundSoldCurrency = allCurrencies.find(
+        (currency) => currency.code === initialSoldCurrencyCode,
+      );
+      if (foundSoldCurrency) setSoldCurrency(foundSoldCurrency);
+    }
+    if (initialBoughtCurrencyCode && allCurrencies.length > 0) {
+      const foundBoughtCurrency = allCurrencies.find(
+        (currency) => currency.code === initialBoughtCurrencyCode,
+      );
+      if (foundBoughtCurrency) setBoughtCurrency(foundBoughtCurrency);
+    }
+  }, [initialSoldCurrencyCode, initialBoughtCurrencyCode, allCurrencies]);
+
   const [soldAmount, setSoldAmount] = useState('');
   const [userRate, setUserRate] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);

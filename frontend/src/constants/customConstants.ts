@@ -35,3 +35,9 @@ export const PASSWORD_REGEX = /^.{4,}$/;
  * Own number > 0 regex to be used throughout application in text fields where we want to be sure, that set number is > 0.
  */
 export const NUMBER_BIGGER_THEN_ZERO_REGEX = /^(?:0*\.[1-9]\d*|[1-9]\d*(?:\.\d+)?)$/;
+
+/**
+ * search params used in hyperlinks
+ */
+export const SEARCHPARAM_SOLD_CURRENCY = 'soldCurrencyCode';
+export const SEARCHPARAM_BOUGHT_CURRENCY = 'boughtCurrencyCode';

@@ -5,10 +5,13 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from 'react-i18next';
 import { coinsTableStyles } from './styles';
-import { Languages } from '../../../constants/customConstants';
+import {
+  Languages,
+  SEARCHPARAM_BOUGHT_CURRENCY,
+  SEARCHPARAM_SOLD_CURRENCY,
+} from '../../../constants/customConstants';
 import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts';
 import { Link } from 'react-router-dom';
-import ROUTES from '../../../constants/routes.ts';
 import CoinHeader from '../CoinHeader/CoinHeader.tsx';
 import cssStyles from './CoinsTable.module.css';
 
@@ -165,7 +168,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           {params.row.isTradeable && (
             <Button
               component={Link}
-              to={ROUTES.TRADE + '/' + selectedCurrency + '-' + params.row.coinSymbol}
+              to={`/trade?${SEARCHPARAM_SOLD_CURRENCY}=${selectedCurrency}&${SEARCHPARAM_BOUGHT_CURRENCY}=${params.row.coinSymbol}`}
               variant="contained"
               size="small"
               sx={coinsTableStyles.tradeButton}

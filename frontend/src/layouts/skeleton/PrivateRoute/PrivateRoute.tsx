@@ -29,11 +29,16 @@ const PrivateRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   //if not logged in (no userData) -> redirect to login page
   if (!userData) {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname }} replace />;
+    return (
+      //note: after login the user is redirected to url he originally entered including search parameters
+      <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname + location.search }} replace />
+    );
   }
   //if token is invalid -> redirect to login page (which also runs logout() due to useEffect)
   if (!isTokenValid(userData.accessToken)) {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname }} replace />;
+    return (
+      <Navigate to={ROUTES.LOGIN} state={{ from: location.pathname + location.search }} replace />
+    );
   }
 
   //else process url as expected
