@@ -20,6 +20,6 @@
     "rateError": "Error while loading exchange rate",
     "bookedRate": "Booked Rate",
     "marketRate": "Market Rate",
-    "requestedRate": "Requested Rate"
+    "requestedRate": "Enter Rate"
   }
 }

@@ -20,6 +20,6 @@
     "rateError": "Chyba při načítání kurzu",
     "bookedRate": "Rezervovaný kurz:",
     "marketRate": "Tržní kurz:",
-    "requestedRate": "Požadovaný kurz:"
+    "requestedRate": "Zadejte kurz:"
   }
 }
