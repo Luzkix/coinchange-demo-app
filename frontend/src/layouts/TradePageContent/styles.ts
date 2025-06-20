@@ -2,16 +2,43 @@ import { SxProps, Theme } from '@mui/material/styles';
 
 export const tradePageContentStyles: Record<string, SxProps<Theme>> = {
   container: {
-    maxWidth: 500,
-    mx: 'auto',
-    mt: 4,
-    px: 2,
-    py: 4,
-    bgcolor: 'white',
-    // borderRadius: 2,
-    // boxShadow: 22,
+    display: 'flex',
+    gap: 2,
+    p: 0,
+    mt: 2,
+    alignItems: 'center', // vertikální zarovnání na střed
+    justifyContent: 'center', // vodorovné zarovnání na střed
+    '@media (max-width: 1000px)': {
+      flexDirection: 'column',
+      alignItems: 'center', // volitelné: aby se v mobilním zobrazení roztáhly na šířku
+    },
   },
-  title: {
+  mainColumn: {
+    flex: '0 1 65%',
+    maxWidth: '65%',
+    '@media (max-width: 1000px)': {
+      flex: '1 1 100%',
+      maxWidth: '100%',
+    },
+  },
+  sideColumn: {
+    flex: '0 1 35%',
+    maxWidth: '35%',
+    '@media (max-width: 1000px)': {
+      flex: '1 1 100%',
+      maxWidth: '100%',
+    },
+  },
+
+  form: {
+    maxWidth: 500,
+    p: 3,
+    bgcolor: 'white',
+    borderRadius: 2,
+    boxShadow: 1,
+  },
+
+  formTitle: {
     mb: 4,
     fontWeight: 700,
     color: 'primary.main',
