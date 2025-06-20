@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Box, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, CircularProgress, Tooltip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -177,7 +177,11 @@ const PortfolioPageContent: React.FC = () => {
       </Typography>
 
       <Box sx={portfolioPageContentStyles.totalBalanceRow}>
-        {isAnyError ? (
+        {fetchedCoinsDataResult.isLoading ||
+        fetchedUserBalancesResult.isLoading ||
+        fetchedEurToUsdResult.isLoading ? (
+          <CircularProgress />
+        ) : isAnyError ? (
           <Alert severity="error" sx={{ fontWeight: 700 }}>
             {t('errors:common.genericErrorTitle')}
           </Alert>
