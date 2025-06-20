@@ -43,9 +43,9 @@ const App: FC = () => {
             </PrivateRoute>
           }
         >
+          <Route path={ROUTES.HOME_PRIVATE} element={<HomePage />} />
           <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
           <Route path={ROUTES.TRADE} element={<TradePage />} />
-          <Route path={ROUTES.CRYPTOCURRENCIES_PRIVATE} element={<CryptocurrenciesPage />} />
           <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
         </Route>
 

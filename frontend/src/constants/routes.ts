@@ -1,8 +1,8 @@
 // Central file for all route paths in the application
 export const ROUTES = {
   HOME: '/',
+  HOME_PRIVATE: '/home-private',
   CRYPTOCURRENCIES: '/cryptocurrencies',
-  CRYPTOCURRENCIES_PRIVATE: '/cryptocurrencies-private',
   LOGIN: '/login',
   SIGNUP: '/signup',
   PORTFOLIO: '/portfolio',

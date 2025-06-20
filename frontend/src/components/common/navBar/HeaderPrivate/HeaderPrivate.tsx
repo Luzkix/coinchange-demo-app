@@ -29,7 +29,7 @@ const HeaderPublic: React.FC = () => {
   return (
     <AppBar sx={headerStyles.appBar}>
       <Toolbar sx={headerStyles.toolbar}>
-        <LogoLink to={ROUTES.PORTFOLIO} />
+        <LogoLink to={ROUTES.HOME_PRIVATE} />
 
         {/* Desktop navigace */}
         {!isMobile && (
@@ -40,11 +40,6 @@ const HeaderPublic: React.FC = () => {
               active={isActive(ROUTES.PORTFOLIO)}
             />
             <NavTab label={t('header.trade')} to={ROUTES.TRADE} active={isActive(ROUTES.TRADE)} />
-            <NavTab
-              label={t('header.cryptocurrencies')}
-              to={ROUTES.CRYPTOCURRENCIES_PRIVATE}
-              active={isActive(ROUTES.CRYPTOCURRENCIES_PRIVATE)}
-            />
             <LanguageSwitcher
               currentLanguage={i18n.language}
               handleLanguageChange={handleLanguageChange}
@@ -77,11 +72,6 @@ const HeaderPublic: React.FC = () => {
                   label={t('header.trade')}
                   to={ROUTES.TRADE}
                   active={isActive(ROUTES.TRADE)}
-                />
-                <NavTab
-                  label={t('header.cryptocurrencies')}
-                  to={ROUTES.CRYPTOCURRENCIES_PRIVATE}
-                  active={isActive(ROUTES.CRYPTOCURRENCIES_PRIVATE)}
                 />
                 <LanguageSwitcher
                   currentLanguage={i18n.language}
