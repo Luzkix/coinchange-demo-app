@@ -9,10 +9,11 @@ import { BalanceTypeEnum } from './customEnums.ts';
 import { BalanceService } from '../services/BalanceService.ts';
 import { CurrencyResponseDto } from '../api-generated/backend';
 import { CurrencyService } from '../services/CurrencyService.ts';
+import { TransactionService } from '../services/TransactionService.ts';
 
 //!!!NOTE! Default behavior for all useQuery is defined in main.tsx
 
-export const creteFetchCoinsDataOptions = (
+export const createFetchCoinsDataOptions = (
   supportedFiatCurrencies: CurrencyResponseDto[],
   supportedCryptoCurrencies: CurrencyResponseDto[],
   fetchCoinsDataOptions?: FetchCoinsDataOptions,
@@ -70,4 +71,18 @@ export const createFetchMarketConversionRateOptions = (
   queryOptions({
     queryKey: ['fetchMarketConversionRate', soldCurrencyCode, boughtCurrencyCode],
     queryFn: () => CurrencyService.fetchMarketConversionRate(soldCurrencyCode, boughtCurrencyCode),
+  });
+
+export const createFetchAllTransactionsByUserOptions = () =>
+  queryOptions({
+    queryKey: ['fetchAllTransactionsByUser'],
+    queryFn: () => TransactionService.fetchAllTransactionsByUser(),
+    gcTime: 0, //dont use cached data
+  });
+
+export const createFetchAllPendingTransactionsByUserOptions = () =>
+  queryOptions({
+    queryKey: ['fetchAllPendingTransactionsByUser'],
+    queryFn: () => TransactionService.fetchAllPendingTransactionsByUser(),
+    gcTime: 0, //dont use cached data
   });

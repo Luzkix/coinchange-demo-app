@@ -1,0 +1,24 @@
+{
+  "columns": {
+    "transactionId": "ID",
+    "userId": "User ID",
+    "soldCurrencyCode": "Currency - Sold",
+    "boughtCurrencyCode": "Currency - Bought",
+    "amountSold": "Amount Selling",
+    "amountBought": "Amount Buying",
+    "conversionRateAfterFeesDeduction": "Conversion Rate",
+    "transactionFeeInBoughtCurrency": "Fee",
+    "feeCategory": "Fee Category",
+    "feeRate": "Fee (%)",
+    "transactionType": "Transaction Type",
+    "createdAt": "Transaction Time",
+    "processedAt": "Processed At",
+    "cancelledAt": "Cancelled At",
+    "externalReference": "Reference",
+    "note": "Note"
+  },
+
+  "common": {
+    "cancelTransaction": "Cancel"
+  }
+}

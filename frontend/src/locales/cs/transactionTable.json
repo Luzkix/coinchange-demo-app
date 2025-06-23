@@ -1,0 +1,24 @@
+{
+  "columns": {
+    "transactionId": "Id",
+    "userId": "Id uživatele",
+    "soldCurrencyCode": "Měna - prodej",
+    "boughtCurrencyCode": "Měna - nákup",
+    "amountSold": "Prodávané množství",
+    "amountBought": "Kupované množství",
+    "conversionRateAfterFeesDeduction": "Konverzní poměr",
+    "transactionFeeInBoughtCurrency": "Poplatek",
+    "feeCategory": "Poplatková kategorie",
+    "feeRate": "Poplatek (%)",
+    "transactionType": "Typ transakce",
+    "createdAt": "Čas transakce",
+    "processedAt": "Vypořádáno",
+    "cancelledAt": "Zrušeno",
+    "externalReference": "Reference",
+    "note": "Poznámka"
+  },
+
+  "common": {
+    "cancelTransaction": "Storno"
+  }
+}

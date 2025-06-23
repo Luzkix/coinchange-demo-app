@@ -15,7 +15,7 @@ import {
   DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED,
 } from '../../../constants/configVariables.ts';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
+import { createFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 import CoinCard from '../../../components/common/CoinCard/CoinCard.tsx';
 
 const CryptocurrenciesTopCoinsContent: React.FC = () => {
@@ -24,7 +24,7 @@ const CryptocurrenciesTopCoinsContent: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+    createFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
   );
   const coinsData = fetchedCoinsDataResult.data;
 

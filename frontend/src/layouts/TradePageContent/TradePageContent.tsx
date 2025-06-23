@@ -1,5 +1,5 @@
 // src/layouts/TradePageContent/TradePageContent.tsx
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Box, CircularProgress, FormControlLabel, Switch, Theme, Typography } from '@mui/material';
 import { tradePageContentStyles } from './styles';
 import TradingForm from './TradingForm/TradingForm.tsx';
@@ -12,6 +12,12 @@ import {
 } from '../../constants/customConstants.ts';
 import ContentBoxLarge from '../../components/ui/ContentBoxLarge/ContentBoxLarge.tsx';
 import CryptocurrenciesTableContent from '../CryptocurrenciesPageContent/CryptocurrenciesTableContent/CryptocurrenciesTableContent.tsx';
+import { TransactionResponseDto } from '../../api-generated/backend';
+import { useQuery } from '@tanstack/react-query';
+import { createFetchAllPendingTransactionsByUserOptions } from '../../constants/customQueryOptions.ts';
+import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../constants/configVariables.ts';
+import { useCancelPendingTransaction } from '../../hooks/useCancelPendingTransaction.ts';
+import TransactionTable from '../../components/common/TransactionTable/TransactionTable.tsx';
 
 const TradePageContent: React.FC = () => {
   const { t } = useTranslation(['tradePage']);
@@ -21,6 +27,32 @@ const TradePageContent: React.FC = () => {
   const [searchParams] = useSearchParams();
   const soldCurrencyCode = searchParams.get(SEARCHPARAM_SOLD_CURRENCY);
   const boughtCurrencyCode = searchParams.get(SEARCHPARAM_BOUGHT_CURRENCY);
+
+  const fetchedPendingTransactionsResult = useQuery({
+    ...createFetchAllPendingTransactionsByUserOptions(),
+    refetchInterval: (query) => {
+      if (query.state.status === 'error') {
+        return DEFAULT_ERROR_REFETCH_INTERVAL;
+      }
+      return false;
+    },
+  });
+
+  const { mutate: cancelPendingTransaction, isPending: isCancelTransactionPending } =
+    useCancelPendingTransaction();
+
+  const [pendingTransactions, setPendingTransactions] = useState<TransactionResponseDto[]>([]);
+
+  useEffect(() => {
+    if (fetchedPendingTransactionsResult.data && fetchedPendingTransactionsResult.data.length > 0) {
+      setPendingTransactions(fetchedPendingTransactionsResult.data);
+    }
+  }, [fetchedPendingTransactionsResult.data]);
+
+  const handleCancelTransaction = (transactionId: number) => {
+    cancelPendingTransaction(transactionId);
+    setPendingTransactions([]);
+  };
 
   return (
     <ContentBoxLarge>
@@ -72,6 +104,16 @@ const TradePageContent: React.FC = () => {
           </Suspense>
         </Box>
       </Box>
+
+      {fetchedPendingTransactionsResult.isLoading || isCancelTransactionPending ? (
+        <CircularProgress />
+      ) : (
+        <TransactionTable
+          data={pendingTransactions}
+          pendingOnly={true}
+          handleCancelTransaction={handleCancelTransaction}
+        />
+      )}
     </ContentBoxLarge>
   );
 };

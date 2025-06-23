@@ -6,7 +6,7 @@ import { Languages } from '../../../constants/customConstants';
 import { CoinsFilterTypeEnum } from '../../../constants/customEnums.ts';
 import { convertCoinsDataIntoCoinsTableRowData } from '../../../services/utils/coinsUtils.ts';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { creteFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
+import { createFetchCoinsDataOptions } from '../../../constants/customQueryOptions.ts';
 import CoinsTable, {
   CoinsTableRowData,
 } from '../../../components/common/CoinsTable/CoinsTable.tsx';
@@ -18,7 +18,7 @@ const CryptocurrenciesTableContent: React.FC = () => {
   const { supportedFiatCurrencies, supportedCryptoCurrencies } = useGeneralContext();
 
   const fetchedCoinsDataResult = useSuspenseQuery(
-    creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+    createFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
   );
   const coinsData = fetchedCoinsDataResult.data;
 

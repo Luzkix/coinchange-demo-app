@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
   createFetchBalancesOptions,
+  createFetchCoinsDataOptions,
   createFetchMarketConversionRateOptions,
-  creteFetchCoinsDataOptions,
 } from '../../constants/customQueryOptions';
 import CoinsTable, { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable';
 import { portfolioPageContentStyles } from './styles';
@@ -31,7 +31,7 @@ const PortfolioPageContent: React.FC = () => {
   const processName = PortfolioPageContent.name;
 
   const fetchedCoinsDataResult = useQuery({
-    ...creteFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
+    ...createFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
     refetchInterval: (query) => {
       if (query.state.status === 'error') {
         return DEFAULT_ERROR_REFETCH_INTERVAL;

@@ -10,7 +10,7 @@ import {
   SEARCHPARAM_BOUGHT_CURRENCY,
   SEARCHPARAM_SOLD_CURRENCY,
 } from '../../../constants/customConstants';
-import { DEFAUL_PAGE_SIZE_OPTIONS } from '../../../constants/configVariables.ts';
+import { DefaultPageSizeOptionsEnum } from '../../../constants/configVariables.ts';
 import { Link } from 'react-router-dom';
 import CoinHeader from '../CoinHeader/CoinHeader.tsx';
 import cssStyles from './CoinsTable.module.css';
@@ -37,7 +37,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
   const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
 
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: DEFAUL_PAGE_SIZE_OPTIONS[0],
+    pageSize: DefaultPageSizeOptionsEnum._10,
     page: 0,
   });
 
@@ -178,7 +178,15 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           )}
         </Box>
       ),
-      sortable: false,
+      sortable: true,
+      // Chci řadit podle jiného sloupce -> klíčové je použít 3. a 4. argument (cellParams1, cellParams2)
+      sortComparator: (_v1, _v2, cellParams1, cellParams2) => {
+        const row1 = cellParams1.api.getRow(cellParams1.id);
+        const row2 = cellParams2.api.getRow(cellParams2.id);
+        const a = row1?.isTradeable ? 1 : 0;
+        const b = row2?.isTradeable ? 1 : 0;
+        return b - a; // true bude nahoře
+      },
       filterable: false,
       align: 'center',
       headerAlign: 'center',
@@ -190,9 +198,12 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
       <DataGrid
         rows={data}
         columns={columns}
+        getRowId={(row) => row.id}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={DEFAUL_PAGE_SIZE_OPTIONS}
+        pageSizeOptions={Object.values(DefaultPageSizeOptionsEnum).filter(
+          (value) => typeof value === 'number',
+        )}
         disableRowSelectionOnClick
         disableColumnMenu
         sx={{

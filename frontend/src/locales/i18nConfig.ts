@@ -10,6 +10,7 @@ import enSignInSignUpPage from './en/signInSignUpPage.json';
 import enProfilePage from './en/profilePage.json';
 import enPortfolioPage from './en/portfolioPage.json';
 import enTradePage from './en/tradePage.json';
+import enTransactionTable from './en/transactionTable.json';
 import csCommon from './cs/common.json';
 import csCryptocurrenciesPage from './cs/cryptocurrenciesPage.json';
 import csHomePage from './cs/homePage.json';
@@ -19,6 +20,7 @@ import csSignInSignUpPage from './cs/signInSignUpPage.json';
 import csProfilePage from './cs/profilePage.json';
 import csPortfolioPage from './cs/portfolioPage.json';
 import csTradePage from './cs/tradePage.json';
+import csTransactionTable from './cs/transactionTable.json';
 
 // Function to change language and its saving to localStorage so the users choice is remembered
 export const changeAndSaveLanguage = (newLanguage: string) => {
@@ -38,6 +40,7 @@ i18nConfig.use(initReactI18next).init({
       profilePage: enProfilePage,
       portfolioPage: enPortfolioPage,
       tradePage: enTradePage,
+      transactionTable: enTransactionTable,
     },
     CS: {
       common: csCommon,
@@ -49,6 +52,7 @@ i18nConfig.use(initReactI18next).init({
       profilePage: csProfilePage,
       portfolioPage: csPortfolioPage,
       tradePage: csTradePage,
+      transactionTable: csTransactionTable,
     },
   },
   lng: localStorage.getItem('coinChangeSelectedLanguage') || 'EN', // using of last saved language or 'EN'
@@ -63,6 +67,7 @@ i18nConfig.use(initReactI18next).init({
     'profilePage',
     'portfolioPage',
     'tradePage',
+    'transactionTable',
   ],
   defaultNS: 'common',
   interpolation: {
