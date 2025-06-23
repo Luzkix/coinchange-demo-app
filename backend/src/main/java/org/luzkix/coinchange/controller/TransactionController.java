@@ -31,7 +31,7 @@ public class TransactionController extends GenericController implements Transact
     }
 
     @Override
-    public ResponseEntity<List<TransactionResponseDto>> getAllPendingTransactions() {
+    public ResponseEntity<List<TransactionResponseDto>> getAllPendingTransactionsByUser() {
         User user = getUserFromAuthentication();
 
         List<Transaction> pendingTransactions = transactionService.findByUserAndPending(user);
@@ -41,7 +41,7 @@ public class TransactionController extends GenericController implements Transact
     }
 
     @Override
-    public ResponseEntity<List<TransactionResponseDto>> getAllTransactions() {
+    public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsByUser() {
         User user = getUserFromAuthentication();
 
         List<Transaction> pendingTransactions = transactionService.findByUser(user);

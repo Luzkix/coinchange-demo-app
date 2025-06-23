@@ -640,7 +640,7 @@ paths:
       tags:
         - ApiTransaction
       summary: Get all transactions for the user
-      operationId: getAllTransactions
+      operationId: getAllTransactionsByUser
       description: |
         Returns all recorded transactions for the user
       security:
@@ -665,7 +665,7 @@ paths:
       tags:
         - ApiTransaction
       summary: Get all transactions for the user in pending state
-      operationId: getAllPendingTransactions
+      operationId: getAllPendingTransactionsByUser
       description: |
         Returns all pending transactions for the user
       security:
