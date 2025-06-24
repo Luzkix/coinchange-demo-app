@@ -19,6 +19,8 @@
   },
 
   "common": {
+    "headerPending": "Nezpracované obchody",
+    "headerAll": "Všechny transakce",
     "cancelTransaction": "Storno"
   }
 }

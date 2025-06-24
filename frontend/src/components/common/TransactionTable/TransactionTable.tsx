@@ -33,13 +33,13 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
             field: 'transactionId',
             headerName: t('transactionTable:columns.transactionId'),
             flex: 1,
-            minWidth: 50,
+            minWidth: 52,
             type: 'number',
             align: 'left',
             headerAlign: 'left',
             sortable: true,
             filterable: true,
-            sortComparator: (a, b) => a.localeCompare(b),
+            sortComparator: (a: number, b: number) => a - b, //sortComparator pro razeni cisel
           },
         ] as GridColDef[])
       : []),
@@ -80,7 +80,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
       headerAlign: 'left',
       sortable: true,
       filterable: true,
-      sortComparator: (a, b) => a.localeCompare(b),
+      sortComparator: (a: number, b: number) => a - b,
     },
 
     {
@@ -93,20 +93,20 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
       headerAlign: 'left',
       sortable: true,
       filterable: true,
-      sortComparator: (a, b) => a.localeCompare(b),
+      sortComparator: (a: number, b: number) => a - b,
     },
 
     {
       field: 'conversionRateAfterFeesDeduction',
       headerName: t('transactionTable:columns.conversionRateAfterFeesDeduction'),
       flex: 1,
-      minWidth: 130,
+      minWidth: 160,
       type: 'number',
       align: 'left',
       headerAlign: 'left',
       sortable: true,
       filterable: true,
-      sortComparator: (a, b) => a.localeCompare(b),
+      sortComparator: (a: number, b: number) => a - b,
       renderCell: (params) => {
         const rate = params.row.conversionRateAfterFeesDeduction;
         const soldCurrency = params.row.soldCurrencyCode;
@@ -120,13 +120,13 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
       field: 'transactionFeeInBoughtCurrency',
       headerName: t('transactionTable:columns.transactionFeeInBoughtCurrency'),
       flex: 1,
-      minWidth: 100,
+      minWidth: 120,
       type: 'number',
       align: 'left',
       headerAlign: 'left',
       sortable: true,
       filterable: true,
-      sortComparator: (a, b) => a.localeCompare(b),
+      sortComparator: (a: number, b: number) => a - b,
       renderCell: (params) => {
         const fee = params.row.transactionFeeInBoughtCurrency;
         const currency = params.row.boughtCurrencyCode;
@@ -163,7 +163,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
       headerAlign: 'left',
       sortable: true,
       filterable: true,
-      sortComparator: (a, b) => a.localeCompare(b),
+      sortComparator: (a: number, b: number) => a - b,
       valueFormatter: (value) => {
         return `${(value * 100).toFixed(1)}%`;
       },
@@ -191,7 +191,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
       field: 'createdAt',
       headerName: t('transactionTable:columns.createdAt'),
       flex: 1,
-      minWidth: 140,
+      minWidth: 160,
       type: 'string',
       align: 'left',
       headerAlign: 'left',
@@ -210,7 +210,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
             field: 'processedAt',
             headerName: t('transactionTable:columns.processedAt'),
             flex: 1,
-            minWidth: 140,
+            minWidth: 160,
             type: 'string',
             align: 'left',
             headerAlign: 'left',
@@ -218,7 +218,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
             filterable: true,
             sortComparator: (a, b) => a.localeCompare(b),
             valueFormatter: (value: string | undefined) => {
-              return !!value ? value : 'null';
+              return !!value ? convertOffsetDateTimeToFormatedString(value) : '';
             },
           },
         ] as GridColDef[])
@@ -231,7 +231,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
             field: 'cancelledAt',
             headerName: t('transactionTable:columns.cancelledAt'),
             flex: 1,
-            minWidth: 140,
+            minWidth: 160,
             type: 'string',
             align: 'left',
             headerAlign: 'left',
@@ -239,7 +239,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
             filterable: true,
             sortComparator: (a, b) => a.localeCompare(b),
             valueFormatter: (value: string | undefined) => {
-              return !!value ? value : 'null';
+              return !!value ? convertOffsetDateTimeToFormatedString(value) : '';
             },
           },
         ] as GridColDef[])
@@ -295,7 +295,9 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
     <Box sx={transactionTableStyles.gridContainer}>
       <DataGrid
         rows={data}
+        rowHeight={30}
         columns={columns}
+        columnHeaderHeight={36}
         getRowId={(row) => row.transactionId}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
@@ -304,6 +306,7 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
         )}
         disableRowSelectionOnClick
         disableColumnMenu
+        showToolbar={!pendingOnly}
         sx={{
           ...transactionTableStyles.dataGrid,
           height: 'auto',
@@ -311,6 +314,23 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
         localeText={{
           paginationRowsPerPage: t('table.rowsPerPage'),
         }}
+        initialState={
+          pendingOnly
+            ? {
+                sorting: {
+                  sortModel: [
+                    { field: 'createdAt', sort: 'desc' }, // výchozí řazení podle transactionId sestupně
+                  ],
+                },
+              }
+            : {
+                sorting: {
+                  sortModel: [
+                    { field: 'transactionId', sort: 'desc' }, // výchozí řazení podle transactionId sestupně
+                  ],
+                },
+              }
+        }
       />
     </Box>
   );

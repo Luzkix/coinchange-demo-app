@@ -13,6 +13,18 @@ export const tradePageContentStyles: Record<string, SxProps<Theme>> = {
       alignItems: 'center', // volitelné: aby se v mobilním zobrazení roztáhly na šířku
     },
   },
+
+  pendingTransactionsContainer: {
+    display: 'block',
+    gap: 2,
+    p: 3,
+    mt: 2,
+    alignItems: 'center', // vertikální zarovnání na střed
+    justifyContent: 'center', // vodorovné zarovnání na střed
+    borderRadius: 2,
+    boxShadow: 1,
+  },
+
   mainColumn: {
     flex: '0 1 65%',
     maxWidth: '65%',

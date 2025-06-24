@@ -11,6 +11,11 @@ export const DEFAULT_ALL_COINS_REFRESH_INTERVAL = 1800000; //30 mins (coinbase f
 export const DEFAULT_ERROR_REFETCH_INTERVAL = 20000; //20 sec
 
 /**
+ * Interval for automatic re-fetching of table with pending transactions
+ */
+export const DEFAULT_PENDING_TRANSACTIONS_REFETCH_INTERVAL = 30000; //30 sec
+
+/**
  * Maximum number of coins for fetching coins details from coinbase api
  */
 export const DEFAULT_LOADED_COINS_LIMIT = 1000;

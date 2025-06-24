@@ -4,7 +4,7 @@ export const transactionTableStyles: Record<string, SxProps<Theme>> = {
   gridContainer: {
     width: '100%',
     height: 'auto',
-    minHeight: 400,
+    mt: 2,
   },
   dataGrid: {
     border: 'none',
@@ -21,6 +21,7 @@ export const transactionTableStyles: Record<string, SxProps<Theme>> = {
       alignItems: 'center', // vertikální centrování obsahu buňky
       paddingTop: 0,
       paddingBottom: 0,
+      fontFamily: 'monospace',
     },
     '& .MuiDataGrid-row': {
       verticalAlign: 'middle', // vertikální zarovnání řádku
@@ -33,6 +34,21 @@ export const transactionTableStyles: Record<string, SxProps<Theme>> = {
     },
     '& .MuiDataGrid-row:hover': {
       backgroundColor: 'action.hover',
+    },
+    '& .MuiDataGrid-columnHeader': {
+      // zmenšení prostoru mezi nadpisem a řadící šipkou
+      m: 0,
+      pr: 0,
+    },
+    '& .MuiDataGrid-columnHeaderTitle': {
+      fontWeight: 'bold !important',
+    },
+    '& .MuiDataGrid-sortIcon': {
+      fontSize: 16, // velikost šipky
+    },
+    '& .MuiDataGrid-toolbar': {
+      my: -1,
+      py: 0,
     },
   },
   toggleGroup: {
@@ -56,12 +72,12 @@ export const transactionTableStyles: Record<string, SxProps<Theme>> = {
     width: '100%',
   },
   tradeButton: {
-    ml: 1,
-    backgroundColor: 'primary.main',
+    ml: 0,
+    backgroundColor: 'lightcoral',
     color: 'primary.contrastText',
     fontSize: '0.75rem',
     px: 2,
-    py: 0.5,
+    py: 0,
     borderRadius: 1,
     '&:hover': {
       backgroundColor: 'primary.dark',

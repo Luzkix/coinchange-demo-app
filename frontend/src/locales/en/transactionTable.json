@@ -19,6 +19,8 @@
   },
 
   "common": {
+    "headerPending": "Pending Trades",
+    "headerAll": "All Transactions",
     "cancelTransaction": "Cancel"
   }
 }

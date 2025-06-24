@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { tradingFormStyles } from './styles';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import AmountInput from './AmountInput/AmountInput';
@@ -38,6 +38,7 @@ const TradingForm: React.FC<TradingFormProps> = ({
   initialBoughtCurrencyCode,
 }) => {
   const { t } = useTranslation(['tradePage', 'errors']);
+  const queryClient = useQueryClient(); //using for invalidating (thus re-fetching) selected queries
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
   const processApiError = useProcessApiError();
   const processName = TradingForm.name;
@@ -262,6 +263,11 @@ const TradingForm: React.FC<TradingFormProps> = ({
             setTimeout(() => setShowSuccess(false), 5000);
             refetchMarketConversionRate();
 
+            // Invalidate pendingTransactions query to trigger refetch e.g. in TransactionTable
+            queryClient.invalidateQueries({
+              queryKey: ['fetchAllPendingTransactionsByUser'],
+            });
+
             if (result?.currenciesBalances) {
               setAvailableBalances(result.currenciesBalances);
             } else refetchBalancesData();
@@ -392,14 +398,14 @@ const TradingForm: React.FC<TradingFormProps> = ({
           !!marketConversionRateError ||
           !!balancesError ||
           isSoldAmountError ||
-          isConvertingSimple ||
-          isConvertingAdvanced ||
           !soldAmount ||
+          !soldCurrency ||
+          !boughtCurrency ||
           (!isSimpleTrading && (!userRate || isUserRateError))
         }
         fullWidth
       >
-        {isConvertingSimple ? (
+        {isConvertingSimple || isConvertingAdvanced ? (
           <CircularProgress size={24} />
         ) : (
           t('tradePage:form.exchange', { currency: boughtCurrency })
