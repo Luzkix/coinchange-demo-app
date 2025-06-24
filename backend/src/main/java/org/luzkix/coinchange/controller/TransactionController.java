@@ -67,6 +67,10 @@ public class TransactionController extends GenericController implements Transact
                         .feeRate(tr.getFeeCategory().getFeeRate())
                         .transactionType(tr.getTransactionTypeEnum().name())
                         .createdAt(DateUtils.convertToSystemOffsetDateTime(tr.getCreatedAt()))
+                        .processedAt(DateUtils.convertToSystemOffsetDateTime(tr.getProcessedAt()))
+                        .cancelledAt(DateUtils.convertToSystemOffsetDateTime(tr.getCancelledAt()))
+                        .externalReference(tr.getExternalReference())
+                        .note(tr.getNote())
                 )
                 .toList();
     }
