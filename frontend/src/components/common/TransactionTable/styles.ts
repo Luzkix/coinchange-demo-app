@@ -50,6 +50,17 @@ export const transactionTableStyles: Record<string, SxProps<Theme>> = {
       my: -1,
       py: 0,
     },
+    '& .transaction-row-pending': {
+      color: 'lightcoral',
+    },
+    '& .transaction-row-cancelled': {
+      color: 'lightgray',
+      fontStyle: 'italic',
+      textDecoration: 'line-through 0px',
+    },
+    '& .transaction-row-processed': {
+      color: 'green',
+    },
   },
   toggleGroup: {
     mb: 2,

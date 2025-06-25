@@ -13,10 +13,7 @@ import {
 import ContentBoxLarge from '../../components/ui/ContentBoxLarge/ContentBoxLarge.tsx';
 import CryptocurrenciesTableContent from '../CryptocurrenciesPageContent/CryptocurrenciesTableContent/CryptocurrenciesTableContent.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  createFetchAllPendingTransactionsByUserOptions,
-  createFetchAllTransactionsByUserOptions,
-} from '../../constants/customQueryOptions.ts';
+import { createFetchAllPendingTransactionsByUserOptions } from '../../constants/customQueryOptions.ts';
 import {
   DEFAULT_ERROR_REFETCH_INTERVAL,
   DEFAULT_PENDING_TRANSACTIONS_REFETCH_INTERVAL,
@@ -43,15 +40,6 @@ const TradePageContent: React.FC = () => {
         return DEFAULT_ERROR_REFETCH_INTERVAL;
       }
       return DEFAULT_PENDING_TRANSACTIONS_REFETCH_INTERVAL;
-    },
-  });
-
-  const fetchedAllTransactionsResult = useQuery({
-    ...createFetchAllTransactionsByUserOptions(),
-    refetchInterval: (query) => {
-      if (query.state.status === 'error') {
-        return DEFAULT_ERROR_REFETCH_INTERVAL;
-      }
     },
   });
 
@@ -143,30 +131,12 @@ const TradePageContent: React.FC = () => {
       ) : fetchedPendingTransactionsResult.data &&
         fetchedPendingTransactionsResult.data.length > 0 ? (
         <Box sx={tradePageContentStyles.pendingTransactionsContainer}>
-          <Typography variant="h5" sx={{ ...cryptocurrenciesTableContentStyles.title, mb: 4 }}>
+          <Typography variant="h5" sx={cryptocurrenciesTableContentStyles.title}>
             {t('transactionTable:common.headerPending')}
           </Typography>
           <TransactionTable
             data={fetchedPendingTransactionsResult.data}
             pendingOnly={true}
-            handleCancelTransaction={handleCancelTransaction}
-          />
-        </Box>
-      ) : null}
-
-      {/*All Transactions Table*/}
-      {fetchedAllTransactionsResult.data?.length == 0 && fetchedAllTransactionsResult.isLoading ? (
-        <Box sx={tradePageContentStyles.pendingTransactionsContainer}>
-          <CircularProgress />
-        </Box>
-      ) : fetchedAllTransactionsResult.data && fetchedAllTransactionsResult.data.length > 0 ? (
-        <Box sx={tradePageContentStyles.pendingTransactionsContainer}>
-          <Typography variant="h5" sx={{ ...cryptocurrenciesTableContentStyles.title, mb: -2 }}>
-            {t('transactionTable:common.headerAll')}
-          </Typography>
-          <TransactionTable
-            data={fetchedAllTransactionsResult.data}
-            pendingOnly={false}
             handleCancelTransaction={handleCancelTransaction}
           />
         </Box>

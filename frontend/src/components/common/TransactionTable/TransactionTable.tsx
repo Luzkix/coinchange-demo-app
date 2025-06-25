@@ -284,7 +284,15 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
           )}
         </Box>
       ),
-      sortable: false,
+      sortable: true,
+      // Chci řadit podle jiného sloupce -> klíčové je použít 3. a 4. argument (cellParams1, cellParams2)
+      sortComparator: (_v1, _v2, cellParams1, cellParams2) => {
+        const row1 = cellParams1.api.getRow(cellParams1.id);
+        const row2 = cellParams2.api.getRow(cellParams2.id);
+        const a = row1?.processedAt == null && row1?.cancelledAt == null ? 1 : 0;
+        const b = row2?.processedAt == null && row2?.cancelledAt == null ? 1 : 0;
+        return b - a; // true bude nahoře
+      },
       filterable: false,
       align: 'center',
       headerAlign: 'center',
@@ -331,6 +339,13 @@ const TransactionTable: React.FC<TransactionTableGridProps> = ({
                 },
               }
         }
+        getRowClassName={(params) => {
+          if (params.row.processedAt == null && params.row.cancelledAt == null)
+            return 'transaction-row-pending';
+          if (params.row.processedAt != null) return 'transaction-row-processed';
+          if (params.row.cancelledAt != null) return 'transaction-row-cancelled';
+          return '';
+        }}
       />
     </Box>
   );

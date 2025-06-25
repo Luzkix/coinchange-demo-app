@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import { useAuth } from '../../contexts/AuthContext';
-import { profilePageStyles } from './styles';
+import { useAuth } from '../../../contexts/AuthContext.tsx';
+import { profilePageStyles } from './styles.ts';
 import { useTranslation } from 'react-i18next';
 
-import { UserUpdateRequestDto } from '../../api-generated/backend';
-import CustomTextField from '../../components/common/CustomTextField/CustomTextField.tsx';
-import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
+import { UserUpdateRequestDto } from '../../../api-generated/backend';
+import CustomTextField from '../../../components/common/CustomTextField/CustomTextField.tsx';
+import ModalLoaderBlocking from '../../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
 
 interface ProfilePageContentFormProps {
   onSubmit: (data: UserUpdateRequestDto) => void;
@@ -77,9 +77,6 @@ const ProfilePageContentForm: React.FC<ProfilePageContentFormProps> = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={profilePageStyles.container}>
-      <Typography variant="h5" gutterBottom>
-        {t('profilePage.title')}
-      </Typography>
       <CustomTextField
         label={t('signInSignUpPage:signUp.username')}
         name="username"

@@ -13,14 +13,14 @@
     "transactionType": "Typ transakce",
     "createdAt": "Čas transakce",
     "processedAt": "Vypořádáno",
-    "cancelledAt": "Zrušeno",
+    "cancelledAt": "Stornováno",
     "externalReference": "Reference",
     "note": "Poznámka"
   },
 
   "common": {
-    "headerPending": "Nezpracované obchody",
-    "headerAll": "Všechny transakce",
+    "headerPending": "Zadané pokyny",
+    "headerAll": "Historie pokynů",
     "cancelTransaction": "Storno"
   }
 }
