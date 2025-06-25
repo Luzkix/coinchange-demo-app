@@ -55,8 +55,8 @@ i18nConfig.use(initReactI18next).init({
       transactionTable: csTransactionTable,
     },
   },
-  lng: localStorage.getItem('coinChangeSelectedLanguage') || 'EN', // using of last saved language or 'EN'
-  fallbackLng: 'EN', // backup
+  lng: localStorage.getItem('coinChangeSelectedLanguage') || 'CS', // using of last saved language or 'CS'
+  fallbackLng: 'CS', // backup
   ns: [
     'common',
     'footer',
