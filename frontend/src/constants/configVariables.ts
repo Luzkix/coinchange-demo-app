@@ -1,6 +1,14 @@
 import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './customEnums.ts';
 
 /**
+ * Currency code of initial bonus deposited to user account when created new account
+ */
+export const INITIAL_BONUS_CURRENCY = 'EUR';
+/**
+ * Amount of initial bonus deposited to user account when created new account
+ */
+export const INITIAL_BONUS_AMOUNT = 100000;
+/**
  * Default interval for fetching coins details from coinbase api
  */
 export const DEFAULT_ALL_COINS_REFRESH_INTERVAL = 1800000; //30 mins (coinbase free api refreshes data once per several hours so it is sufficient)

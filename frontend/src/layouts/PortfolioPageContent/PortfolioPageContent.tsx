@@ -20,7 +20,11 @@ import {
   CurrencyConversionRateResponseDto,
 } from '../../api-generated/backend';
 import { BalanceTypeEnum } from '../../constants/customEnums.ts';
-import { DEFAULT_ERROR_REFETCH_INTERVAL } from '../../constants/configVariables.ts';
+import {
+  DEFAULT_ERROR_REFETCH_INTERVAL,
+  INITIAL_BONUS_AMOUNT,
+  INITIAL_BONUS_CURRENCY,
+} from '../../constants/configVariables.ts';
 import { useProcessApiError } from '../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../services/utils/errorUtils.ts';
 
@@ -39,7 +43,7 @@ const PortfolioPageContent: React.FC = () => {
       return false;
     },
   });
-  const fetchedUserBalancesResult = useQuery({
+  const fetchedAvailableUserBalancesResult = useQuery({
     ...createFetchBalancesOptions(BalanceTypeEnum.AVAILABLE),
     refetchInterval: (query) =>
       query.state.status === 'error' ? DEFAULT_ERROR_REFETCH_INTERVAL : false,
@@ -51,7 +55,9 @@ const PortfolioPageContent: React.FC = () => {
   });
 
   const [coinsData, setCoinsData] = useState<CoinsMap>();
-  const [userBalancesData, setUserBalancesData] = useState<CurrencyBalanceResponseDto[]>([]);
+  const [userAvailableBalancesData, setUserAvailableBalancesData] = useState<
+    CurrencyBalanceResponseDto[]
+  >([]);
   const [eurToUsdRate, setEurToUsdRate] = useState<CurrencyConversionRateResponseDto>();
 
   useEffect(() => {
@@ -59,34 +65,43 @@ const PortfolioPageContent: React.FC = () => {
       setCoinsData(fetchedCoinsDataResult.data);
     }
     if (
-      fetchedUserBalancesResult.data &&
-      fetchedUserBalancesResult.data.currenciesBalances.length > 0
+      fetchedAvailableUserBalancesResult.data &&
+      fetchedAvailableUserBalancesResult.data.currenciesBalances.length > 0
     ) {
-      setUserBalancesData(fetchedUserBalancesResult.data.currenciesBalances);
+      setUserAvailableBalancesData(fetchedAvailableUserBalancesResult.data.currenciesBalances);
     }
     if (fetchedEurToUsdResult.data) {
       setEurToUsdRate(fetchedEurToUsdResult.data);
     }
-  }, [fetchedCoinsDataResult.data, fetchedUserBalancesResult.data, fetchedEurToUsdResult.data]);
+  }, [
+    fetchedCoinsDataResult.data,
+    fetchedAvailableUserBalancesResult.data,
+    fetchedEurToUsdResult.data,
+  ]);
 
   const [selectedCurrency, setSelectedCurrency] = useState(
     Languages[i18n.language]?.currency || supportedFiatCurrencies[0].code,
   );
   const [nonZeroBalances, setNonZeroBalances] = useState(true);
 
-  // Conversion of coinsData and userBalancesData into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
+  // Conversion of coinsData and userAvailableBalancesData into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
   const coinsTableRowData = useMemo(() => {
-    if (!coinsData || !coinsData.get(selectedCurrency) || !userBalancesData || !eurToUsdRate)
+    if (
+      !coinsData ||
+      !coinsData.get(selectedCurrency) ||
+      !userAvailableBalancesData ||
+      !eurToUsdRate
+    )
       return [] as CoinsTableRowData[];
 
     return convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData(
       coinsData,
-      userBalancesData,
+      userAvailableBalancesData,
       eurToUsdRate,
       selectedCurrency,
       supportedFiatCurrencies,
     );
-  }, [coinsData, userBalancesData, eurToUsdRate, selectedCurrency]);
+  }, [coinsData, userAvailableBalancesData, eurToUsdRate, selectedCurrency]);
 
   // calculate total available balance for particular currency before nonZeroBalances filtration
   const totalAvailableBalanceInSelectedCurrency = useMemo(
@@ -103,6 +118,52 @@ const PortfolioPageContent: React.FC = () => {
     [coinsTableRowData, nonZeroBalances],
   );
 
+  //CALCULATION OF PROFIT IN % BASED ON TOTAL BALANCE
+  const fetchedTotalUserBalancesResult = useQuery({
+    ...createFetchBalancesOptions(BalanceTypeEnum.TOTAL),
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? DEFAULT_ERROR_REFETCH_INTERVAL : false,
+  });
+  const [userTotalBalancesData, setUserTotalBalancesData] = useState<CurrencyBalanceResponseDto[]>(
+    [],
+  );
+
+  useEffect(() => {
+    if (
+      fetchedTotalUserBalancesResult.data &&
+      fetchedTotalUserBalancesResult.data.currenciesBalances.length > 0
+    ) {
+      setUserTotalBalancesData(fetchedTotalUserBalancesResult.data.currenciesBalances);
+    }
+  }, [fetchedTotalUserBalancesResult.data]);
+
+  // Conversion of coinsData and userTotalBalancesData into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
+  const coinsTableRowDataWithTotalBalances = useMemo(() => {
+    if (
+      !coinsData ||
+      !coinsData.get(INITIAL_BONUS_CURRENCY) ||
+      !userTotalBalancesData ||
+      !eurToUsdRate
+    )
+      return [] as CoinsTableRowData[];
+
+    return convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData(
+      coinsData,
+      userTotalBalancesData,
+      eurToUsdRate,
+      INITIAL_BONUS_CURRENCY,
+      supportedFiatCurrencies,
+    );
+  }, [coinsData, userTotalBalancesData, eurToUsdRate]);
+
+  // calculate total available balance for particular currency before nonZeroBalances filtration
+  const totalBalanceInEurCurrency = useMemo(
+    () => coinsTableRowDataWithTotalBalances.reduce((sum, item) => sum + item.price, 0),
+    [coinsTableRowDataWithTotalBalances],
+  );
+  // calculate profit in %
+  const profitInPercent = (totalBalanceInEurCurrency / INITIAL_BONUS_AMOUNT - 1) * 100;
+
   //ERRORS HANDLING
   const [isCoinsDataError, setIsCoinsDataError] = useState(false);
   const [isUserBalancesDataError, setIsUserBalancesDataError] = useState(false);
@@ -117,10 +178,13 @@ const PortfolioPageContent: React.FC = () => {
   }, [fetchedCoinsDataResult.isError]);
 
   useEffect(() => {
-    if (!fetchedUserBalancesResult.isLoading && fetchedUserBalancesResult.isError) {
-      setIsUserBalancesDataError(!!fetchedUserBalancesResult.error);
+    if (
+      !fetchedAvailableUserBalancesResult.isLoading &&
+      fetchedAvailableUserBalancesResult.isError
+    ) {
+      setIsUserBalancesDataError(!!fetchedAvailableUserBalancesResult.error);
     }
-  }, [fetchedUserBalancesResult.isError]);
+  }, [fetchedAvailableUserBalancesResult.isError]);
 
   useEffect(() => {
     if (!fetchedEurToUsdResult.isLoading && fetchedEurToUsdResult.isError) {
@@ -131,13 +195,13 @@ const PortfolioPageContent: React.FC = () => {
   useEffect(() => {
     const anyError =
       fetchedCoinsDataResult.isError ||
-      fetchedUserBalancesResult.isError ||
+      fetchedAvailableUserBalancesResult.isError ||
       fetchedEurToUsdResult.isError;
 
     setIsAnyError(anyError);
   }, [
     fetchedCoinsDataResult.isError,
-    fetchedUserBalancesResult.isError,
+    fetchedAvailableUserBalancesResult.isError,
     fetchedEurToUsdResult.isError,
   ]);
 
@@ -151,10 +215,10 @@ const PortfolioPageContent: React.FC = () => {
         //not ApiError
         addErrorPopup('errors:message.fetchCoinsDataError');
       }
-    } else if (isUserBalancesDataError && fetchedUserBalancesResult.error) {
-      setUserBalancesData([]);
-      if (isApiError(fetchedUserBalancesResult.error)) {
-        processApiError(fetchedUserBalancesResult.error, processName);
+    } else if (isUserBalancesDataError && fetchedAvailableUserBalancesResult.error) {
+      setUserAvailableBalancesData([]);
+      if (isApiError(fetchedAvailableUserBalancesResult.error)) {
+        processApiError(fetchedAvailableUserBalancesResult.error, processName);
       } else {
         //not ApiError
         addErrorPopup(t('errors:message.fetchBalancesError'));
@@ -178,7 +242,7 @@ const PortfolioPageContent: React.FC = () => {
 
       <Box sx={portfolioPageContentStyles.totalBalanceRow}>
         {fetchedCoinsDataResult.isLoading ||
-        fetchedUserBalancesResult.isLoading ||
+        fetchedAvailableUserBalancesResult.isLoading ||
         fetchedEurToUsdResult.isLoading ? (
           <CircularProgress />
         ) : isAnyError ? (
@@ -187,22 +251,45 @@ const PortfolioPageContent: React.FC = () => {
           </Alert>
         ) : (
           <>
-            <Typography sx={portfolioPageContentStyles.totalBalanceValue}>
-              {new Intl.NumberFormat(
-                Languages[i18n.language]?.languageCountryCode || Languages.EN.languageCountryCode,
-                {
-                  style: 'currency',
-                  currency: selectedCurrency,
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                },
-              ).format(totalAvailableBalanceInSelectedCurrency)}
-            </Typography>
-            <Tooltip title={t('portfolioPage.totalAvailableBalance')}>
-              <InfoOutlinedIcon
-                sx={{ ml: 0, fontSize: 20, color: 'text.secondary', cursor: 'pointer' }}
-              />
-            </Tooltip>
+            <Box sx={portfolioPageContentStyles.summaryContainer}>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <Typography sx={portfolioPageContentStyles.totalBalanceValue}>
+                  {new Intl.NumberFormat(
+                    Languages[i18n.language]?.languageCountryCode ||
+                      Languages.CS.languageCountryCode,
+                    {
+                      style: 'currency',
+                      currency: selectedCurrency,
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    },
+                  ).format(totalAvailableBalanceInSelectedCurrency)}
+                </Typography>
+                <Tooltip title={t('portfolioPage.totalAvailableBalance')}>
+                  <InfoOutlinedIcon
+                    sx={{ ml: 0, fontSize: 20, color: 'text.secondary', cursor: 'pointer' }}
+                  />
+                </Tooltip>
+              </Box>
+
+              {!!totalBalanceInEurCurrency && (
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <Typography
+                    sx={{
+                      ...portfolioPageContentStyles.totalBalanceValue,
+                      color: profitInPercent < 0 ? 'red' : '#27ae60',
+                    }}
+                  >
+                    {`${profitInPercent == 0 ? '' : profitInPercent > 0 ? '▲' : '▼'} ${profitInPercent.toFixed(2)}%`}
+                  </Typography>
+                  <Tooltip title={t('portfolioPage.profitInPercent')}>
+                    <InfoOutlinedIcon
+                      sx={{ ml: 0, fontSize: 20, color: 'text.secondary', cursor: 'pointer' }}
+                    />
+                  </Tooltip>
+                </Box>
+              )}
+            </Box>
           </>
         )}
       </Box>

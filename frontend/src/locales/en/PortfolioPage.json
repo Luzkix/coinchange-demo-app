@@ -2,6 +2,7 @@
   "portfolioPage": {
     "title": "Portfolio Overview",
     "totalAvailableBalance": "Total Available Balance",
+    "profitInPercent": "Total profit/loss in % for the entire period since the account was opened",
     "hideZeroBalances": "Hide zero balances"
   }
 }

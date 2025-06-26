@@ -8,6 +8,13 @@ export const portfolioPageContentStyles: Record<string, SxProps<Theme>> = {
     mt: 4,
     px: 2,
   },
+  summaryContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    flexWrap: 'wrap',
+  },
   title: {
     mb: 3,
     fontWeight: 700,

@@ -2,6 +2,7 @@
   "portfolioPage": {
     "title": "Přehled portfolia",
     "totalAvailableBalance": "Celkový použitelný zůstatek",
+    "profitInPercent": "Celkový zisk/ztráta v % za celou dobu od otevření účtu",
     "hideZeroBalances": "Skrýt měny bez zůstatku"
   }
 }
