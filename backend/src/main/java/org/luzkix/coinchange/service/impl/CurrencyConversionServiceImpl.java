@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.config.security.jwt.JwtProvider;
 import org.luzkix.coinchange.dto.ConversionRateTokenPayloadDto;
-import org.luzkix.coinchange.dto.CurrencyBalanceDto;
+import org.luzkix.coinchange.dto.projections.CurrencyBalanceDto;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
 import org.luzkix.coinchange.exceptions.InvalidInputDataException;
@@ -333,7 +333,7 @@ public class CurrencyConversionServiceImpl implements CurrencyConversionService 
         List<CurrencyBalanceDto> balances = balanceService.getCurrencyBalances(user, CustomConstants.BalanceTypeEnum.AVAILABLE);
         for (CurrencyBalanceDto balance : balances) {
             if (balance.getCurrency().getId().equals(soldCurrency.getId())) {
-                if (balance.getAvailableBalance().compareTo(soldCurrencyAmount) >= 0) {
+                if (balance.getBalance().compareTo(soldCurrencyAmount) >= 0) {
                     return true;
                 }
             }

@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.service;
 
+import org.luzkix.coinchange.dto.projections.CurrencyBalanceDto;
 import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
@@ -7,7 +8,6 @@ import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.Transaction.TransactionTypeEnum;
 import org.luzkix.coinchange.model.User;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,11 +47,11 @@ public interface TransactionService {
 
     List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(User user);
 
-    Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency);
+    List<CurrencyBalanceDto> getAvailableBalancesForAllUsedCurrenciesByUser(User user);
 
-    Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency);
-
-    Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency);
+    List<CurrencyBalanceDto> getTotalBalancesForAllUsedCurrenciesByUser(User user);
 
     Transaction cancelPendingTransaction(Long id);
+
+
 }

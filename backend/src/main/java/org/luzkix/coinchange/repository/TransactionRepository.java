@@ -1,5 +1,6 @@
 package org.luzkix.coinchange.repository;
 
+import org.luzkix.coinchange.dto.projections.CurrencyBalanceDto;
 import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.model.Currency;
@@ -10,9 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
@@ -72,30 +71,45 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<CurrencyUsageDto> findUniqueCurrenciesUsedByUser(@Param("user") User user);
 
     @Query("""
-        SELECT COALESCE(SUM(t.amountSold), 0)
-        FROM Transaction t
-        WHERE t.user = :user
-          AND t.soldCurrency = :currency
-          AND (t.processedAt IS NOT NULL OR (t.processedAt IS NULL AND t.cancelledAt IS NULL))
+    SELECT
+      c as currency,
+      COALESCE(SUM(CASE
+        WHEN t.boughtCurrency = c AND t.processedAt IS NOT NULL THEN t.amountBought
+        ELSE 0 END), 0)
+      -
+      COALESCE(SUM(CASE
+        WHEN t.soldCurrency = c AND (t.processedAt IS NOT NULL OR (t.processedAt IS NULL AND t.cancelledAt IS NULL)) THEN t.amountSold
+        ELSE 0 END), 0)
+      AS balance
+    FROM Transaction t
+    JOIN Currency c ON (t.boughtCurrency = c OR t.soldCurrency = c)
+    WHERE t.user = :user
+    GROUP BY c
     """)
-    Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(@Param("user") User user, @Param("currency") Currency currency);
+    List<CurrencyBalanceDto> getAvailableBalancesForAllUsedCurrenciesByUser(@Param("user") User user);
 
     @Query("""
-        SELECT COALESCE(SUM(t.amountSold), 0)
-        FROM Transaction t
-        WHERE t.user = :user
-          AND t.soldCurrency = :currency
-          AND t.processedAt IS NULL
-          AND t.cancelledAt IS NULL
+    SELECT
+      c as currency,
+      COALESCE(SUM(CASE
+        WHEN t.boughtCurrency = c AND t.processedAt IS NOT NULL THEN t.amountBought
+        ELSE 0 END), 0)
+      -
+      COALESCE(SUM(CASE
+        WHEN t.soldCurrency = c AND (t.processedAt IS NOT NULL OR (t.processedAt IS NULL AND t.cancelledAt IS NULL)) THEN t.amountSold
+        ELSE 0 END), 0)
+      +
+      COALESCE(SUM(CASE
+        WHEN t.soldCurrency = c AND t.processedAt IS NULL AND t.cancelledAt IS NULL THEN t.amountSold
+        ELSE 0 END), 0)
+      AS balance
+    FROM Transaction t
+    JOIN Currency c ON (t.boughtCurrency = c OR t.soldCurrency = c)
+    WHERE t.user = :user
+    GROUP BY c
     """)
-    Optional<BigDecimal> sumSoldAmountForCurrencyPending(@Param("user") User user, @Param("currency") Currency currency);
+    List<CurrencyBalanceDto> getTotalBalancesForAllUsedCurrenciesByUser(@Param("user") User user);
 
-    @Query("""
-        SELECT COALESCE(SUM(t.amountBought), 0)
-        FROM Transaction t
-        WHERE t.user = :user
-          AND t.boughtCurrency = :currency
-          AND t.processedAt IS NOT NULL
-    """)
-    Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(@Param("user") User user, @Param("currency") Currency currency);
+
+
 }

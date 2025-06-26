@@ -3,6 +3,7 @@ package org.luzkix.coinchange.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.luzkix.coinchange.dao.TransactionDao;
+import org.luzkix.coinchange.dto.projections.CurrencyBalanceDto;
 import org.luzkix.coinchange.dto.projections.CurrencyUsageDto;
 import org.luzkix.coinchange.dto.projections.TotalFeesForCurrencyDto;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
@@ -16,7 +17,6 @@ import org.luzkix.coinchange.service.TransactionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -114,18 +114,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<BigDecimal> sumSoldAmountForCurrencyNotCancelled(User user, Currency currency) {
-        return transactionDao.sumSoldAmountForCurrencyNotCancelled(user, currency);
+    public List<CurrencyBalanceDto> getAvailableBalancesForAllUsedCurrenciesByUser(User user) {
+        return transactionDao.getAvailableBalancesForAllUsedCurrenciesByUser(user);
     }
 
     @Override
-    public Optional<BigDecimal> sumSoldAmountForCurrencyPending(User user, Currency currency) {
-        return transactionDao.sumSoldAmountForCurrencyPending(user, currency);
-    }
-
-    @Override
-    public Optional<BigDecimal> sumBoughtAmountForCurrencyProcessed(User user, Currency currency) {
-        return transactionDao.sumBoughtAmountForCurrencyProcessed(user, currency);
+    public List<CurrencyBalanceDto> getTotalBalancesForAllUsedCurrenciesByUser(User user) {
+        return transactionDao.getTotalBalancesForAllUsedCurrenciesByUser(user);
     }
 
     @Override
