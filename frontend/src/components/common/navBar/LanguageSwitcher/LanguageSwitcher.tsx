@@ -2,7 +2,6 @@ import React from 'react';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import { languageSwitcherStyles } from './styles.ts';
-import { SupportedLanguageEnum } from '../../../../constants/customEnums.ts';
 import { Languages } from '../../../../constants/customConstants.ts';
 import { useTranslation } from 'react-i18next';
 
@@ -31,16 +30,16 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         </IconButton>
       </Tooltip>
       <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
-        {Object.values(SupportedLanguageEnum).map((language) => (
+        {Object.values(Languages).map((language) => (
           <MenuItem
-            key={language}
-            selected={currentLanguage === language}
+            key={language.id}
+            selected={currentLanguage === language.id}
             onClick={() => {
-              handleLanguageChange(language);
+              handleLanguageChange(language.id);
               setAnchorEl(null);
             }}
           >
-            {Languages[language].localizedName}
+            {Languages[language.id].localizedName}
           </MenuItem>
         ))}
       </Menu>

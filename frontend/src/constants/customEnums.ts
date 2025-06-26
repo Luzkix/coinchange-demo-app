@@ -23,14 +23,6 @@ export enum CurrencyTypeEnum {
   CRYPTO = 'C',
 }
 
-/**
- * Enum defining supported languages
- */
-export enum SupportedLanguageEnum {
-  ENGLISH = 'EN',
-  CZECH = 'CS',
-}
-
 export enum CoinsFilterTypeEnum {
   ALL = 'all',
   TRADEABLE = 'tradeable',
