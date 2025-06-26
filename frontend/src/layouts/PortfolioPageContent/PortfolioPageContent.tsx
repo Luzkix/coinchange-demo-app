@@ -252,6 +252,7 @@ const PortfolioPageContent: React.FC = () => {
         ) : (
           <>
             <Box sx={portfolioPageContentStyles.summaryContainer}>
+              {/* Section displaying total available balance */}
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <Typography sx={portfolioPageContentStyles.totalBalanceValue}>
                   {new Intl.NumberFormat(
@@ -272,6 +273,7 @@ const PortfolioPageContent: React.FC = () => {
                 </Tooltip>
               </Box>
 
+              {/* Section displaying % of total profit/loss */}
               {!!totalBalanceInEurCurrency && (
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                   <Typography
