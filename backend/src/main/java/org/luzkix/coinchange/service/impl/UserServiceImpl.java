@@ -49,6 +49,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findAllActiveUsers() {
+        return userDao.findAllActiveUsers();
+    };
+
+    @Override
     @Transactional
     public UserLoginResponseDto createUser(UserRegistrationRequestDto registrationDto) {
         // Check if the user already exists

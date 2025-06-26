@@ -58,6 +58,7 @@ public class BalanceServiceImpl implements BalanceService {
         // Return as BalancesResponseDto
         BalancesResponseDto responseDto = new BalancesResponseDto();
         responseDto.setCurrenciesBalances(currenciesBalances);
+        responseDto.setUserName(user.getUsername());
 
         return responseDto;
     }

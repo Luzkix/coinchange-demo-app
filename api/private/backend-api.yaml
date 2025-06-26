@@ -156,11 +156,15 @@ components:
     BalancesResponseDto:
       type: object
       properties:
+        userName:
+          type: string
+          example: JohnDow
         currenciesBalances:
           type: array
           items:
             $ref: '#/components/schemas/CurrencyBalanceResponseDto'
       required:
+        - userName
         - currenciesBalances
     CurrencyResponseDto:
       type: object
@@ -475,6 +479,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BalancesResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /balance/all-users:
+    get:
+      tags:
+        - ApiBalance
+      summary: Get currencies balances for all users
+      operationId: getBalancesForAllUsers
+      parameters:
+        - name: type
+          in: query
+          description: Type of requested balance, AVAILABLE / TOTAL
+          required: false
+          schema:
+            type: string
+            enum: [ AVAILABLE, TOTAL ]
+            default: TOTAL
+          example: TOTAL
+      description: |
+        For all users returns information about their fiat and crypto currencies balances (available or total).
+      security:
+        - bearerAuth: [ ]
+      responses:
+        201:
+          description: (available/total) balances of fiat and crypto currencies of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BalancesResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:
