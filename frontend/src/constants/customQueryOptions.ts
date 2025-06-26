@@ -64,6 +64,13 @@ export const createFetchBalancesOptions = (balanceType: BalanceTypeEnum) =>
     gcTime: 0, //dont use cached data
   });
 
+export const createFetchBalancesOfAllUsersOptions = (balanceType: BalanceTypeEnum) =>
+  queryOptions({
+    queryKey: ['fetchBalancesOfAllUsers', balanceType],
+    queryFn: () => BalanceService.fetchBalancesOfAllUsers(balanceType),
+    gcTime: 0, //dont use cached data
+  });
+
 export const createFetchMarketConversionRateOptions = (
   soldCurrencyCode: string,
   boughtCurrencyCode: string,
