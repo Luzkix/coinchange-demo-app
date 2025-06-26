@@ -20,7 +20,7 @@ const PublicLayout: React.FC = () => {
       {!cookiesAccepted && (
         <CookieBanner
           onAccept={() => setCookiesAccepted(true)}
-          onClose={() => setCookiesAccepted(false)}
+          onClose={() => setCookiesAccepted(true)}
         />
       )}
     </Box>
