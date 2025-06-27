@@ -20,7 +20,7 @@ const PublicRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
   //if there is valid userData (e.g. loaded from localStorage) -> redirect to portfolio page
   if (userData && isTokenValid(userData.accessToken)) {
     // Redirect to original url (if exists) or to default page (e.g. /portfolio)
-    const from = location.state?.from || ROUTES.PORTFOLIO;
+    const from = location.state?.from || ROUTES.HOME_PRIVATE;
     return <Navigate to={from} replace />;
   }
   //else process url as expected

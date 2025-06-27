@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { introductionStyles } from './styles.ts';
 import ROUTES from '../../../constants/routes.ts';
+import { useAuth } from '../../../contexts/AuthContext.tsx';
 
 const introPicture = '/intro_pic.webp';
 
 export const Introduction: React.FC = () => {
   const { t } = useTranslation(['homepage']);
+  const { userData } = useAuth();
 
   return (
     <Box sx={introductionStyles.container}>
@@ -27,13 +29,13 @@ export const Introduction: React.FC = () => {
 
         <Button
           component={Link}
-          to={ROUTES.SIGNUP}
+          to={userData ? ROUTES.TRADE : ROUTES.SIGNUP}
           variant="contained"
           color="primary"
           size="large"
           sx={introductionStyles.signupButton}
         >
-          {t('introduction.signUp')}
+          {t(userData ? 'introduction.trade' : 'introduction.signUp')}
         </Button>
       </Box>
     </Box>

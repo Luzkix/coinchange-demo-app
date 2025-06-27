@@ -156,13 +156,16 @@ const PortfolioPageContent: React.FC = () => {
     );
   }, [coinsData, userTotalBalancesData, eurToUsdRate]);
 
-  // calculate total available balance for particular currency before nonZeroBalances filtration
+  // calculate total balance in EUR for the user
   const totalBalanceInEurCurrency = useMemo(
     () => coinsTableRowDataWithTotalBalances.reduce((sum, item) => sum + item.price, 0),
     [coinsTableRowDataWithTotalBalances],
   );
   // calculate profit in %
-  const profitInPercent = (totalBalanceInEurCurrency / INITIAL_BONUS_AMOUNT - 1) * 100;
+  const profitInPercent =
+    totalBalanceInEurCurrency == 0
+      ? 0
+      : (totalBalanceInEurCurrency / INITIAL_BONUS_AMOUNT - 1) * 100;
 
   //ERRORS HANDLING
   const [isCoinsDataError, setIsCoinsDataError] = useState(false);

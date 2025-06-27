@@ -15,6 +15,7 @@ import PublicRoute from './layouts/skeleton/PublicRoute/PublicRoute.tsx';
 import PrivateRoute from './layouts/skeleton/PrivateRoute/PrivateRoute.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import TradePage from './pages/TradePage.tsx';
+import HomePagePrivate from './pages/HomePagePrivate.tsx';
 
 const App: FC = () => {
   return (
@@ -43,7 +44,7 @@ const App: FC = () => {
             </PrivateRoute>
           }
         >
-          <Route path={ROUTES.HOME_PRIVATE} element={<HomePage />} />
+          <Route path={ROUTES.HOME_PRIVATE} element={<HomePagePrivate />} />
           <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
           <Route path={ROUTES.TRADE} element={<TradePage />} />
           <Route path={ROUTES.PROFILE} element={<ProfilePage />} />

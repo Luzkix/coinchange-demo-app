@@ -53,7 +53,7 @@ export const CoinHeader: React.FC<CoinHeaderProps> = ({
 
   return (
     <Box sx={containerStyles}>
-      <Box sx={iconStyles}>{coinSymbol.charAt(0)}</Box>
+      <Box sx={iconStyles}>{coinSymbol.charAt(0).toUpperCase()}</Box>
 
       {!iconOnly && (
         <Box sx={coinHeaderStyles.infoContainer}>
@@ -61,7 +61,7 @@ export const CoinHeader: React.FC<CoinHeaderProps> = ({
             {coinName}
           </Typography>
           <Typography variant="body2" sx={symbolStyles}>
-            {coinSymbol}
+            {coinSymbol.toUpperCase()}
           </Typography>
         </Box>
       )}

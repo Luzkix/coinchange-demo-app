@@ -29,14 +29,15 @@ export const CoinCard: React.FC<CoinCardProps> = ({
 
   //conversion of string formats into number formats for select input variables
   const coinPriceNum = Number(coinPrice);
+  const digitsBeforeDecimal = Math.floor(Math.abs(coinPriceNum)).toString().length;
   const coinPriceChangeNum = convertStringNumberToRoundedNumber(coinPriceChange, 2);
 
   // Format price with local currency formatting
   const formattedPrice = new Intl.NumberFormat(Languages[i18n.language].languageCountryCode, {
     style: 'currency',
     currency: currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digitsBeforeDecimal > 6 ? 0 : 2,
   }).format(coinPriceNum);
 
   // Determine price change color and icon

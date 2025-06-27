@@ -34,6 +34,9 @@ export const coinCardStyles: Record<string, SystemStyleObject<Theme>> = {
 
   // price styles
   price: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     fontWeight: 600,
     mt: 1,
     mb: 0,
@@ -60,7 +63,7 @@ export const coinCardStyles: Record<string, SystemStyleObject<Theme>> = {
   priceChange: {
     display: 'flex',
     alignItems: 'center',
-    ml: -1,
+    justifyContent: 'center',
   },
 
   // size variants for price change

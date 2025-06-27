@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 import enCommon from './en/common.json';
 import enCryptocurrenciesPage from './en/cryptocurrenciesPage.json';
 import enHomePage from './en/homePage.json';
+import enHomePagePrivate from './en/homePagePrivate.json';
 import enFooter from './en/footer.json';
 import enErrors from './en/errors.json';
 import enSignInSignUpPage from './en/signInSignUpPage.json';
@@ -14,6 +15,7 @@ import enTransactionTable from './en/transactionTable.json';
 import csCommon from './cs/common.json';
 import csCryptocurrenciesPage from './cs/cryptocurrenciesPage.json';
 import csHomePage from './cs/homePage.json';
+import csHomePagePrivate from './cs/homePagePrivate.json';
 import csFooter from './cs/footer.json';
 import csErrors from './cs/errors.json';
 import csSignInSignUpPage from './cs/signInSignUpPage.json';
@@ -35,6 +37,7 @@ i18nConfig.use(initReactI18next).init({
       footer: enFooter,
       errors: enErrors,
       homepage: enHomePage,
+      homePagePrivate: enHomePagePrivate,
       cryptocurrenciesPage: enCryptocurrenciesPage,
       signInSignUpPage: enSignInSignUpPage,
       profilePage: enProfilePage,
@@ -47,6 +50,7 @@ i18nConfig.use(initReactI18next).init({
       footer: csFooter,
       errors: csErrors,
       homepage: csHomePage,
+      homePagePrivate: csHomePagePrivate,
       cryptocurrenciesPage: csCryptocurrenciesPage,
       signInSignUpPage: csSignInSignUpPage,
       profilePage: csProfilePage,
@@ -62,6 +66,7 @@ i18nConfig.use(initReactI18next).init({
     'footer',
     'errors',
     'homepage',
+    'homePagePrivate',
     'cryptocurrenciesPage',
     'signInSignUpPage',
     'profilePage',
