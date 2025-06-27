@@ -1,6 +1,7 @@
 package org.luzkix.coinchange.dao.impl;
 
 import org.luzkix.coinchange.dao.UserDao;
+import org.luzkix.coinchange.model.Role;
 import org.luzkix.coinchange.model.User;
 import org.luzkix.coinchange.repository.UserRepository;
 import org.luzkix.coinchange.utils.UserUtils;
@@ -26,6 +27,10 @@ public class UserDaoImpl implements UserDao {
     public List<User> findAllActiveUsers() {
         return userRepository.findAll().stream()
                 .filter(UserUtils::isActiveUser)
+                //do not return admin users
+                .filter(user -> user.getRoles().stream()
+                        .noneMatch(role -> role.getName().equals(Role.RoleEnum.ADMIN.getName()))
+                )
                 .toList();
     }
 
@@ -51,5 +56,5 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findById(Long userId) {
         return userRepository.findById(userId).orElse(null);
-    };
+    }
 }
