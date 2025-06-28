@@ -364,7 +364,18 @@ components:
           type: string
           example: JohnDowPassw2
       description: All fields are optional. Only provided fields will be updated.
-
+    TotalFeesResponseDto:
+      type: object
+      properties:
+        currencyCode:
+          type: string
+          example: EUR
+        totalFees:
+          type: number
+          example: 2.00023586
+      required:
+        - currencyCode
+        - totalFees
 
 paths:
   /user/login:
@@ -782,6 +793,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserLoginResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /fee/user-total-fees/{targetCurrencyCode}:
+    get:
+      tags:
+        - ApiFee
+      summary: Get total fees in target currency for user
+      operationId: getTotalFeesForUser
+      parameters:
+        - name: targetCurrencyCode
+          in: path
+          description: Currency code used for calculating the total fees
+          required: true
+          schema:
+            type: string
+          example: USD
+      description: |
+        Returns total fees for all processed transactions and user calculated in target currency
+      responses:
+        201:
+          description: Calculated total user fees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalFeesResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /fee/total-fees/{targetCurrencyCode}:
+    get:
+      tags:
+        - ApiFee
+      summary: Get total fees in target currency for all users
+      operationId: getTotalFees
+      parameters:
+        - name: targetCurrencyCode
+          in: path
+          description: Currency code used for calculating the total fees
+          required: true
+          schema:
+            type: string
+          example: USD
+      description: |
+        Returns total fees for all processed transactions calculated in target currency
+      responses:
+        201:
+          description: Calculated total fees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalFeesResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

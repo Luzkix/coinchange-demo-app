@@ -51,7 +51,7 @@ public interface TransactionService {
 
     List<CurrencyBalanceDto> getTotalBalancesForAllUsedCurrenciesByUser(User user);
 
-    Transaction cancelPendingTransaction(Long id);
+    void cancelPendingTransaction(Long id);
 
 
 }

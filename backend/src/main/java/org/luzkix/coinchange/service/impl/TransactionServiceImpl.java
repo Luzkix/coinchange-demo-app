@@ -125,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction cancelPendingTransaction(Long id) {
+    public void cancelPendingTransaction(Long id) {
         Transaction transaction = transactionDao.findById(id).orElseThrow(() ->
                 new InvalidInputDataException("Transaction with id " + id + "was  not found", ErrorBusinessCodeEnum.ENTITY_NOT_FOUND));
 
@@ -146,7 +146,5 @@ public class TransactionServiceImpl implements TransactionService {
                     ErrorBusinessCodeEnum.CANCELLATION_TRANSACTION_FAILURE
             );
         }
-
-        return transaction;
     }
 }
