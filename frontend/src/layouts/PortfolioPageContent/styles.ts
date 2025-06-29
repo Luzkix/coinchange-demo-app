@@ -43,4 +43,32 @@ export const portfolioPageContentStyles: Record<string, SxProps<Theme>> = {
     letterSpacing: 1,
     ml: 0, // mezera od popisku
   },
+
+  totalFeesRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1.5, // rozumná mezera mezi popiskem a hodnotou
+    mt: 1,
+    mb: 1,
+    fontSize: '1.2rem',
+    fontWeight: 750,
+  },
+  totalFeesLabel: {
+    fontSize: '1.2rem',
+    color: 'text.secondary',
+    mr: 0.5,
+  },
+  totalFeesValue: {
+    color: 'text.secondary',
+    ml: 0.5,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1,
+  },
+  totalFeesTooltipIcon: {
+    fontSize: 18,
+    color: 'text.disabled',
+    ml: 1,
+    cursor: 'pointer',
+  },
 };

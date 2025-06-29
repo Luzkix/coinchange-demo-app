@@ -18,8 +18,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class FeeController extends GenericController implements FeeApi {
 
-    private CurrencyService currencyService;
-    private FeesService feesService;
+    private final CurrencyService currencyService;
+    private final FeesService feesService;
 
     @Override
     public ResponseEntity<TotalFeesResponseDto> getTotalFees(String targetCurrencyCode) {

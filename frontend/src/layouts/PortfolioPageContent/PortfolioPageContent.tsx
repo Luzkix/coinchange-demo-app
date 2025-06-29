@@ -6,6 +6,8 @@ import {
   createFetchBalancesOptions,
   createFetchCoinsDataOptions,
   createFetchMarketConversionRateOptions,
+  createFetchTotalFeesForUserOptions,
+  createFetchTotalFeesOptions,
 } from '../../constants/customQueryOptions';
 import CoinsTable, { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable';
 import { portfolioPageContentStyles } from './styles';
@@ -27,12 +29,15 @@ import {
 } from '../../constants/configVariables.ts';
 import { useProcessApiError } from '../../hooks/useProcessApiError.ts';
 import { isApiError } from '../../services/utils/errorUtils.ts';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 
 const PortfolioPageContent: React.FC = () => {
   const { t, i18n } = useTranslation(['portfolioPage', 'cryptocurrenciesPage', 'errors']);
   const { supportedFiatCurrencies, supportedCryptoCurrencies, addErrorPopup } = useGeneralContext();
   const processApiError = useProcessApiError();
   const processName = PortfolioPageContent.name;
+  const { userData } = useAuth();
+  const isAdmin = !!userData?.roles?.includes('ADMIN');
 
   const fetchedCoinsDataResult = useQuery({
     ...createFetchCoinsDataOptions(supportedFiatCurrencies, supportedCryptoCurrencies),
@@ -82,6 +87,21 @@ const PortfolioPageContent: React.FC = () => {
   const [selectedCurrency, setSelectedCurrency] = useState(
     Languages[i18n.language]?.currency || supportedFiatCurrencies[0].code,
   );
+
+  const fetchedTotalFeesForUserResult = useQuery({
+    ...createFetchTotalFeesForUserOptions(selectedCurrency),
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? DEFAULT_ERROR_REFETCH_INTERVAL : false,
+    enabled: !isAdmin, // <-- spoustet pouze pokud neni admin
+  });
+
+  const fetchedTotalFeesResult = useQuery({
+    ...createFetchTotalFeesOptions(selectedCurrency),
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? DEFAULT_ERROR_REFETCH_INTERVAL : false,
+    enabled: isAdmin, // <-- spoustet pouze pokud je admin
+  });
+
   const [nonZeroBalances, setNonZeroBalances] = useState(true);
 
   // Conversion of coinsData and userAvailableBalancesData into format suitable for DataGrid -> array of directly usable data filtered for selectedCurrency
@@ -237,6 +257,8 @@ const PortfolioPageContent: React.FC = () => {
     }
   }, [isCoinsDataError, isUserBalancesDataError, isEurToUsdRateError]);
 
+  //TOTAL PAID FEES
+
   return (
     <Box sx={portfolioPageContentStyles.container}>
       <Typography variant="h4" sx={portfolioPageContentStyles.title}>
@@ -307,6 +329,42 @@ const PortfolioPageContent: React.FC = () => {
       />
 
       <CoinsTable data={filteredTableRowData} selectedCurrency={selectedCurrency} />
+
+      <Box sx={portfolioPageContentStyles.totalFeesRow}>
+        <Typography sx={portfolioPageContentStyles.totalFeesLabel}>
+          {t('portfolioPage.totalFees')}
+        </Typography>
+        {fetchedTotalFeesForUserResult.isLoading || fetchedTotalFeesResult.isLoading ? (
+          <CircularProgress size={18} />
+        ) : fetchedTotalFeesForUserResult.isError || fetchedTotalFeesResult.isError ? (
+          <Typography color="error">{t('errors:common.genericErrorTitle')}</Typography>
+        ) : (
+          <Box sx={portfolioPageContentStyles.totalFeesValue}>
+            {((!isAdmin && fetchedTotalFeesForUserResult.data?.totalFees !== undefined) ||
+              (isAdmin && fetchedTotalFeesResult.data?.totalFees !== undefined)) &&
+              new Intl.NumberFormat(
+                Languages[i18n.language]?.languageCountryCode || Languages.CS.languageCountryCode,
+                {
+                  style: 'currency',
+                  currency: selectedCurrency,
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                },
+              ).format(
+                isAdmin
+                  ? (fetchedTotalFeesResult.data?.totalFees ?? 0)
+                  : (fetchedTotalFeesForUserResult.data?.totalFees ?? 0),
+              )}
+            <Tooltip
+              title={t(
+                isAdmin ? 'portfolioPage.totalFeesTooltipAdmin' : 'portfolioPage.totalFeesTooltip',
+              )}
+            >
+              <InfoOutlinedIcon sx={portfolioPageContentStyles.totalFeesTooltipIcon} />
+            </Tooltip>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };

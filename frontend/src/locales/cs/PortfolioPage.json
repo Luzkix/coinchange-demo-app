@@ -1,8 +1,11 @@
 {
   "portfolioPage": {
     "title": "Přehled portfolia",
-    "totalAvailableBalance": "Celkový použitelný zůstatek",
+    "totalAvailableBalance": "Celkový použitelný zůstatek. Pozn. nezpracované transakce snižují použitelný zůstatek u měn, které jsou blokovány pro prodej!",
     "profitInPercent": "Celkový zisk/ztráta v % za celou dobu od otevření účtu",
-    "hideZeroBalances": "Skrýt měny bez zůstatku"
+    "hideZeroBalances": "Skrýt měny bez zůstatku",
+    "totalFees": "Celkové poplatky:",
+    "totalFeesTooltip": "Celkové poplatky, které kdy byly burze zaplaceny za směnu transakcí, převedené do zvolené měny",
+    "totalFeesTooltipAdmin": "Celkové poplatky za všechny uživatele, které kdy byly zaplaceny burze, převedené do zvolené měny"
   }
 }

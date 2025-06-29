@@ -10,6 +10,7 @@ import { BalanceService } from '../services/BalanceService.ts';
 import { CurrencyResponseDto } from '../api-generated/backend';
 import { CurrencyService } from '../services/CurrencyService.ts';
 import { TransactionService } from '../services/TransactionService.ts';
+import { FeeService } from '../services/FeeService.ts';
 
 //!!!NOTE! Default behavior for all useQuery is defined in main.tsx
 
@@ -92,4 +93,18 @@ export const createFetchAllPendingTransactionsByUserOptions = () =>
     queryKey: ['fetchAllPendingTransactionsByUser'],
     queryFn: () => TransactionService.fetchAllPendingTransactionsByUser(),
     gcTime: 0, //dont use cached data
+  });
+
+export const createFetchTotalFeesOptions = (targetCurrencyCode: string) =>
+  queryOptions({
+    queryKey: ['fetchTotalFees', targetCurrencyCode],
+    queryFn: () => FeeService.fetchTotalFees(targetCurrencyCode),
+    gcTime: 0, //dont use cached data
+  });
+
+export const createFetchTotalFeesForUserOptions = (targetCurrencyCode: string) =>
+  queryOptions({
+    queryKey: ['fetchTotalFeesForUser', targetCurrencyCode],
+    queryFn: () => FeeService.fetchTotalFeesForUser(targetCurrencyCode),
+    gcTime: DEFAULT_ALL_COINS_REFRESH_INTERVAL + 1000,
   });

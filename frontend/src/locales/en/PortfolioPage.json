@@ -1,8 +1,11 @@
 {
   "portfolioPage": {
     "title": "Portfolio Overview",
-    "totalAvailableBalance": "Total Available Balance",
+    "totalAvailableBalance": "Total available balance. Note: Pending transactions reduce the available balance for currencies that are blocked for sale!",
     "profitInPercent": "Total profit/loss in % for the entire period since the account was opened",
-    "hideZeroBalances": "Hide zero balances"
+    "hideZeroBalances": "Hide zero balances",
+    "totalFees": "Total Fees:",
+    "totalFeesTooltip": "Total fees paid to the exchange for all trades since the account was opened, converted to the selected currency",
+    "totalFeesTooltipAdmin": "Total fees for all users ever paid to the exchange, converted to the selected currency"
   }
 }
