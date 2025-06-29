@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Box, Button, CircularProgress } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { tradingFormStyles } from './styles';
+import { tradeSuccessMessageStyles, tradingFormStyles } from './styles';
 import { useGeneralContext } from '../../../contexts/GeneralContext';
 import AmountInput from './AmountInput/AmountInput';
 import ConversionRateBlock from './ConversionRateBlock/ConversionRateBlock.tsx';
 import FeeInfo from './FeeInfo/FeeInfo';
-import TradeSuccessMessage from './TradeSuccessMessage/TradeSuccessMessage';
 import {
   createFetchBalancesOptions,
   createFetchMarketConversionRateOptions,
@@ -389,6 +388,7 @@ const TradingForm: React.FC<TradingFormProps> = ({
       />
 
       <FeeInfo feeAmount={feeAmount} boughtCurrency={boughtCurrency} />
+
       <Button
         sx={tradingFormStyles.submitButton}
         variant="contained"
@@ -411,7 +411,14 @@ const TradingForm: React.FC<TradingFormProps> = ({
           t('tradePage:form.exchange', { currency: boughtCurrency })
         )}
       </Button>
-      {showSuccess && <TradeSuccessMessage />}
+
+      {showSuccess && (
+        <Typography sx={tradeSuccessMessageStyles.root}>
+          {isSimpleTrading
+            ? t('tradePage:form.successConversionMessage')
+            : t('tradePage:form.successAdvancedTradingMessage')}
+        </Typography>
+      )}
     </Box>
   );
 };

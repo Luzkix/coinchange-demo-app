@@ -15,3 +15,12 @@ export const tradingFormStyles: Record<string, SxProps<Theme>> = {
     fontSize: '1.1rem',
   },
 };
+
+export const tradeSuccessMessageStyles: Record<string, SxProps<Theme>> = {
+  root: {
+    mt: 2,
+    color: 'success.main',
+    textAlign: 'center',
+    fontWeight: 700,
+  },
+};

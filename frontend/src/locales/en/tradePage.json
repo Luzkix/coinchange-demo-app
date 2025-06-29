@@ -20,6 +20,8 @@
     "rateError": "Error while loading exchange rate",
     "bookedRate": "Booked Rate",
     "marketRate": "Market Rate",
-    "requestedRate": "Enter Rate"
+    "requestedRate": "Enter Rate",
+    "successConversionMessage": "Exchange was successfully processed!",
+    "successAdvancedTradingMessage": "The exchange order was placed successfully!"
   }
 }
