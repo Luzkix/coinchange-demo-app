@@ -3,7 +3,7 @@
     "title": "Vytvořte si účet",
     "titleDesc": "Ovládejte vše co CoinChange nabízí pomocí jediného účtu",
     "username": "Uživatelské jméno",
-    "email": "Email",
+    "email": "Fiktivní email",
     "password": "Heslo",
     "passwordConfirm": "Potvrdit heslo",
     "passwordsDoNotMatch": "Hesla se neshodují",

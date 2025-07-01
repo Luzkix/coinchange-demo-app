@@ -6,7 +6,7 @@
   <strong>Full-stack demo platform that simulates a real crypto-exchange experience</strong>  
   <em>React 18 · Spring Boot 3 · PostgreSQL 15 · JWT Security</em>
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)
+![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=flat-square&logo=spring)
 ![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)
@@ -80,7 +80,7 @@ PostgreSQL ◄─────┘ │
 | Layer        | Main technologies                                                                               |
 |--------------|-------------------------------------------------------------------------------------------------|
 | Frontend     | React 18, TypeScript 5, Vite, MUI 5, React Router 6, TanStack Query 4, Chart.js 4, i18next      |
-| Backend      | Java 17, Spring Boot 3, Spring Security 6, Spring Data JPA, Lombok, Caffeine, Springdoc OpenAPI |
+| Backend      | Java 21, Spring Boot 3, Spring Security 6, Spring Data JPA, Lombok, Caffeine, Springdoc OpenAPI |
 | Database     | PostgreSQL 15 (prod), H2 in-memory (dev)                                                        |
 | Build Tools  | Maven 3.9, npm, Flyway migrations                                                               |
 | External API | Coinbase Exchange REST API                                                                      |
@@ -90,7 +90,7 @@ PostgreSQL ◄─────┘ │
 ## 5  Quick Start
 
 ### Prerequisites
-* **Java 17**, **Node 18**, **Maven 3.9**, **Docker 24+**
+* **Java 21**, **Node 18**, **Maven 3.9**, **Docker 24+**
 
 ### 1  Clone
 git clone https://github.com/Luzkix/coinchange-demo-app.git

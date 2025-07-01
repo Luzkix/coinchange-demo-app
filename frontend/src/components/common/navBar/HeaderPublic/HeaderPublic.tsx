@@ -28,7 +28,7 @@ const HeaderPublic: React.FC = () => {
   return (
     <AppBar sx={headerStyles.appBar}>
       <Toolbar sx={headerStyles.toolbar}>
-        <LogoLink to={ROUTES.HOME} sx={headerStyles.logo} />
+        <LogoLink to={ROUTES.HOME} />
 
         {/* Desktop navigace */}
         {!isMobile && (
