@@ -17,7 +17,7 @@ public class JobsServiceImpl implements JobsService {
     private final TransactionService transactionService;
     private final CurrencyConversionService currencyConversionService;
 
-    @Scheduled(fixedDelay = 15000) // Runs every 15 seconds
+    @Scheduled(fixedDelayString = "${checkPendingTransactionsInterval}") // interval defined in application.properties (note: @Value annotation cant be used here for reading out variable from application.properties since it is read out later than @Scheduled annotation needs)
     public void scheduledJobsTo15sec() {
         checkAndProcessPendingTransactionsJob();
     }
