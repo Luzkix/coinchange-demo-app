@@ -11,31 +11,29 @@ COPY frontend/ ./
 RUN npm run build
 
 # ---------- Stage 2: Build backend ----------
-FROM maven:3.9.8-eclipse-temurin-21 AS backend-build
+FROM maven:3.9.8-eclipse-temurin-21-alpine AS backend-build
 WORKDIR /app
 
 # Copy OpenAPI spec pro generování klienta
 COPY api /api
 
-# Přednačtení Maven závislostí (cacheable)
+# Přednačtení Maven závislostí (cacheable) - OPRAVENO
 COPY backend/pom.xml ./
 COPY backend/mvnw ./
 COPY backend/.mvn ./.mvn
+
 RUN chmod +x mvnw \
- && ./mvnw dependency:go-offline -B
+    && ./mvnw dependency:go-offline -B
 
-# Kopie backend zdrojů
+# Kopie backend zdrojů + statiky z frontendu
 COPY backend/src src/
-
-# Zkopírování frontend dist výstupu (včetně public assets) do Spring static
 COPY --from=frontend-build /app/frontend/dist/ src/main/resources/static/
 
 # Kompilace Spring Boot aplikace (skip testů)
-RUN chmod +x mvnw \
- && ./mvnw clean package -DskipTests -B
+RUN ./mvnw clean package -DskipTests -B
 
 # ---------- Stage 3: Final runtime image ----------
-FROM eclipse-temurin:21-jre-jammy AS runtime
+FROM gcr.io/distroless/java21-debian12
 WORKDIR /app
 
 # Přenos vygenerovaného JAR souboru
@@ -44,11 +42,13 @@ COPY --from=backend-build /app/target/coinchange-backend-*.jar app.jar
 # Defaultní environment proměnné (lze přepsat při docker run)
 ENV SPRING_PROFILES_ACTIVE=devel \
     SERVER_PORT=2000 \
-    LOGGING_LVL=WARN \
+    JWT_SECRET=changeME \
+    JWT_EXPIRATION=3600000 \
     CONVERSION_VALIDITY=10 \
-    DEFAULT_CURRENCY=EUR
+    DEFAULT_CURRENCY=EUR \
+    LOGGING_LVL=WARN
 
 EXPOSE ${SERVER_PORT}
 
-# Spuštění aplikace s předáním profilů a portu
-ENTRYPOINT ["sh","-c","java -jar /app/app.jar --spring.profiles.active=${SPRING_PROFILES_ACTIVE} --server.port=${SERVER_PORT}"]
+# Spuštění Spring Bootu; env přepíše parametry
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

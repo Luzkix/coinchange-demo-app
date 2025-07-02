@@ -1,0 +1,27 @@
+# Git repozitář
+.git
+.gitignore
+
+# Lokální IDE a editor soubory
+*.iml
+.idea/
+.vscode/
+
+# Lokální závislosti (budou instalovány v image)
+frontend/node_modules
+backend/target
+**/node_modules
+
+# Lokální konfigurace a citlivé soubory
+.env
+*.local
+docker-compose*.yml
+
+# Build artefakty
+docker-compose*.yml
+npm-debug.log*
+yarn-error.log*
+
+# Další nepotřebné soubory
+.DS_Store
+Thumbs.db
