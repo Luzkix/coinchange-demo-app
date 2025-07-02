@@ -46,7 +46,7 @@ export const DEFAUL_NO_OF_TOP_COINS_TO_BE_DISPLAYED = 6;
 /**
  * Default time in miliseconds for refreshing "top" coins price data (e.g.Tradeable,Top fainers, New on CoinChange...)
  */
-export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 10000; //milisec
+export const DEFAUL_REFRESH_TIME_OF_TOP_COINS_TO_BE_DISPLAYED = 15000; //milisec
 
 /**
  * Default time in miliseconds for automatic hiding of popup error messages

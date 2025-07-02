@@ -1,13 +1,15 @@
-import { ApiCoinPairService } from '../api-generated/coinbase';
 import {
   DEFAULT_COINS_SORTING,
   DEFAULT_COINS_TYPE,
   DEFAULT_LOADED_COINS_LIMIT,
 } from '../constants/configVariables.ts';
 import { CoinsMap, FetchCoinsDataOptions } from '../constants/customTypes.ts';
-import { ApiCoinStatsService, CoinStats } from '../api-generated/coinbase-exchange';
 import { FetchCoinPairStatsError, FetchCoinsDataError } from '../constants/customErrors.ts';
-import { CurrencyResponseDto } from '../api-generated/backend';
+import {
+  ApiCoinbaseService,
+  type CoinStatsResponseDto,
+  CurrencyResponseDto,
+} from '../api-generated/backend';
 import { convertCurrenciesToStringArrayOfCodes } from './utils/coinsUtils.ts';
 
 /**
@@ -27,7 +29,7 @@ export const CoinsDataService = {
     try {
       // Step 1: Call the API with specified parameters or default ones if not specified
       console.log(`Fetching supported coins data...`);
-      const response = await ApiCoinPairService.getListOfCoinsWithTradingDetails(
+      const response = await ApiCoinbaseService.getListOfCoinsWithTradingDetails(
         options && options.limit ? options.limit : DEFAULT_LOADED_COINS_LIMIT, // limit
         options && options.offset ? options.offset : undefined, // offset
         options && options.productType ? options.productType : DEFAULT_COINS_TYPE, // productType
@@ -91,10 +93,10 @@ export const CoinsDataService = {
   /**
    * Fetches statistics for a specific coin pair by productId
    */
-  async fetchCoinPairStats(productId: string): Promise<CoinStats> {
+  async fetchCoinPairStats(productId: string): Promise<CoinStatsResponseDto> {
     try {
       console.log(`Fetching supported coin pair stats for ${productId} ...`);
-      return await ApiCoinStatsService.getCoinStats(productId);
+      return await ApiCoinbaseService.getCoinStats(productId);
     } catch (error) {
       const message = `Failed to fetch stats for ${productId}`;
       console.log(message);

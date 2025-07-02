@@ -6,7 +6,7 @@ import TopUsersTabs from './TopUsersTabs/TopUsersTabs.tsx';
 
 export const TopUsers: React.FC = () => {
   return (
-    <Box sx={hotCoinsStyles.container}>
+    <Box sx={{ ...hotCoinsStyles.container, mt: '2rem' }}>
       <TopUsersInfo />
       <Suspense fallback={<CircularProgress />}>
         <TopUsersTabs />

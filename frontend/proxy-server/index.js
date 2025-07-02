@@ -17,39 +17,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Vytvoření proxy pro Coinbase API
-app.use(
-  '/api-coinbase',
-  createProxyMiddleware({
-    target: 'https://api.coinbase.com',
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api-coinbase': '', // Odstraní prefix '/api-coinbase' při přesměrování
-    },
-    // Přidání logování pro debug
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(`[Proxy] Proxying to: ${proxyReq.path}`);
-    },
-  }),
-);
-
-// Vytvoření proxy pro Coinbase Exchange API
-app.use(
-  '/api-coinbase-exchange',
-  createProxyMiddleware({
-    target: 'https://api.exchange.coinbase.com',
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api-coinbase-exchange': '',
-    },
-  }),
-);
-
 // Vytvoření proxy pro vlastní backend
 app.use(
   '/',
   createProxyMiddleware({
-    target: 'http://localhost:2000',
+    target: 'http://localhost:2000', //port where i am locally running java backend when developing. In docker image this port does not matter
     changeOrigin: true,
   }),
 );

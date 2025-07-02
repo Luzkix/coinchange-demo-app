@@ -20,7 +20,8 @@
   },
 
   "tableContent": {
-    "cryptocurrenciesTableTitle": "Přehled kryptoměn"
+    "cryptocurrenciesTableTitle": "Přehled kryptoměn",
+    "total": "Celkem kryptoměn:"
   },
 
   "topCoins": {

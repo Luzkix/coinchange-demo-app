@@ -6,8 +6,8 @@ import TopUsers from './TopUsers/TopUsers.tsx';
 export const HomePagePrivateContent: React.FC = () => {
   return (
     <ContentBox>
-      <Introduction />
       <TopUsers />
+      <Introduction />
     </ContentBox>
   );
 };

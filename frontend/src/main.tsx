@@ -21,8 +21,10 @@ const queryClient = new QueryClient({
   },
 });
 
-// Initialization of alternative BASE urls at app startup using own proxy server to deal with CORS errors
-setApiBaseToProxyUrl(true);
+// Initialization of alternative BASE urls at app startup using own proxy server to deal with CORS errors (useProxy == true) or it is false for build phase (when building docker image)
+// Proxy only in dev (based on .env.development / .env.production files)
+const useProxy = import.meta.env.VITE_REACT_APP_USE_PROXY === 'true';
+setApiBaseToProxyUrl(useProxy);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

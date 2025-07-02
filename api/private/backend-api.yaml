@@ -376,6 +376,130 @@ components:
       required:
         - currencyCode
         - totalFees
+    CoinPairDto:
+      type: object
+      properties:
+        product_id:
+          type: string
+          description: Unique identifier for the product pair
+          example: "BTC-USD"
+        base_currency_id:
+          type: string
+          description: Unique identifier for the base currency
+          example: "BTC"
+        quote_currency_id:
+          type: string
+          description: Unique identifier for the quote currency
+          example: "USD"
+        base_display_symbol:
+          type: string
+          description: Display symbol for base currency
+          example: "BTC"
+        quote_display_symbol:
+          type: string
+          description: Display symbol for quote currency
+          example: "USD"
+        base_name:
+          type: string
+          description: Display name of the base currency
+          example: "Bitcoin"
+        quote_name:
+          type: string
+          description: Display name of the quote currency
+          example: "US Dollar"
+        price:
+          type: string
+          description: Current price of the product pair
+          example: "88828.96"
+        price_percentage_change_24h:
+          type: string
+          description: 24-hour price percentage change
+          example: "1.97654041425943"
+        volume_24h:
+          type: string
+          description: 24-hour trading volume in base currency
+          example: "11537.70988692"
+        approximate_quote_24h_volume:
+          type: string
+          description: Approximate quote currency volume (i.e. base currency volume * quote currency price) in USD/EUR/...
+          example: "1024882770.04"
+        volume_percentage_change_24h:
+          type: string
+          description: 24-hour volume percentage change
+          example: "143.92418656128531"
+        is_disabled:
+          type: boolean
+          description: Indicates if trading is disabled
+          example: false
+        new:
+          type: boolean
+          description: Indicates if the product is newly listed
+          example: false
+        status:
+          type: string
+          description: Current status of the product
+          example: "online"
+        product_type:
+          type: string
+          description: Type of product (e.g. SPOT)
+          example: "SPOT"
+      required:
+        - product_id
+        - base_currency_id
+        - quote_currency_id
+        - base_display_symbol
+        - quote_display_symbol
+        - base_name
+        - price
+        - price_percentage_change_24h
+        - volume_24h
+        - volume_percentage_change_24h
+    CoinPairResponseDto:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoinPairDto'
+        num_products:
+          type: integer
+      required:
+        - products
+        - num_products
+    CoinStatsResponseDto:
+      type: object
+      properties:
+        open:
+          type: string
+          description: Open price for coin-pair in current trading day
+          example: "89907.44"
+        high:
+          type: string
+          description: Highest price for coin-pair in current trading day
+          example: "92907.44"
+        low:
+          type: string
+          description: Lowest price for coin-pair in current trading day
+          example: "87907.44"
+        last:
+          type: string
+          description: Last known price for coin-pair
+          example: "91907.44"
+        volume:
+          type: string
+          description: 24-hour volume in selected currency (e.g. amount of BTC traded in last 24 hours)
+          example: "10710.55244289"
+        volume_30day:
+          type: string
+          description: 30-day volume in selected currency (e.g. amount of BTC traded in last 30 days)
+          example: "285985.01131518"
+      required:
+        - open
+        - high
+        - low
+        - last
+        - volume
+        - volume_30day
 
 paths:
   /user/login:
@@ -852,6 +976,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TotalFeesResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /coinbase/coin-pair:
+    get:
+      tags:
+        - ApiCoinbase
+      summary: Get list of coins
+      description: Retrieves list of coins with detailed trading information as described on https://docs.cdp.coinbase.com/advanced-trade/reference/retailbrokerageapi_getproducts
+      operationId: getListOfCoinsWithTradingDetails
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 250
+        - name: offset
+          in: query
+          description: Pagination offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - name: product_type
+          in: query
+          description: Filter by product type
+          required: false
+          schema:
+            type: string
+            enum: [SPOT, FUTURE]
+          example: SPOT
+        - name: product_ids
+          in: query
+          description: Comma-separated list of product IDs
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          example: BTC-USD, BTC-EUR
+        - name: products_sort_order
+          in: query
+          description: Sort order for results
+          required: false
+          schema:
+            type: string
+            enum: [PRODUCTS_SORT_ORDER_UNDEFINED, PRODUCTS_SORT_ORDER_VOLUME_24H_DESCENDING, PRODUCTS_SORT_ORDER_LIST_TIME_DESCENDING]
+          example: PRODUCTS_SORT_ORDER_VOLUME_24H_DESCENDING
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinPairResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /coinbase/coin-stats/{product_id}/stats:
+    get:
+      tags:
+        - ApiCoinbase
+      summary: Get select coin-pair statistics
+      description: Retrieves 30day and 24hour stats including last known price for a selected coin-pair as described on https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductstats
+      operationId: getCoinStats
+      parameters:
+        - name: product_id
+          in: path
+          description: Product identifier, e.g. BTC-USD
+          required: true
+          schema:
+            type: string
+          example: BTC-USD
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinStatsResponseDto'
         400:
           description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
           content:

@@ -1,5 +1,5 @@
-import { CoinPair } from '../api-generated/coinbase';
 import { CoinsSortOrderTypeEnum, CoinsTypeEnum } from './customEnums.ts';
+import { CoinPairDto } from '../api-generated/backend';
 
 /**
  * Type for storing basic data about languages. Properties are:
@@ -14,10 +14,10 @@ export type Language = {
 };
 
 /**
- * Type definition for FetchedCoinPair specifying CoinPair and boolean defining whether CoinPair is tradeable on CoinChange exchange,
+ * Type definition for FetchedCoinPair specifying CoinPairDto and boolean defining whether CoinPairDto is tradeable on CoinChange exchange,
  * example: {coinPair : BTC-USD CoinPair, isTradeable: true}
  */
-export type FetchedCoinPair = { coinPair: CoinPair; isTradeable: boolean };
+export type FetchedCoinPair = { coinPair: CoinPairDto; isTradeable: boolean };
 
 /**
  * Type definition for resulting map (currencies -> coins map),

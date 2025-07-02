@@ -64,14 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  products:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CoinPair'
-                  num_products:
-                    type: integer
+                $ref: '#/components/schemas/CoinPairResponse'
         '500':
           description: Unexpected error
 
@@ -155,4 +148,15 @@ components:
         - price_percentage_change_24h
         - volume_24h
         - volume_percentage_change_24h
-
+    CoinPairResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoinPair'
+        num_products:
+          type: integer
+      required:
+        - products
+        - num_products

@@ -1,5 +1,4 @@
 import { CurrencyTypeEnum } from '../../constants/customEnums.ts';
-import { CoinPair } from '../../api-generated/coinbase';
 import { CoinsMap } from '../../constants/customTypes.ts';
 import { QueryClient } from '@tanstack/react-query';
 import { createFetchCoinPairStatsOptions } from '../../constants/customQueryOptions.ts';
@@ -7,6 +6,7 @@ import { FetchCoinPairStatsError } from '../../constants/customErrors.ts';
 import { TFunction } from 'i18next';
 import { CoinsTableRowData } from '../../components/common/CoinsTable/CoinsTable.tsx';
 import {
+  CoinPairDto,
   CurrencyBalanceResponseDto,
   CurrencyConversionRateResponseDto,
   CurrencyResponseDto,
@@ -64,7 +64,7 @@ export const getPriceChangePercentageFromStringNumbers = (
  * @param currency - Target currency (USD/EUR)
  * @returns Array of CoinPair sorted by volume descending
  */
-export const getTradeableCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
+export const getTradeableCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPairDto[] => {
   const currencyData = fetchedCoinsData.get(currency);
   if (!currencyData) return [];
 
@@ -84,7 +84,7 @@ export const getTradeableCoins = (fetchedCoinsData: CoinsMap, currency: string):
  * @param currency - Target currency (USD/EUR)
  * @returns Array of CoinPair sorted by price change descending
  */
-export const getTopGainers = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
+export const getTopGainers = (fetchedCoinsData: CoinsMap, currency: string): CoinPairDto[] => {
   const currencyData = fetchedCoinsData.get(currency);
   if (!currencyData) return [];
 
@@ -103,7 +103,7 @@ export const getTopGainers = (fetchedCoinsData: CoinsMap, currency: string): Coi
  * @param currency - Target currency (USD/EUR)
  * @returns Array of CoinPair sorted by volume descending
  */
-export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPair[] => {
+export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinPairDto[] => {
   const currencyData = fetchedCoinsData.get(currency);
   if (!currencyData) return [];
 
@@ -126,11 +126,11 @@ export const getNewCoins = (fetchedCoinsData: CoinsMap, currency: string): CoinP
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
 export const updateCoinsPrices = async (
-  displayedCoins: CoinPair[],
+  displayedCoins: CoinPairDto[],
   queryClient: QueryClient,
   addErrorPopup?: (message: string) => void,
   t?: TFunction<string[], undefined>,
-): Promise<CoinPair[]> => {
+): Promise<CoinPairDto[]> => {
   return Promise.all(
     displayedCoins.map(async (coin) => {
       try {
@@ -189,6 +189,7 @@ export const convertCoinsDataIntoCoinsTableRowData = (
  * @param balances - balances of all FIAT/CRYPTO currencies owned by the user
  * @param eurToUsdRate - EUR to USD rate for calculations of current balances values in selected currency
  * @param selectedCurrency - fiat currency to be used to filter coins matching this currency
+ * @param supportedFiatCurrencies - list of supported FIAT currencies
  * @returns Array of CoinPair as a Promise with refreshed properties such as 'price' and 'price_percentage_change_24h'
  */
 export const convertCoinsDataAndUserBalanceDataIntoCoinsTableRowData = (

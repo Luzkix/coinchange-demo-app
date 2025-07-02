@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.luzkix</groupId>
-	<artifactId>backend</artifactId>
+	<artifactId>coinchange-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>coinchange-backend</name>
 	<description>coinchange-backend</description>
@@ -243,6 +243,37 @@
 							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
 						</configuration>
 					</execution>
+					<!-- External client API generated from coinbase-public-api.yaml -->
+					<execution>
+						<id>generate-coinbase-client</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<!-- YAML file path -->
+							<inputSpec>${project.basedir}/../api/public/coinbase-public-api.yaml</inputSpec>
+							<!-- Generator for Java Spring Boot -->
+							<generatorName>java</generatorName>
+							<library>webclient</library>
+							<!-- Output folder -->
+							<output>${project.build.directory}/generated-sources/openapi-client/coinbase</output>
+							<!-- Packages for generated classes -->
+							<apiPackage>org.luzkix.coinchange.openapi.coinbaseclient.client</apiPackage>
+							<modelPackage>org.luzkix.coinchange.openapi.coinbaseclient.model</modelPackage>
+							<invokerPackage>org.luzkix.coinchange.openapi.coinbaseclient.invoker</invokerPackage>
+							<!-- not generating test classes which are not needed and may cause issues -->
+							<generateApiTests>false</generateApiTests>
+							<generateModelTests>false</generateModelTests>
+							<!-- additional config options -->
+							<configOptions>
+								<interfaceOnly>false</interfaceOnly>
+								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
+								<useJakartaEe>true</useJakartaEe> <!-- Řeší problém s generováním neplatných javax anotací, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
+							</configOptions>
+							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -273,7 +304,7 @@
 					</execution>
 					<!-- External client API generated from coinbase-exchange-public-api.yaml -->
 					<execution>
-						<id>add-generated-sources-api-client</id>
+						<id>add-generated-sources-api-client-coinbase-exchange</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -283,6 +314,25 @@
 							<resources>
 								<resource>
 									<directory>${project.build.directory}/generated-sources/openapi-client/coinbaseexchange</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<!-- External client API generated from coinbase-public-api.yaml -->
+					<execution>
+						<id>add-generated-sources-api-client-coinbase</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-sources/openapi-client/coinbase</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/generated-sources/openapi-client/coinbase</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>

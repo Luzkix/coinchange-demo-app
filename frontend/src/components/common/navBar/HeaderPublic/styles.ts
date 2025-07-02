@@ -14,12 +14,6 @@ export const headerStyles: Record<string, SxProps<Theme>> = {
     minHeight: { xs: 56, sm: 64 },
     px: { xs: 1, sm: 3 },
   },
-  logo: {
-    textDecoration: 'none',
-    color: 'inherit',
-    fontWeight: 'bold',
-    fontSize: { xs: 20, sm: 24 },
-  },
   navContainer: {
     display: 'flex',
     alignItems: 'center',

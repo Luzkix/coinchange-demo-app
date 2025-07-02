@@ -28,31 +28,48 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        // Allow access to Swagger UI and API docs without authentication for testing purposes
+                        // Swagger UI a API docs
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
-                        // Allow public access to GET/currency and login + register endpoints
-                        .requestMatchers(HttpMethod.GET, "/currency").permitAll()
+                        // Veřejné API endpointy
+                        .requestMatchers(HttpMethod.GET, "/currency", "/coinbase/**", "/coinbase-exchange/**").permitAll()
+
+                        // SPA routes (frontend stránky)
+                        .requestMatchers("/", "/cryptocurrencies", "/login", "/signup").permitAll()
+
+                        // Login + register endpointy
                         .requestMatchers("/user/login", "/user/register").permitAll()
 
-                        // Restrict access to /admin/** only for ADMIN role
+                        // Statické frontend zdroje
+                        .requestMatchers(
+                                "/index.html",
+                                "/favicon.ico",
+                                "/assets/**",
+                                "/*.webp",
+                                "/*.svg",
+                                "/static/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        // Omezení /admin/** pouze pro ADMIN roli
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // Allow ADMIN and USER roles to access all other endpoints
+                        // Všechny ostatní API endpointy vyžadují USER nebo ADMIN roli
                         .requestMatchers("/**").hasAnyRole("ADMIN", "USER")
 
-                        // Require authentication for any other requests
+                        // Fallback: jakékoli další požadavky vyžadují autentifikaci
                         .anyRequest().authenticated()
                 )
+
                 // Custom handling of exceptions which are being processed within security layer before the request reaches its endpoint
                 // The exceptions will be resolved within common handlerExceptionResolver == processed by my own ExceptionHandlerAdvice (which ensures creation of proper ErrorDto).
                 .exceptionHandling(exceptions -> exceptions
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
-                        })
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            handlerExceptionResolver.resolveException(request, response, null, authException);
-                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                handlerExceptionResolver.resolveException(request, response, null, accessDeniedException)
+                        )
+                        .authenticationEntryPoint((request, response, authException) ->
+                                handlerExceptionResolver.resolveException(request, response, null, authException)
+                        )
                 )
                 // Add filter to handle custom security exceptions such as InvalidJwtTokenException
                 //  - this filter ensures that these custom exceptions are not converted into more general exceptions and are directly handed over to common handlerExceptionResolver == processed by my own ExceptionHandlerAdvice
@@ -62,5 +79,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 }

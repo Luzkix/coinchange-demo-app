@@ -1,5 +1,3 @@
-import { OpenAPI as CoinbaseOpenAPI } from '../src/api-generated/coinbase/core/OpenAPI';
-import { OpenAPI as CoinbaseExchangeOpenAPI } from '../src/api-generated/coinbase-exchange/core/OpenAPI';
 import { OpenAPI as BackendOpenAPI } from '../src/api-generated/backend/core/OpenAPI';
 
 /**
@@ -11,14 +9,10 @@ import { OpenAPI as BackendOpenAPI } from '../src/api-generated/backend/core/Ope
  */
 export function setApiBaseToProxyUrl(useProxy: boolean = true): void {
   if (useProxy) {
-    // Using proxy server
-    CoinbaseOpenAPI.BASE = 'http://localhost:5000/api-coinbase';
-    CoinbaseExchangeOpenAPI.BASE = 'http://localhost:5000/api-coinbase-exchange';
+    // Using proxy server which runs on port 5000. Used automatically by vite for "dev" script
     BackendOpenAPI.BASE = 'http://localhost:5000';
   } else {
-    // Direct calls (will be blocked by CORS, just for info)
-    CoinbaseOpenAPI.BASE = 'https://api.coinbase.com';
-    CoinbaseExchangeOpenAPI.BASE = 'https://api.exchange.coinbase.com';
-    BackendOpenAPI.BASE = 'http://localhost:2000';
+    // Direct calls without proxy to be used for building docker image. Used automatically by vite for "build" script
+    BackendOpenAPI.BASE = '';
   }
 }
