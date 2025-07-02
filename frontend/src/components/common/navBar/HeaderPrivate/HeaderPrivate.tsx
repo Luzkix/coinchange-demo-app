@@ -29,7 +29,9 @@ const HeaderPublic: React.FC = () => {
   return (
     <AppBar sx={headerStyles.appBar}>
       <Toolbar sx={headerStyles.toolbar}>
-        <LogoLink to={ROUTES.HOME_PRIVATE} />
+        <Box sx={{ mx: 1 }}>
+          <LogoLink to={ROUTES.HOME} />
+        </Box>
 
         {/* Desktop navigace */}
         {!isMobile && (
@@ -58,9 +60,14 @@ const HeaderPublic: React.FC = () => {
               onClick={() => setDrawerOpen(!drawerOpen)}
               sx={headerStyles.menuIconButton}
             >
-              <MenuIcon />
+              <MenuIcon fontSize="large" />
             </IconButton>
-            <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+              slotProps={{ paper: { sx: headerStyles.drawerPaper } }}
+            >
               <Box sx={headerStyles.drawerContent} role="presentation">
                 <Box sx={theme.mixins.toolbar} />
                 <NavTab

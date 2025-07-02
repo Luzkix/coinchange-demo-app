@@ -41,11 +41,17 @@ export const headerStyles: Record<string, SxProps<Theme>> = {
     display: { xs: 'flex', md: 'none' },
     ml: 1,
     color: '#0A0B0D',
+    width: 90,
+    justifyContent: 'center',
   },
   drawerPaper: {
     width: 240,
     backgroundColor: '#fff',
     boxShadow: 3,
+    height: 'auto',
+    bottom: 'auto',
+    maxHeight: '80vh',
+    overflow: 'visible',
   },
   drawerContent: {
     width: 240,
@@ -54,6 +60,7 @@ export const headerStyles: Record<string, SxProps<Theme>> = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
+    mb: 2,
   },
   drawerLangSwitcher: {
     mt: 2,
