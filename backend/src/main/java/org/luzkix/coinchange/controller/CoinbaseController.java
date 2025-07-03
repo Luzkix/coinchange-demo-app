@@ -3,7 +3,7 @@ package org.luzkix.coinchange.controller;
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.exceptions.CustomInternalErrorException;
 import org.luzkix.coinchange.exceptions.ErrorBusinessCodeEnum;
-import org.luzkix.coinchange.openapi.backendapi.api.CoinbaseApi;
+import org.luzkix.coinchange.openapi.backendapi.api.ApiCoinbaseApi;
 import org.luzkix.coinchange.openapi.backendapi.model.CoinPairDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CoinPairResponseDto;
 import org.luzkix.coinchange.openapi.backendapi.model.CoinStatsResponseDto;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class CoinbaseController extends GenericController implements CoinbaseApi {
+public class CoinbaseController extends GenericController implements ApiCoinbaseApi {
 
     private final CoinbaseService coinbaseService;
     private final CoinbaseExchangeService coinbaseExchangeService;

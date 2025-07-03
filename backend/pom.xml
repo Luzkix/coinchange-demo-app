@@ -208,6 +208,7 @@
 								<interfaceOnly>true</interfaceOnly>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
 								<useSpringBoot3>true</useSpringBoot3> <!-- Aktivace Spring Boot 3 kompatibility, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
+								<useTags>true</useTags> <!-- zajisti pouzivani tagu a podle nich bude openapi generator vytvaret jednotliva API -->
 							</configOptions>
 							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
 						</configuration>
@@ -239,6 +240,7 @@
 								<interfaceOnly>false</interfaceOnly>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
 								<useJakartaEe>true</useJakartaEe> <!-- Řeší problém s generováním neplatných javax anotací, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
+								<useTags>true</useTags> <!-- zajisti pouzivani tagu a podle nich bude openapi generator vytvaret jednotliva API -->
 							</configOptions>
 							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
 						</configuration>
@@ -270,6 +272,7 @@
 								<interfaceOnly>false</interfaceOnly>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp> <!-- zbytečný timestamp pokud jej nepotřebuju cíleně -->
 								<useJakartaEe>true</useJakartaEe> <!-- Řeší problém s generováním neplatných javax anotací, např. místo javax importů se generují jakarta importy kt.jsou kompatibilní se spring boot 3-->
+								<useTags>true</useTags> <!-- zajisti pouzivani tagu a podle nich bude openapi generator vytvaret jednotliva API -->
 							</configOptions>
 							<cleanupOutput>true</cleanupOutput> <!-- promazání cílové složky před generováním nových souborů -->
 						</configuration>

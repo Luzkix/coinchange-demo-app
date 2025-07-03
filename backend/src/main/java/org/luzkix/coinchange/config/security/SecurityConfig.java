@@ -28,36 +28,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger UI a API docs
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        // API endpointy s prefixem
+                        .requestMatchers("/api/user/login", "/api/user/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/currency", "/api/coinbase/**").permitAll()
+                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER")
 
-                        // Veřejné API endpointy
-                        .requestMatchers(HttpMethod.GET, "/currency", "/coinbase/**", "/coinbase-exchange/**").permitAll()
+                        // UI routes
+                        .requestMatchers(HttpMethod.GET, "/ui/**").permitAll()
 
-                        // SPA routes (frontend stránky)
-                        .requestMatchers("/", "/cryptocurrencies", "/login", "/signup").permitAll()
-
-                        // Login + register endpointy
-                        .requestMatchers("/user/login", "/user/register").permitAll()
-
-                        // Statické frontend zdroje
+                        // Statické zdroje (frontend build)
                         .requestMatchers(
+                                "/",
                                 "/index.html",
-                                "/favicon.ico",
+                                "/static/**",
                                 "/assets/**",
+                                "/favicon.ico",
                                 "/*.webp",
                                 "/*.svg",
-                                "/static/**",
                                 "/webjars/**"
                         ).permitAll()
 
-                        // Omezení /admin/** pouze pro ADMIN roli
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Všechny ostatní API endpointy vyžadují USER nebo ADMIN roli
-                        .requestMatchers("/**").hasAnyRole("ADMIN", "USER")
-
-                        // Fallback: jakékoli další požadavky vyžadují autentifikaci
                         .anyRequest().authenticated()
                 )
 

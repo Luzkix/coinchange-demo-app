@@ -3,7 +3,7 @@ package org.luzkix.coinchange.controller;
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.config.CustomConstants;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.api.BalanceApi;
+import org.luzkix.coinchange.openapi.backendapi.api.ApiBalanceApi;
 import org.luzkix.coinchange.openapi.backendapi.model.BalancesResponseDto;
 import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.UserService;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class BalanceController extends GenericController implements BalanceApi {
+public class BalanceController extends GenericController implements ApiBalanceApi {
 
     private final BalanceService balanceService;
     private final UserService userService;

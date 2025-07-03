@@ -502,7 +502,7 @@ components:
         - volume_30day
 
 paths:
-  /user/login:
+  /api/user/login:
     post:
       tags:
         - ApiUser
@@ -530,7 +530,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /user/register:
+  /api/user/register:
     post:
       tags:
         - ApiUser
@@ -558,7 +558,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /user/refresh-token:
+  /api/user/refresh-token:
     post:
       tags:
         - ApiUser
@@ -587,7 +587,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /balance:
+  /api/balance:
     get:
       tags:
         - ApiBalance
@@ -620,7 +620,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /balance/all-users:
+  /api/balance/all-users:
     get:
       tags:
         - ApiBalance
@@ -655,7 +655,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currency:
+  /api/currency:
     get:
       tags:
         - ApiCurrency
@@ -678,7 +678,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currency/{type}:
+  /api/currency/{type}:
     get:
       tags:
         - ApiCurrency
@@ -712,7 +712,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
 
-  /currency/conversion-rate/{soldCurrencyCode}-{boughtCurrencyCode}:
+  /api/currency/conversion-rate/{soldCurrencyCode}-{boughtCurrencyCode}:
     get:
       tags:
         - ApiCurrency
@@ -750,7 +750,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currency/convert-simple:
+  /api/currency/convert-simple:
     post:
       tags:
         - ApiCurrency
@@ -778,7 +778,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /currency/convert-advanced:
+  /api/currency/convert-advanced:
     post:
       tags:
         - ApiCurrency
@@ -809,7 +809,7 @@ paths:
 
 
 
-  /transaction:
+  /api/transaction:
     get:
       tags:
         - ApiTransaction
@@ -834,7 +834,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /transaction/pending:
+  /api/transaction/pending:
     get:
       tags:
         - ApiTransaction
@@ -859,7 +859,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /transaction/cancel/{id}:
+  /api/transaction/cancel/{id}:
     post:
       tags:
         - ApiTransaction
@@ -893,7 +893,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /user/update:
+  /api/user/update:
     post:
       tags:
         - ApiUser
@@ -924,7 +924,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
 
-  /fee/user-total-fees/{targetCurrencyCode}:
+  /api/fee/user-total-fees/{targetCurrencyCode}:
     get:
       tags:
         - ApiFee
@@ -953,7 +953,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /fee/total-fees/{targetCurrencyCode}:
+  /api/fee/total-fees/{targetCurrencyCode}:
     get:
       tags:
         - ApiFee
@@ -982,7 +982,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /coinbase/coin-pair:
+  /api/coinbase/coin-pair:
     get:
       tags:
         - ApiCoinbase
@@ -1043,7 +1043,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-  /coinbase/coin-stats/{product_id}/stats:
+  /api/coinbase/coin-stats/{product_id}/stats:
     get:
       tags:
         - ApiCoinbase

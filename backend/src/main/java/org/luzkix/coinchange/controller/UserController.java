@@ -1,7 +1,7 @@
 package org.luzkix.coinchange.controller;
 
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.api.UserApi;
+import org.luzkix.coinchange.openapi.backendapi.api.ApiUserApi;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.UserService;
 import org.luzkix.coinchange.utils.validations.BusinessValidations;
@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserController extends GenericController implements UserApi {
+public class UserController extends GenericController implements ApiUserApi {
 
     @Autowired
     private UserService userService;

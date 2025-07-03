@@ -8,7 +8,7 @@ import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.api.CurrencyApi;
+import org.luzkix.coinchange.openapi.backendapi.api.ApiCurrencyApi;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
 import org.luzkix.coinchange.service.BalanceService;
 import org.luzkix.coinchange.service.CurrencyConversionService;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CurrencyController extends GenericController implements CurrencyApi {
+public class CurrencyController extends GenericController implements ApiCurrencyApi {
 
     private final JwtProvider jwtProvider;
     private final CurrencyService currencyService;

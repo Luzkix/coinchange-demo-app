@@ -3,7 +3,7 @@ package org.luzkix.coinchange.controller;
 import lombok.RequiredArgsConstructor;
 import org.luzkix.coinchange.model.Transaction;
 import org.luzkix.coinchange.model.User;
-import org.luzkix.coinchange.openapi.backendapi.api.TransactionApi;
+import org.luzkix.coinchange.openapi.backendapi.api.ApiTransactionApi;
 import org.luzkix.coinchange.openapi.backendapi.model.TransactionResponseDto;
 import org.luzkix.coinchange.service.TransactionService;
 import org.luzkix.coinchange.utils.DateUtils;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class TransactionController extends GenericController implements TransactionApi {
+public class TransactionController extends GenericController implements ApiTransactionApi {
 
     private final TransactionService transactionService;
 
