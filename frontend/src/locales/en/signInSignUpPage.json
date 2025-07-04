@@ -8,7 +8,10 @@
     "passwordConfirm": "Confirm password",
     "passwordsDoNotMatch": "Passwords do not match",
     "register": "Register",
-    "registering": "Registering..."
+    "registering": "Registering...",
+    "congratulationTitle": "🎉 Congratulations! 🎉",
+    "congratulationMessage": "Thank you for registering. We have credited your account with a registration bonus of: "
+
   },
 
   "signIn": {

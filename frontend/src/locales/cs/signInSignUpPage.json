@@ -8,7 +8,9 @@
     "passwordConfirm": "Potvrdit heslo",
     "passwordsDoNotMatch": "Hesla se neshodují",
     "register": "Registrovat",
-    "registering": "Registrování..."
+    "registering": "Registrování...",
+    "congratulationTitle": "🎉 Gratulujeme! 🎉",
+    "congratulationMessage": "Děkujeme za registraci. Připsali jsme Vám registrační bonus ve výši: "
   },
 
   "signIn": {
