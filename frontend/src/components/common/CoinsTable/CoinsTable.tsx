@@ -32,9 +32,10 @@ export interface CoinsTableRowData {
 interface CoinsDataGridProps {
   data: CoinsTableRowData[];
   selectedCurrency: string;
+  isPortfolioPage?: boolean;
 }
 
-const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) => {
+const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency, isPortfolioPage }) => {
   const { t, i18n } = useTranslation(['cryptocurrenciesPage']);
 
   const [paginationModel, setPaginationModel] = useState({
@@ -164,21 +165,41 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
       field: 'actions',
       headerName: t('table.actions'),
       minWidth: 150,
-      renderCell: (params: GridRenderCellParams<any, CoinsTableRowData>) => (
-        <Box sx={coinsTableStyles.actionsCell}>
-          {params.row.isTradeable && (
-            <Button
-              component={Link}
-              to={`${ROUTES.TRADE}?${SEARCHPARAM_SOLD_CURRENCY}=${selectedCurrency}&${SEARCHPARAM_BOUGHT_CURRENCY}=${params.row.coinSymbol}`}
-              variant="contained"
-              size="small"
-              sx={coinsTableStyles.tradeButton}
-            >
-              {t('table.trade')}
-            </Button>
-          )}
-        </Box>
-      ),
+      renderCell: (params: GridRenderCellParams<any, CoinsTableRowData>) => {
+        // POUZE PRO PORTFOLIOPAGE
+        // najdi řádek s měnou která je rovna 'selectedCurrency' a jehož userBalance > 0.
+        // action button na nákup chceme zobrazit pouze pokud má uživatel u vybrané selected currency (což bude soldCurrency) zůstatek > 0
+        const balanceRow = params.api
+          .getAllRowIds() // 1. Získej všechny ID řádků
+          .map((id) => params.api.getRow(id)) // 2. Načti data každého řádku
+          .find(
+            (row: CoinsTableRowData | null) =>
+              row != null &&
+              row.coinSymbol === selectedCurrency && // 3. Vyber řádek se stejným symbolem měny
+              (row.userBalance ?? 0) > 0, // 4. Ujisti se, že userBalance > 0
+          );
+
+        debugger;
+        const canTrade = isPortfolioPage
+          ? params.row.isTradeable && balanceRow != null
+          : params.row.isTradeable;
+
+        return (
+          <Box sx={coinsTableStyles.actionsCell}>
+            {canTrade && (
+              <Button
+                component={Link}
+                to={`${ROUTES.TRADE}?${SEARCHPARAM_SOLD_CURRENCY}=${selectedCurrency}&${SEARCHPARAM_BOUGHT_CURRENCY}=${params.row.coinSymbol}`}
+                variant="contained"
+                size="small"
+                sx={coinsTableStyles.tradeButton}
+              >
+                {t('table.trade')}
+              </Button>
+            )}
+          </Box>
+        );
+      },
       sortable: true,
       // Chci řadit podle jiného sloupce -> klíčové je použít 3. a 4. argument (cellParams1, cellParams2)
       sortComparator: (_v1, _v2, cellParams1, cellParams2) => {

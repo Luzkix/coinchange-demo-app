@@ -120,7 +120,7 @@ const PortfolioPageContent: React.FC = () => {
       eurToUsdRate,
       selectedCurrency,
       supportedFiatCurrencies,
-    );
+    ).sort((a, b) => (a.price > b.price ? -1 : 1)); //sorted by highest current value of each coin
   }, [coinsData, userAvailableBalancesData, eurToUsdRate, selectedCurrency]);
 
   // calculate total available balance for particular currency before nonZeroBalances filtration
@@ -336,7 +336,11 @@ const PortfolioPageContent: React.FC = () => {
         setSelectedCurrency={setSelectedCurrency}
       />
 
-      <CoinsTable data={filteredTableRowData} selectedCurrency={selectedCurrency} />
+      <CoinsTable
+        data={filteredTableRowData}
+        selectedCurrency={selectedCurrency}
+        isPortfolioPage={true}
+      />
 
       <Box sx={portfolioPageContentStyles.totalFeesRow}>
         <Typography sx={portfolioPageContentStyles.totalFeesLabel}>
