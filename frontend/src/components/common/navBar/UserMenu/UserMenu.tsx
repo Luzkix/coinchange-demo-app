@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/AuthContext.tsx';
 import { userMenuStyles } from './styles.ts';
 import { useTranslation } from 'react-i18next';
+import ROUTES from '../../../../constants/routes.ts';
 
 const UserMenu: React.FC = () => {
   const { t } = useTranslation(['common']);
@@ -23,7 +24,7 @@ const UserMenu: React.FC = () => {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    navigate(ROUTES.PROFILE);
     handleClose();
   };
 
