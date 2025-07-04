@@ -14,6 +14,7 @@ import { DefaultPageSizeOptionsEnum } from '../../../constants/configVariables.t
 import { Link } from 'react-router-dom';
 import CoinHeader from '../CoinHeader/CoinHeader.tsx';
 import cssStyles from './CoinsTable.module.css';
+import ROUTES from '../../../constants/routes.ts';
 
 export interface CoinsTableRowData {
   id: string;
@@ -168,7 +169,7 @@ const CoinsTable: React.FC<CoinsDataGridProps> = ({ data, selectedCurrency }) =>
           {params.row.isTradeable && (
             <Button
               component={Link}
-              to={`/trade?${SEARCHPARAM_SOLD_CURRENCY}=${selectedCurrency}&${SEARCHPARAM_BOUGHT_CURRENCY}=${params.row.coinSymbol}`}
+              to={`${ROUTES.TRADE}?${SEARCHPARAM_SOLD_CURRENCY}=${selectedCurrency}&${SEARCHPARAM_BOUGHT_CURRENCY}=${params.row.coinSymbol}`}
               variant="contained"
               size="small"
               sx={coinsTableStyles.tradeButton}

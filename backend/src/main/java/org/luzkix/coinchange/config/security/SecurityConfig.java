@@ -28,26 +28,14 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        // API endpointy s prefixem
+                        // 1) Povolit veřejné REST API pro login/register, měny a dotazy na coinbase api
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/currency", "/api/coinbase/**").permitAll()
+                        // 2) Veškeré ostatní /api/** chránit
                         .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER")
-
-                        // UI routes
-                        .requestMatchers(HttpMethod.GET, "/ui/**").permitAll()
-
-                        // Statické zdroje (frontend build)
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/static/**",
-                                "/assets/**",
-                                "/favicon.ico",
-                                "/*.webp",
-                                "/*.svg",
-                                "/webjars/**"
-                        ).permitAll()
-
+                        // 3) Všechny ostatní GET requesty (včetně všech frontend ui volání) povolit
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // 4) Fallback pro ostatní požadavky
                         .anyRequest().authenticated()
                 )
 

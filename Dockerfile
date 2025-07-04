@@ -27,7 +27,7 @@ RUN chmod +x mvnw \
 
 # Kopie backend zdrojů + statiky z frontendu
 COPY backend/src src/
-COPY --from=frontend-build /app/frontend/dist/ src/main/resources/static/
+COPY --from=frontend-build /app/frontend/dist/ src/main/resources/public/
 
 # Kompilace Spring Boot aplikace (skip testů)
 RUN ./mvnw clean package -DskipTests -B
