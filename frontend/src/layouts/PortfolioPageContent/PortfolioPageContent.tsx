@@ -291,7 +291,11 @@ const PortfolioPageContent: React.FC = () => {
                     },
                   ).format(totalAvailableBalanceInSelectedCurrency)}
                 </Typography>
-                <Tooltip title={t('portfolioPage.totalAvailableBalance')}>
+                <Tooltip
+                  title={t('portfolioPage.totalAvailableBalance')}
+                  enterTouchDelay={0}
+                  leaveTouchDelay={5000}
+                >
                   <InfoOutlinedIcon
                     sx={{ ml: 0, fontSize: 20, color: 'text.secondary', cursor: 'pointer' }}
                   />
@@ -309,7 +313,11 @@ const PortfolioPageContent: React.FC = () => {
                   >
                     {`${profitInPercent == 0 ? '' : profitInPercent > 0 ? '▲' : '▼'} ${profitInPercent.toFixed(2)}%`}
                   </Typography>
-                  <Tooltip title={t('portfolioPage.profitInPercent')}>
+                  <Tooltip
+                    title={t('portfolioPage.profitInPercent')}
+                    enterTouchDelay={0}
+                    leaveTouchDelay={5000}
+                  >
                     <InfoOutlinedIcon
                       sx={{ ml: 0, fontSize: 20, color: 'text.secondary', cursor: 'pointer' }}
                     />
@@ -356,6 +364,8 @@ const PortfolioPageContent: React.FC = () => {
                   : (fetchedTotalFeesForUserResult.data?.totalFees ?? 0),
               )}
             <Tooltip
+              enterTouchDelay={0}
+              leaveTouchDelay={5000}
               title={t(
                 isAdmin ? 'portfolioPage.totalFeesTooltipAdmin' : 'portfolioPage.totalFeesTooltip',
               )}
