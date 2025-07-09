@@ -134,7 +134,6 @@ public class TransactionServiceImpl implements TransactionService {
                 ErrorBusinessCodeEnum.CANCELLATION_TRANSACTION_FAILURE);
 
         try{
-
             transaction.setCancelledAt(LocalDateTime.now());
             transactionDao.save(transaction);
 

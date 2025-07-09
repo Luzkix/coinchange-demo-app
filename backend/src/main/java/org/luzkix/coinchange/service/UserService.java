@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserService {
     UserLoginResponseDto createUser(UserRegistrationRequestDto registrationDto);
 
-    UserLoginResponseDto logUser(UserLoginRequestDto userLoginDto);
+    UserLoginResponseDto loginUser(UserLoginRequestDto userLoginDto);
 
     User findUserById(Long userId);
 
@@ -17,4 +17,6 @@ public interface UserService {
     RefreshTokenResponseDto refreshToken(User user);
 
     UserLoginResponseDto updateUser(UserUpdateRequestDto userLoginDto, User user);
+
+    UserLoginResponseDto suspendUser(User user);
 }

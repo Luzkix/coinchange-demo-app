@@ -10,6 +10,9 @@
     "roles": "Application Roles",
     "saveChanges": "Save Changes",
     "saving": "Saving...",
-    "updateConfirmation": "Profile details have been successfully updated."
+    "updateConfirmation": "Profile details have been successfully updated.",
+    "cancelAccount": "Deactivate Account !",
+    "cancelAccountConfirmationTitle": "Account Deactivated!",
+    "cancelAccountConfirmationMessage": "Your account has been successfully deactivated. Thank you for using the Coinchange app! If you need to reactivate your account, please contact the system administrator."
   }
 }

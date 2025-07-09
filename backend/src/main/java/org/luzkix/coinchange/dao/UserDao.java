@@ -7,6 +7,8 @@ import java.util.List;
 public interface UserDao {
     User save(User user);
 
+    User findUserByUsernameOrEmail(String username, String email);
+
     User findActiveUserByUsernameOrEmail(String username, String email);
 
     User findActiveUserByUsername(String username);

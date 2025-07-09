@@ -11,14 +11,29 @@ export const profilePageStyles: Record<string, SxProps<Theme>> = {
     maxWidth: { xs: '100%', sm: '15%' },
     m: { xs: 0, sm: 2 },
     mt: { xs: 2, sm: 2 },
-
+    alignItems: 'center',
     height: { xs: 'auto', sm: 'fit-content' },
+  },
+  menu: {
+    backgroundColor: 'white',
     boxShadow: { xs: 1, sm: 1 },
     borderRadius: 2,
     zIndex: 1,
-    backgroundColor: 'white',
     overflowX: 'auto',
   },
+
+  cancelAccountButton: {
+    backgroundColor: 'lightcoral',
+    color: 'white',
+    mt: 2,
+    width: '100%',
+
+    boxShadow: { xs: 1, sm: 1 },
+    borderRadius: 2,
+    zIndex: 1,
+    overflowX: 'auto',
+  },
+
   navList: {
     p: 0,
   },

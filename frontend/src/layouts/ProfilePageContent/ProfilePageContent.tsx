@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, List, ListItemButton, ListItemText, Paper } from '@mui/material';
+import { Box, Button, List, ListItemButton, ListItemText, Paper } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { profilePageStyles } from './styles';
 import { useUpdateUser } from '../../hooks/useUpdateUser.ts';
@@ -9,6 +9,10 @@ import ProfilePageContentForm from './ProfilePageContentForm/ProfilePageContentF
 import TransactionsHistoryContent from './TransactionsHistoryContent/TransactionsHistoryContent.tsx';
 import ContentBoxLarge from '../../components/ui/ContentBoxLarge/ContentBoxLarge.tsx';
 import { useTranslation } from 'react-i18next';
+import { useSuspendUser } from '../../hooks/useSuspendUser.ts';
+import { useAuth } from '../../contexts/AuthContext.tsx';
+import ModalLoaderBlocking from '../../components/common/ModalLoaderBlocking/ModalLoaderBlocking.tsx';
+import { useGeneralContext } from '../../contexts/GeneralContext.tsx';
 
 enum ProfileSection {
   PROFILE = 'PROFILE',
@@ -17,9 +21,13 @@ enum ProfileSection {
 
 const ProfilePageContent: React.FC = () => {
   const { t } = useTranslation(['profilePage', 'transactionTable']);
+  const { userData, logout } = useAuth();
+  const isAdmin = !!userData?.roles?.includes('ADMIN');
+  const { addErrorModal } = useGeneralContext();
   const navigate = useNavigate();
   const location = useLocation();
   const { mutate: updateUser, isPending } = useUpdateUser();
+  const { mutate: suspendUser, isPending: isPendingSuspendUser } = useSuspendUser();
   const [updateIsSuccess, setUpdateIsSuccess] = useState(false);
   const [selectedSection, setSelectedSection] = useState<ProfileSection>(ProfileSection.PROFILE);
 
@@ -33,28 +41,49 @@ const ProfilePageContent: React.FC = () => {
     });
   };
 
+  const handleCancelAccount = () => {
+    suspendUser(undefined, {
+      onSuccess: () => {
+        logout();
+        addErrorModal(
+          t('profilePage:profilePage.cancelAccountConfirmationMessage'),
+          t('profilePage:profilePage.cancelAccountConfirmationTitle'),
+        );
+      },
+    });
+  };
+
   return (
     <ContentBoxLarge>
       <Box sx={profilePageStyles.root}>
         {/* Side navigation panel */}
-        <Paper elevation={1} sx={profilePageStyles.sidePanel}>
-          <List component="nav" sx={profilePageStyles.navList}>
-            <ListItemButton
-              selected={selectedSection === ProfileSection.PROFILE}
-              onClick={() => setSelectedSection(ProfileSection.PROFILE)}
-              sx={profilePageStyles.navItem}
-            >
-              <ListItemText primary={t('profilePage:profilePage.title')} />
-            </ListItemButton>
-            <ListItemButton
-              selected={selectedSection === ProfileSection.TRANSACTIONS}
-              onClick={() => setSelectedSection(ProfileSection.TRANSACTIONS)}
-              sx={profilePageStyles.navItem}
-            >
-              <ListItemText primary={t('transactionTable:common.headerAll')} />
-            </ListItemButton>
-          </List>
-        </Paper>
+
+        <Box sx={profilePageStyles.sidePanel}>
+          <Paper elevation={1} sx={profilePageStyles.menu}>
+            <List component="nav" sx={profilePageStyles.navList}>
+              <ListItemButton
+                selected={selectedSection === ProfileSection.PROFILE}
+                onClick={() => setSelectedSection(ProfileSection.PROFILE)}
+                sx={profilePageStyles.navItem}
+              >
+                <ListItemText primary={t('profilePage:profilePage.title')} />
+              </ListItemButton>
+              <ListItemButton
+                selected={selectedSection === ProfileSection.TRANSACTIONS}
+                onClick={() => setSelectedSection(ProfileSection.TRANSACTIONS)}
+                sx={profilePageStyles.navItem}
+              >
+                <ListItemText primary={t('transactionTable:common.headerAll')} />
+              </ListItemButton>
+            </List>
+          </Paper>
+
+          {!isAdmin && (
+            <Button onClick={handleCancelAccount} sx={profilePageStyles.cancelAccountButton}>
+              {t('profilePage:profilePage.cancelAccount')}
+            </Button>
+          )}
+        </Box>
 
         {/* Main content */}
         <Box sx={profilePageStyles.main}>
@@ -68,6 +97,7 @@ const ProfilePageContent: React.FC = () => {
           {selectedSection === ProfileSection.TRANSACTIONS && <TransactionsHistoryContent />}
         </Box>
       </Box>
+      <ModalLoaderBlocking isOpen={isPendingSuspendUser} />
     </ContentBoxLarge>
   );
 };

@@ -11,10 +11,7 @@ import org.luzkix.coinchange.exceptions.InvalidInputDataException;
 import org.luzkix.coinchange.model.Currency;
 import org.luzkix.coinchange.model.*;
 import org.luzkix.coinchange.openapi.backendapi.model.*;
-import org.luzkix.coinchange.service.BalanceService;
-import org.luzkix.coinchange.service.CurrencyService;
-import org.luzkix.coinchange.service.FeeCategoryService;
-import org.luzkix.coinchange.service.UserService;
+import org.luzkix.coinchange.service.*;
 import org.luzkix.coinchange.utils.DateUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,6 +40,8 @@ public class UserServiceImpl implements UserService {
 
     private final JwtProvider jwtProvider;
 
+    private final TransactionService transactionService;
+
     @Override
     public User findUserById(Long userId) {
         return userDao.findById(userId);
@@ -56,8 +55,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserLoginResponseDto createUser(UserRegistrationRequestDto registrationDto) {
-        // Check if the user already exists
-        User user = userDao.findActiveUserByUsernameOrEmail(registrationDto.getUsername(), registrationDto.getEmail());
+        // Check if the user already exists (even if it is suspended user)
+        User user = userDao.findUserByUsernameOrEmail(registrationDto.getUsername(), registrationDto.getEmail());
         if (Objects.nonNull(user)) throw new InvalidInputDataException(ErrorBusinessCodeEnum.USER_ALREADY_EXISTS.getMessage(), ErrorBusinessCodeEnum.USER_ALREADY_EXISTS);
 
         //encode password
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserLoginResponseDto logUser(UserLoginRequestDto userLoginDto) {
+    public UserLoginResponseDto loginUser(UserLoginRequestDto userLoginDto) {
         // Get user based on username/email
         User user = userDao.findActiveUserByUsernameOrEmail(userLoginDto.getUsernameOrEmail(), userLoginDto.getUsernameOrEmail());
         if (user == null)
@@ -152,6 +151,23 @@ public class UserServiceImpl implements UserService {
         responseDto.setJwtToken(jwtProvider.generateToken(user.getId()));
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public UserLoginResponseDto suspendUser(User user) {
+        // 1. check if user has any pending transactions. If so, cancel them.
+        List<Transaction> pendingTransactions = transactionService.findByUserAndPending(user);
+        for(Transaction pendingTransaction : pendingTransactions) {
+            transactionService.cancelPendingTransaction(pendingTransaction.getId());
+        }
+
+        // 2. ends user validity
+        LocalDateTime endOfValidity = LocalDateTime.now();
+        user.setValidTo(endOfValidity);
+        user = userDao.save(user);
+
+        return prepareUserLoginResponseDto(user);
     }
 
     //PRIVATE METHODS

@@ -54,4 +54,13 @@ export const UserService = {
     console.log('Updating user data...');
     return ApiUserService.updateUser(data);
   },
+
+  /**
+   * Suspends the user account using the backend API.
+   * Returns UserLoginResponseDto on success.
+   */
+  async suspendUser(): Promise<UserLoginResponseDto> {
+    console.log('Suspending user account...');
+    return ApiUserService.suspendUser();
+  },
 };

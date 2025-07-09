@@ -10,6 +10,9 @@
     "roles": "Aplikační role",
     "saveChanges": "Uložit změny",
     "saving": "Ukládám...",
-    "updateConfirmation": "Údaje byly úspěšně aktualizovány."
+    "updateConfirmation": "Údaje byly úspěšně aktualizovány.",
+    "cancelAccount": "Deaktivovat účet !",
+    "cancelAccountConfirmationTitle": "Účet deaktivován!",
+    "cancelAccountConfirmationMessage": "Váš účet byl úspěšně deaktivován. Děkujeme za používání aplikace Coinchange! V případě potřeby reaktivace účtu se obraťte na správce systému."
   }
 }

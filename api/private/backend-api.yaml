@@ -923,7 +923,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
-
+  /api/user/suspend:
+    post:
+      tags:
+        - ApiUser
+      summary: Suspends the user account
+      operationId: suspendUser
+      description: |
+        Suspends the user account by ending of the account validity.
+      security:
+        - bearerAuth: []
+      responses:
+        201:
+          description: User account successfully suspended
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponseDto'
+        400:
+          description: Variants of Bad request - returned ErrorDto will specify particular type of thrown error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
   /api/fee/user-total-fees/{targetCurrencyCode}:
     get:
       tags:

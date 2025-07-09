@@ -41,7 +41,7 @@
     },
     "USER_ALREADY_EXISTS": {
       "title": "User Already Exists",
-      "message": "User with same username / email already exists."
+      "message": "User with the same username/email already exists or the data belongs to a previously deleted account."
     },
     "USER_NOT_FOUND": {
       "title": "User Not Found",

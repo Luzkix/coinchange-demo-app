@@ -28,7 +28,7 @@ public class UserController extends GenericController implements ApiUserApi {
     public ResponseEntity<UserLoginResponseDto> loginUser(UserLoginRequestDto userLoginDto) {
         validateUserLoginRequestDto(userLoginDto);
 
-        UserLoginResponseDto loggedUser = userService.logUser(userLoginDto);
+        UserLoginResponseDto loggedUser = userService.loginUser(userLoginDto);
 
         return ResponseEntity.status(201).body(loggedUser);
     }
@@ -47,6 +47,15 @@ public class UserController extends GenericController implements ApiUserApi {
         User user = getUserFromAuthentication();
 
         UserLoginResponseDto updatedUser = userService.updateUser(userUpdateRequestDto, user);
+
+        return ResponseEntity.status(201).body(updatedUser);
+    }
+
+    @Override
+    public ResponseEntity<UserLoginResponseDto> suspendUser() {
+        User user = getUserFromAuthentication();
+
+        UserLoginResponseDto updatedUser = userService.suspendUser(user);
 
         return ResponseEntity.status(201).body(updatedUser);
     }

@@ -41,7 +41,7 @@
     },
     "USER_ALREADY_EXISTS": {
       "title": "Uživatel již existuje",
-      "message": "Uživatel se stejným jménem / emailem již existuje."
+      "message": "Uživatel se stejným jménem / emailem již existuje nebo údaje náleží dříve smazanému účtu."
     },
     "USER_NOT_FOUND": {
       "title": "Uživatel nenalezen",
