@@ -12,6 +12,7 @@
 # Generic files
 .DS_Store
 .idea/
+.run/
 
 # Private files
 private-notes.docx
