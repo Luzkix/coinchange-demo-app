@@ -45,14 +45,20 @@ CoinChange is an educational virtual cryptocurrency exchange platform where user
 * **Advanced Orders** – specify your own conversion rate
 ### Portfolio
 * Multi-asset wallet with live P/L
-* Full transaction history
+### Profile
+* Summary + edit of user´s profile data
+* View and download full transaction history
+### Cryptocurrencies
+* Check actual stats of cryptocurrencies, Top gainers, New on CoinChange
 ### UX
 * Responsive Material-UI design
 * i18n (English / Czech)
 * Leaderboard of top virtual traders
 ### Security
 * Spring Security 6 + JWT (access & refresh)
-* BCrypt password hashing, CORS & rate-limiting
+* BCrypt password hashing
+### API
+* Full OpenAPI 3 generated API (both on frontend and backend) based on shared yaml files (same files shared between frontend and backend to ensure single place of truth)
 
 ---
 
@@ -98,16 +104,16 @@ cd coinchange-demo-app
 
 ### 2  Backend
 cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=dev # H2 + Swagger UI
+mvn spring-boot:run -Dspring-boot.run.profiles=devel # H2 + Swagger UI
 
 ### 3  Frontend
 cd ../frontend
 npm install
-npm start # http://localhost:3000
+npm run dev # http://localhost:8080
 
 ### 4  Docs
-* Swagger UI → http://localhost:8080/swagger-ui.html
-* OpenAPI JSON → http://localhost:8080/v3/api-docs
+* Swagger UI → http://localhost:2000/swagger-ui.html
+* OpenAPI JSON → http://localhost:2000/v3/api-docs
 
 ---
 
@@ -165,20 +171,32 @@ conversion.validity=${seconds}
 ---
 
 ## 8  Development Workflow
-1. **Feature branch** from `develop`
-2. Unit + integration tests ≥ 80 %
-3. Conventional Commits
-4. PR → GitHub Actions (build + sonar)
-5. Reviewed & merged to `main`
+1. committing directly to 'master' branch
+2. no unit/integration testing
 
 ---
 
 ## 9  Deployment
 
-docker-compose -f docker-compose.prod.yml up -d
+* Create docker image using following commands:
 
-* Spring Boot runs behind reverse-proxy on port 8080
-* PostgreSQL volume for persistent data
+docker build -f Dockerfile -t luzkix/coinchange:latest --no-cache .
+
+docker push luzkix/coinchange:latest
+
+* You can than run created container using following docker run command (you can adjust ports or ENV variables as needed):
+  
+docker run -d \
+  --name coinchange \
+  -p 200:8080 \
+  -e SPRING_PROFILES_ACTIVE=devel \
+  -e JWT_SECRET="bXktdmVyeS1zZWN1cmUtc2VjcmV0LWtleTEyMzQ1WEcqecqwecWQEc" \
+  -e JWT_EXPIRATION=3600000 \
+  -e SERVER_PORT=8080 \
+  luzkix/coinchange:latest
+
+* In this example the application will be accessible on port 200 (internally runs on port 8080), it runs with 'devel' profile (configuration of own DB is not needed since in-memory H2 DB will be used) 
+* If you want to run it with real Postgres DB, you need to run it with 'prod' profile and you need to add additional ENV properties such as: DB_USERNAME, DB_PWD, DB_URL. Everything else remains same.
 
 ---
 
@@ -191,6 +209,12 @@ docker-compose -f docker-compose.prod.yml up -d
 ---
 
 ## 11  License & Acknowledgements
+### License
 *MIT License* — see `LICENSE`.  
 Powered by the awesome open-source communities of Spring and React. Using free apis of Coinbase to load actual information about coins prices.
 UI inspired by world best crypto exchanges coinbase.com and coinmate.io.
+
+### Acknowledgements
+* The layout of CoinChange app was inspired by these best crypto exchanges:
+  * Coinbase.com
+  * Coinmate.io

@@ -31,7 +31,7 @@ Controller → Service → Repository → Database ⇄ Mapper (MapStruct)
 ### 2.2  Asynchronous Tasks
 | Task                                  | Schedule     | Notes                                               |
 |---------------------------------------|--------------|-----------------------------------------------------|
-| checkAndProcessPendingTransactionsJob | every 15 sec | Regularly checks and processes pending limit orders |
+| checkAndProcessPendingTransactionsJob | every 60 sec | Regularly checks and processes pending limit orders |
 
 ### 2.3  Caching
 | Task               | Cache validity | Notes                                                  |
@@ -151,7 +151,7 @@ No tests implemented
 * Storage in `converted_fee_amount`
 
 #### Scheduled Jobs
-* Every 15 seconds check for pending transactions
+* Every 60 seconds check for pending transactions
 * Auto-processing when target rate is reached
 
 
