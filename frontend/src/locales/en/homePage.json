@@ -11,5 +11,8 @@
     "tradeable": "Tradeable",
     "topGainers": "Top gainers",
     "seeMoreAssets": "See more assets"
+  },
+  "acknowledgment": {
+    "title": "The layout of CoinChange app was inspired by these best crypto exchanges:"
   }
 }

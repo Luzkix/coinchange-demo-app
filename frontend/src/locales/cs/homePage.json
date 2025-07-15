@@ -11,5 +11,8 @@
     "tradeable": "Obchodovatelné",
     "topGainers": "Největší růst",
     "seeMoreAssets": "Zobrazit více aktiv"
+  },
+  "acknowledgment": {
+    "title": "Layout aplikace CoinChange byl inspirován těmito nejlepšími krypto burzami:"
   }
 }
